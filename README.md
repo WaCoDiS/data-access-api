@@ -12,7 +12,7 @@ The underlying library integrating OpenAPI to SpringBoot is [springfox](https://
 
 Make sure your local docker host is running.
 
-run *mvn clean package docker:image* to build a docker image
-run *mvn docker:start* to start a container (*mvn docker:run* to keep the container attached)
-run *mvn docker:stop* to stop a running container
+run **mvn clean package docker:image** to build a docker image
+run **mvn docker:start** to start a container (**mvn docker:run** to keep the container attached)
+run **mvn docker:stop** to stop a running container
 
