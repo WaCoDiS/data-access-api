@@ -10,9 +10,9 @@ This is an example of building a OpenAPI-enabled server in Java using the Spring
 
 The underlying library integrating OpenAPI to SpringBoot is [springfox](https://github.com/springfox/springfox)
 
-Start your server as a simple java application
+Make sure your local docker host is running.
 
-You can view the api documentation in swagger-ui by pointing to  
-http://localhost:8080/
+run *mvn clean package docker:image* to build a docker image
+run *mvn docker:start* to start a container (*mvn docker:run* to keep the container attached)
+run *mvn docker:stop* to stop a running container
 
-Change default port value in application.properties
