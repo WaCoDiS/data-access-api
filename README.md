@@ -12,7 +12,7 @@ The underlying library integrating OpenAPI to SpringBoot is [springfox](https://
 
 1. cd to project folder
 2. use dockerfile to build docker image
-3. run a container using built docker image
+3. run a container using built docker image (define port mapping for port 8080)
 
 You can view the api documentation in swagger-ui by pointing to  
 http://localhost:8080/
