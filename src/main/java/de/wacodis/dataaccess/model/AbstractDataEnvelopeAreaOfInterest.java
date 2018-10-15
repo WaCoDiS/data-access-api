@@ -2,6 +2,7 @@ package de.wacodis.dataaccess.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,8 +12,10 @@ import javax.validation.constraints.*;
 /** AbstractDataEnvelopeAreaOfInterest */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-09-14T15:57:11.999+02:00[Europe/Berlin]")
-public class AbstractDataEnvelopeAreaOfInterest {
+        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+public class AbstractDataEnvelopeAreaOfInterest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("extent")
     @Valid
     private List<Float> extent = null;

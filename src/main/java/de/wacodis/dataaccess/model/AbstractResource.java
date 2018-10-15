@@ -6,13 +6,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.util.Objects;
 import javax.validation.constraints.*;
 
 /** AbstractResource */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-09-14T15:57:11.999+02:00[Europe/Berlin]")
+        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -22,7 +23,9 @@ import javax.validation.constraints.*;
     @JsonSubTypes.Type(value = PostResource.class, name = "PostResource"),
     @JsonSubTypes.Type(value = GetResource.class, name = "GetResource"),
 })
-public class AbstractResource {
+public class AbstractResource implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("url")
     private String url = null;
 

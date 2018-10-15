@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -14,7 +15,7 @@ import org.joda.time.DateTime;
 /** AbstractDataEnvelope */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-09-14T15:57:11.999+02:00[Europe/Berlin]")
+        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -25,7 +26,9 @@ import org.joda.time.DateTime;
     @JsonSubTypes.Type(value = CopernicusDataEnvelope.class, name = "CopernicusDataEnvelope"),
     @JsonSubTypes.Type(value = GdiDeDataEnvelope.class, name = "GdiDeDataEnvelope"),
 })
-public class AbstractDataEnvelope {
+public class AbstractDataEnvelope implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /** shall be used to determine the responsible data backend */
     public enum SourceTypeEnum {
         SENSORWEBDATAENVELOPE("SensorWebDataEnvelope"),

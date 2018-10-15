@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.util.Objects;
 import javax.validation.constraints.*;
 
 /** CopernicusDataEnvelope */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-09-14T15:57:11.999+02:00[Europe/Berlin]")
-public class CopernicusDataEnvelope extends AbstractDataEnvelope {
+        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+public class CopernicusDataEnvelope extends AbstractDataEnvelope implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("datasetId")
     private Object datasetId = null;
 
