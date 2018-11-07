@@ -12,13 +12,13 @@ import javax.validation.constraints.*;
 /** AbstractDataEnvelopeAreaOfInterest */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 public class AbstractDataEnvelopeAreaOfInterest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("extent")
     @Valid
-    private List<Float> extent = null;
+    private List<Float> extent = new ArrayList<Float>();
 
     public AbstractDataEnvelopeAreaOfInterest extent(List<Float> extent) {
         this.extent = extent;
@@ -26,9 +26,6 @@ public class AbstractDataEnvelopeAreaOfInterest implements Serializable {
     }
 
     public AbstractDataEnvelopeAreaOfInterest addExtentItem(Float extentItem) {
-        if (this.extent == null) {
-            this.extent = new ArrayList<Float>();
-        }
         this.extent.add(extentItem);
         return this;
     }
@@ -40,8 +37,10 @@ public class AbstractDataEnvelopeAreaOfInterest implements Serializable {
      * @return extent
      */
     @ApiModelProperty(
+            required = true,
             value =
                     "the coordinates, using EPSG:4326, (in analogy to GeoJSON bbox) in the order \"southwesterly point followed by more northeasterly point\". Schema is [minLon, minLat, maxLon, maxLat] ")
+    @NotNull
     @Size(min = 4, max = 4)
     public List<Float> getExtent() {
         return extent;

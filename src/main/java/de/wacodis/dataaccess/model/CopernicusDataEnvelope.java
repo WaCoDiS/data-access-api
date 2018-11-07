@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 /** CopernicusDataEnvelope */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 public class CopernicusDataEnvelope extends AbstractDataEnvelope implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -50,10 +50,10 @@ public class CopernicusDataEnvelope extends AbstractDataEnvelope implements Seri
     }
 
     @JsonProperty("satellite")
-    private SatelliteEnum satellite = null;
+    private SatelliteEnum satellite;
 
     @JsonProperty("cloudCoverage")
-    private Float cloudCoverage = null;
+    private Float cloudCoverage;
 
     /** Gets or Sets portal */
     public enum PortalEnum {
@@ -85,7 +85,7 @@ public class CopernicusDataEnvelope extends AbstractDataEnvelope implements Seri
     }
 
     @JsonProperty("portal")
-    private PortalEnum portal = null;
+    private PortalEnum portal;
 
     public CopernicusDataEnvelope datasetId(Object datasetId) {
         this.datasetId = datasetId;

@@ -15,7 +15,7 @@ import org.joda.time.DateTime;
 /** AbstractDataEnvelope */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -61,7 +61,7 @@ public class AbstractDataEnvelope implements Serializable {
     }
 
     @JsonProperty("sourceType")
-    private SourceTypeEnum sourceType = null;
+    private SourceTypeEnum sourceType;
 
     @JsonProperty("areaOfInterest")
     private AbstractDataEnvelopeAreaOfInterest areaOfInterest = null;
@@ -70,10 +70,10 @@ public class AbstractDataEnvelope implements Serializable {
     private AbstractDataEnvelopeTimeFrame timeFrame = null;
 
     @JsonProperty("created")
-    private DateTime created = null;
+    private DateTime created;
 
     @JsonProperty("modified")
-    private DateTime modified = null;
+    private DateTime modified;
 
     public AbstractDataEnvelope sourceType(SourceTypeEnum sourceType) {
         this.sourceType = sourceType;

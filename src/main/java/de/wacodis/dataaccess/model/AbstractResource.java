@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 /** AbstractResource */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -27,7 +27,7 @@ public class AbstractResource implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("url")
-    private String url = null;
+    private String url;
 
     /** Gets or Sets method */
     public enum MethodEnum {
@@ -59,7 +59,7 @@ public class AbstractResource implements Serializable {
     }
 
     @JsonProperty("method")
-    private MethodEnum method = null;
+    private MethodEnum method;
 
     public AbstractResource url(String url) {
         this.url = url;

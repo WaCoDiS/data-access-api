@@ -9,15 +9,15 @@ import javax.validation.constraints.*;
 /** GdiDeDataEnvelope */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 public class GdiDeDataEnvelope extends AbstractDataEnvelope implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("catalougeUrl")
-    private String catalougeUrl = null;
+    private String catalougeUrl;
 
     @JsonProperty("recordRefId")
-    private String recordRefId = null;
+    private String recordRefId;
 
     public GdiDeDataEnvelope catalougeUrl(String catalougeUrl) {
         this.catalougeUrl = catalougeUrl;

@@ -9,24 +9,24 @@ import javax.validation.constraints.*;
 /** SensorWebDataEnvelope */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 public class SensorWebDataEnvelope extends AbstractDataEnvelope implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("serviceUrl")
-    private String serviceUrl = null;
+    private String serviceUrl;
 
     @JsonProperty("offering")
-    private String offering = null;
+    private String offering;
 
     @JsonProperty("featureOfInterest")
-    private String featureOfInterest = null;
+    private String featureOfInterest;
 
     @JsonProperty("observedProperty")
-    private String observedProperty = null;
+    private String observedProperty;
 
     @JsonProperty("procedure")
-    private String procedure = null;
+    private String procedure;
 
     public SensorWebDataEnvelope serviceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;

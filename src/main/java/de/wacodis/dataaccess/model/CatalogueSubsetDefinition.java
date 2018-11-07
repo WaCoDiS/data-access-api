@@ -9,12 +9,12 @@ import javax.validation.constraints.*;
 /** CatalogueSubsetDefinition */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 public class CatalogueSubsetDefinition extends AbstractSubsetDefinition implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("datasetIdentifier")
-    private String datasetIdentifier = null;
+    private String datasetIdentifier;
 
     @JsonProperty("serviceUrl")
     private Object serviceUrl = null;

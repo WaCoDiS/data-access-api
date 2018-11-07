@@ -13,15 +13,15 @@ import org.joda.time.DateTime;
 @ApiModel(description = "time frame the dataset covers")
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 public class AbstractDataEnvelopeTimeFrame implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("startTime")
-    private DateTime startTime = null;
+    private DateTime startTime;
 
     @JsonProperty("endTime")
-    private DateTime endTime = null;
+    private DateTime endTime;
 
     public AbstractDataEnvelopeTimeFrame startTime(DateTime startTime) {
         this.startTime = startTime;
@@ -33,7 +33,8 @@ public class AbstractDataEnvelopeTimeFrame implements Serializable {
      *
      * @return startTime
      */
-    @ApiModelProperty(value = "the beginning of the time frame ")
+    @ApiModelProperty(required = true, value = "the beginning of the time frame ")
+    @NotNull
     @Valid
     public DateTime getStartTime() {
         return startTime;
@@ -53,7 +54,8 @@ public class AbstractDataEnvelopeTimeFrame implements Serializable {
      *
      * @return endTime
      */
-    @ApiModelProperty(value = "the ending of the time frame ")
+    @ApiModelProperty(required = true, value = "the ending of the time frame ")
+    @NotNull
     @Valid
     public DateTime getEndTime() {
         return endTime;

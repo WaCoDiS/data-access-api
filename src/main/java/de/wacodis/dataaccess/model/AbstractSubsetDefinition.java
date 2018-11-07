@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 /** AbstractSubsetDefinition */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-10-12T15:49:20.560+02:00[Europe/Berlin]")
+        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -61,10 +61,10 @@ public class AbstractSubsetDefinition implements Serializable {
     }
 
     @JsonProperty("sourceType")
-    private SourceTypeEnum sourceType = null;
+    private SourceTypeEnum sourceType;
 
     @JsonProperty("identifier")
-    private String identifier = null;
+    private String identifier;
 
     public AbstractSubsetDefinition sourceType(SourceTypeEnum sourceType) {
         this.sourceType = sourceType;
