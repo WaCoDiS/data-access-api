@@ -7,7 +7,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
+        date = "2018-11-27T14:57:01.610+01:00[Europe/Berlin]")
 @Controller
 @RequestMapping("${openapi.waCoDiSDataAccess.base-path:/dataAccess}")
 public class DataenvelopesApiController implements DataenvelopesApi {

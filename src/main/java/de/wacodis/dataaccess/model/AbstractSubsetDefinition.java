@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 /** AbstractSubsetDefinition */
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2018-11-07T15:19:59.896+01:00[Europe/Berlin]")
+        date = "2018-11-27T14:57:01.610+01:00[Europe/Berlin]")
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
