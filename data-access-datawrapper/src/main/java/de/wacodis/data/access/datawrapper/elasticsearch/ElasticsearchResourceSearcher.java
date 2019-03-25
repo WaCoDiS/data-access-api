@@ -35,6 +35,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -144,10 +145,13 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
      * @return
      */
     private SearchRequest buildSearchRequestForSubsetDefintion(AbstractSubsetDefinition subset, AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame) {
+        QueryBuilder query = this.queryProvider.buildQueryForSubsetDefinition(subset, areaOfInterest, timeFrame);
+        
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.timeOut);
         source.from(0); //retrieve all hits
-        source.size(Integer.MAX_VALUE);
+        source.size(10000); //10000 = max allowed value
+        source.query(query);
 
         SearchRequest request = new SearchRequest();
         request.indices(this.indexName);
@@ -179,6 +183,8 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             String jsonResponse = hit.getSourceAsString();
             ObjectMapper responseDeserializer = this.jsonDeserializerFactory.getObjectMapper(jsonResponse);
             AbstractDataEnvelope responseDataEnvelope = responseDeserializer.readValue(jsonResponse, AbstractDataEnvelope.class);
+            responseDataEnvelope.setAreaOfInterest(getDefaultAreaOfInterest(responseDataEnvelope.getAreaOfInterest()));
+            responseDataEnvelopes.add(responseDataEnvelope);
         }
 
         return responseDataEnvelopes;

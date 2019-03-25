@@ -8,6 +8,7 @@ package de.wacodis.data.access.datawrapper.elasticsearch.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
 import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
@@ -60,7 +61,8 @@ public class DataEnvelopeJsonDeserializerFactory {
         }
         
        deserializeModule.addDeserializer(typeReference.getClass(), new GeoShapeCompatibilityDataEnvelopeDeserializer<>());
-       deserializer.registerModule(deserializeModule);    
+       deserializer.registerModule(deserializeModule);
+       deserializer.registerModule(new JodaModule());
        
        LOGGER.debug("create DataEnvelope json deserializer for type " + typeReference.getClass().getSimpleName());
        

@@ -26,10 +26,10 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 public class AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvider implements ElasticsearchQueryProvider {
 
     private static final ShapeRelation SPATIALBBOXFILTER_RELATION = ShapeRelation.CONTAINS;
-    private static final String SPATIALBBOXFILTER_ATTRIBUTE = "areaOfInterest.extent";
-    private static final String TIMEFRAMEFILTER_STARTATTRIBUTE = "timeFrame.starttime";
-    private static final String TIMEFRAMEFILTER_ENDATTRIBUTE = "timeFrame.endtime";
-    private static final String DATEFORMAT = "yyyyMMdd'T'HH:mm:ss.SSSZZ";
+    private static final String SPATIALBBOXFILTER_ATTRIBUTE = "areaOfInterest";
+    private static final String TIMEFRAMEFILTER_STARTATTRIBUTE = "timeFrame.startTime";
+    private static final String TIMEFRAMEFILTER_ENDATTRIBUTE = "timeFrame.endTime";
+    private static final String DATEFORMAT = "yyyyMMdd'T'HH:mm:ss.SSS";
 
     @Override
     public BoolQueryBuilder buildQueryForSubsetDefinition(AbstractSubsetDefinition subsetDefinition, AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame) {
@@ -40,8 +40,8 @@ public class AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvide
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
         QueryBuilder spatialFilter = getSpatialBBOXFilter(areaOfInterest);
-        QueryBuilder startTimeFilter = getTimeFrameStartEndFilter(timeFrame);
-        QueryBuilder endTimeFilter = getTimeFrameStartEndFilter(timeFrame);
+        QueryBuilder startTimeFilter = getTimeFrameStartTimeFilter(timeFrame);
+        QueryBuilder endTimeFilter = getTimeFrameEndTimeFilter(timeFrame);
 
         boolQuery.filter(spatialFilter).filter(startTimeFilter).filter(endTimeFilter); //add all filters (logical and)
 
@@ -69,7 +69,7 @@ public class AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvide
         return QueryBuilders.rangeQuery(TIMEFRAMEFILTER_STARTATTRIBUTE).gte(timeFrame.getStartTime().toString(DATEFORMAT)).format(DATEFORMAT);
     }
 
-    private RangeQueryBuilder getTimeFrameStartEndFilter(AbstractDataEnvelopeTimeFrame timeFrame) {
+    private RangeQueryBuilder getTimeFrameEndTimeFilter(AbstractDataEnvelopeTimeFrame timeFrame) {
         return QueryBuilders.rangeQuery(TIMEFRAMEFILTER_ENDATTRIBUTE).lte(timeFrame.getEndTime().toString(DATEFORMAT)).format(DATEFORMAT);
     }
 }
