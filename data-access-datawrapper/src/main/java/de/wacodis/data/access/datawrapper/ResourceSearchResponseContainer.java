@@ -15,14 +15,14 @@ import java.util.List;
  *
  * @author <a href="mailto:arne.vogt@hs-bochum.de">Arne Vogt</a>
  */
-public class ResponseHelper {
+public class ResourceSearchResponseContainer {
     
     private final AbstractDataEnvelopeAreaOfInterest inputAreaOfInterest;
     private final AbstractDataEnvelopeTimeFrame inputTimeFrame;
     private final AbstractSubsetDefinition inputSubset;
     private final List<AbstractDataEnvelope> responseDataEnvelopes;
 
-    public ResponseHelper(AbstractDataEnvelopeAreaOfInterest inputAreaOfInterest, AbstractDataEnvelopeTimeFrame inputTimeFrame, AbstractSubsetDefinition inputSubset, List<AbstractDataEnvelope> responseDataEnvelopes) {
+    public ResourceSearchResponseContainer(AbstractDataEnvelopeAreaOfInterest inputAreaOfInterest, AbstractDataEnvelopeTimeFrame inputTimeFrame, AbstractSubsetDefinition inputSubset, List<AbstractDataEnvelope> responseDataEnvelopes) {
         this.inputAreaOfInterest = inputAreaOfInterest;
         this.inputTimeFrame = inputTimeFrame;
         this.inputSubset = inputSubset;

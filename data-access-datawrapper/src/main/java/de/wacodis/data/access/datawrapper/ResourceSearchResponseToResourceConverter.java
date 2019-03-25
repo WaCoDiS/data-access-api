@@ -3,20 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.wacodis.data.access.datawrapper.elasticsearch;
+package de.wacodis.data.access.datawrapper;
 
 import de.wacodis.dataaccess.model.AbstractResource;
-import de.wacodis.dataaccess.model.DataAccessResourceSearchBody;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author <a href="mailto:arne.vogt@hs-bochum.de">Arne Vogt</a>
  */
-public interface DataWrapper {
+public interface ResourceSearchResponseToResourceConverter {
     
-    Map<String, List<AbstractResource>> query(DataAccessResourceSearchBody searchBody) throws IOException;
+    List<AbstractResource> convertToResource(ResourceSearchResponseContainer searchResponse);
     
 }
