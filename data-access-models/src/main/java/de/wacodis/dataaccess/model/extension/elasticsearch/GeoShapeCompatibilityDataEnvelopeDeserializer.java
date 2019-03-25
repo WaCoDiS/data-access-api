@@ -8,16 +8,14 @@ package de.wacodis.dataaccess.model.extension.elasticsearch;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
-import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
 import java.io.IOException;
 
 /**
@@ -40,6 +38,7 @@ public class GeoShapeCompatibilityDataEnvelopeDeserializer<T extends AbstractDat
     @Override
     public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JodaModule());
         ObjectCodec oc = jp.getCodec();
         JsonNode node = oc.readTree(jp);
    
