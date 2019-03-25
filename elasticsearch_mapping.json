@@ -1,0 +1,28 @@
+{
+    "settings" : {
+        "number_of_shards" : 1,
+		"number_of_replicas": 1
+    },
+	"mappings": {
+		"dataenvelope": {
+		"dynamic_templates": [
+			{
+			  "properties_template": {
+				"match_mapping_type": "string",
+				"mapping": {
+				  "type": "keyword"
+				}
+			  }
+			}
+		],
+		"properties": {
+			   "areaOfInterest": 
+				   {"type":  "geo_shape",
+					"tree": "quadtree",
+					"strategy": "recursive",
+					"precision": "30cm"
+				   }
+			}
+		}
+	}
+}
