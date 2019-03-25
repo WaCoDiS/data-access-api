@@ -25,7 +25,7 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
  */
 public class AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvider implements ElasticsearchQueryProvider {
 
-    private static final ShapeRelation SPATIALBBOXFILTER_RELATION = ShapeRelation.WITHIN;
+    private static final ShapeRelation SPATIALBBOXFILTER_RELATION = ShapeRelation.CONTAINS;
     private static final String SPATIALBBOXFILTER_ATTRIBUTE = "areaOfInterest.extent";
     private static final String TIMEFRAMEFILTER_STARTATTRIBUTE = "timeFrame.starttime";
     private static final String TIMEFRAMEFILTER_ENDATTRIBUTE = "timeFrame.endtime";
