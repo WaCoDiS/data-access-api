@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: data-access
+  profiles:
+    active: docker
+  cloud:
+    config:
+      uri: http://localhost:8888
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"

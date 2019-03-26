@@ -26,13 +26,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.http.HttpHost;
+import java.util.concurrent.TimeUnit;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -49,25 +48,50 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticsearchResourceSearcher.class);
 
-    private final ElasticsearchQueryProvider queryProvider;
+    private static final int DEFAULTTIMEOUT_MILLIS = 10000;
 
     private String indexName;
-    private TimeValue timeOut;
+    private TimeValue requestTimeout;
     private RestHighLevelClient elasticsearchClient;
     private ResourceSearchResponseToResourceConverter responseConverter;
     private final DataEnvelopeJsonDeserializerFactory jsonDeserializerFactory;
+    private final ElasticsearchQueryProvider queryProvider;
 
-    public ElasticsearchResourceSearcher(ResourceSearchResponseToResourceConverter responseConverter) {
+    /**
+     * 
+     * @param elasticsearchClient elasticsearch high level REST client
+     * @param indexName elasticsearch index
+     * @param responseConverter applied to extract AbstracResource from AbstractDataEnvelope
+     * @param requestTimeout_millis timeout per request
+     */
+    public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName, ResourceSearchResponseToResourceConverter responseConverter, long requestTimeout_millis) {
         this.responseConverter = responseConverter;
+        this.elasticsearchClient = elasticsearchClient;
+        this.indexName = indexName;
+        this.requestTimeout = new TimeValue(requestTimeout_millis, TimeUnit.MILLISECONDS);
         this.jsonDeserializerFactory = new DataEnvelopeJsonDeserializerFactory();
-
-        //ToDO config
         this.queryProvider = new DataAccessSearchBodyElasticsearchBoolQueryProvider();
-        this.elasticsearchClient = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
     }
 
-    public ElasticsearchResourceSearcher() {
-        this(new NullResourceSearchResponseToResourceConverter());
+    /**
+     * use default timeout 10000 milliseconds
+     *
+     * @param elasticsearchClient
+     * @param indexName
+     * @param responseConverter
+     */
+    public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName, ResourceSearchResponseToResourceConverter responseConverter) {
+        this(elasticsearchClient, indexName, responseConverter, DEFAULTTIMEOUT_MILLIS);
+    }
+
+    /**
+     * use NullResourceSearchResponseToResourceConverter, use default timeout 10000 milliseconds
+     *
+     * @param elasticsearchClient
+     * @param indexName
+     */
+    public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName) {
+        this(elasticsearchClient, indexName, new NullResourceSearchResponseToResourceConverter(), DEFAULTTIMEOUT_MILLIS);
     }
 
     public ResourceSearchResponseToResourceConverter getResponseConverter() {
@@ -86,12 +110,12 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
         this.indexName = indexName;
     }
 
-    public TimeValue getTimeOut() {
-        return timeOut;
+    public TimeValue getRequestTimeout() {
+        return requestTimeout;
     }
 
-    public void setTimeOut(TimeValue timeOut) {
-        this.timeOut = timeOut;
+    public void setRequestTimeout(TimeValue requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     @Override
@@ -146,9 +170,9 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
      */
     private SearchRequest buildSearchRequestForSubsetDefintion(AbstractSubsetDefinition subset, AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame) {
         QueryBuilder query = this.queryProvider.buildQueryForSubsetDefinition(subset, areaOfInterest, timeFrame);
-        
+
         SearchSourceBuilder source = new SearchSourceBuilder();
-        source.timeout(this.timeOut);
+        source.timeout(this.requestTimeout);
         source.from(0); //retrieve all hits
         source.size(10000); //10000 = max allowed value
         source.query(query);
@@ -234,7 +258,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             Float[] extent = new Float[4]; //[minLon, minLat, maxLon, maxLat]
             List<Float> coord1 = geoShapeAreaOfInterest.getCoordinates().get(0); //topLeft (lon, lat)
             List<Float> coord2 = geoShapeAreaOfInterest.getCoordinates().get(1); //bottomRight (lon, lat)
-            
+
             extent[0] = coord1.get(0); //minLon
             extent[1] = coord2.get(1); //minLat
             extent[2] = coord2.get(0); //maxLon
