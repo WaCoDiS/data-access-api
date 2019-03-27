@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -33,6 +31,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 @RefreshScope
 public class ResourcesApiController implements ResourcesApi {
 
+      private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ResourcesApiController.class);
+    
     private final NativeWebRequest request;
     
     @Autowired
@@ -40,9 +40,7 @@ public class ResourcesApiController implements ResourcesApi {
     
     @Autowired
     ElasticsearchClientFactory elasticsearchClientFactory;
-    
-    
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ResourcesApiController.class);
+
 
     @org.springframework.beans.factory.annotation.Autowired
     public ResourcesApiController(NativeWebRequest request) {
@@ -68,7 +66,7 @@ public class ResourcesApiController implements ResourcesApi {
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(hits);
         } catch (IOException ex) {
             LOGGER.error("error while querying metadata for search body " + System.lineSeparator() + dataAccessResourceSearchBody.toString(), ex);     
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.TEXT_PLAIN).body(ex.getMessage());
         }finally{
             try {
                 elasticsearchClient.close();
