@@ -38,7 +38,7 @@ public interface DataEnvelopeManipulator {
      * @return true if successfully deleted
      * @throws java.io.IOException
      */
-    boolean deleteDataEnvelope(String identifier) throws IOException;
+    RequestResult deleteDataEnvelope(String identifier) throws IOException;
 }
 
 

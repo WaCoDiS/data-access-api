@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import de.wacodis.data.access.datawrapper.DataEnvelopeManipulator;
+import de.wacodis.data.access.datawrapper.RequestResult;
+import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopeJsonDeserializerFactory;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.ElasticsearchCompatibilityDataEnvelopeSerializer;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
@@ -24,11 +26,19 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.DefaultEditorKit;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.rest.RestStatus;
 
 /**
  *
@@ -105,13 +115,54 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
     }
 
     @Override
-    public AbstractDataEnvelope updateDataEnvelope(String identifier, AbstractDataEnvelope dataEnvelope) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public AbstractDataEnvelope updateDataEnvelope(String identifier, AbstractDataEnvelope dataEnvelope) throws IOException {
+        try {
+            UpdateRequest request = buildUpdateRequest(identifier, dataEnvelope);
+            UpdateResponse response = this.elasticsearchClient.update(request, RequestOptions.DEFAULT);
+            
+            
+            if(response.status().equals(RestStatus.OK) || response.status().equals(RestStatus.CREATED)){ //upsert
+                if(response.getGetResult().isExists() && !response.getGetResult().isSourceEmpty()){
+                    String updatedDataEnvelopeJson = response.getGetResult().sourceAsString();
+                    ObjectMapper deserializer = this.jsonDeserializerFactory.getObjectMapper(updatedDataEnvelopeJson);
+                    AbstractDataEnvelope updatedDataEnvelope = deserializer.readValue(updatedDataEnvelopeJson, AbstractDataEnvelope.class);      
+                    AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(((GeoShapeCompatibilityAreaOfInterest)updatedDataEnvelope.getAreaOfInterest()));
+                    updatedDataEnvelope.setAreaOfInterest(defaultAreaOfInterest);
+                    
+                    return updatedDataEnvelope;
+                }else{
+                    throw new IOException("AbstractDataEnvelope with identifier " + identifier + " updated/created in index "+ this.indexName +" but response did not contain updated resource");
+                }
+            }else{
+                throw new IOException("could not update or create AbstractDataEnvelope with indentifier" + identifier + "  ,request got response" + response.status().toString());
+            }
 
+        } catch (Exception ex) {
+            throw new IOException("could not update AbstractDataEnvelope with identifier " + identifier + ",  raised unexpected exception", ex);
+        }
+    }   
+    
     @Override
-    public boolean deleteDataEnvelope(String identifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public RequestResult deleteDataEnvelope(String identifier) throws IOException {
+        try {
+            DeleteRequest request = buildDeleteRequest(identifier);
+            DeleteResponse response = this.elasticsearchClient.delete(request, RequestOptions.DEFAULT);
+            DocWriteResponse.Result result = response.getResult();
+
+            switch (result) {
+                case DELETED:
+                    LOGGER.info("successfully deleted document " + identifier + " from index" + this.indexName);
+                    return RequestResult.DELETED;
+                case NOT_FOUND:
+                    LOGGER.info("unable to deleted document " + identifier + " from index " + this.indexName + ", document " + identifier + "was not found");
+                    return RequestResult.NOTFOUND;
+                default:
+                    LOGGER.info("unable to deleted document " + identifier + " from index " + this.indexName + ", request got response " + result.toString());
+                    return RequestResult.ERROR;
+            }
+        } catch (Exception ex) {
+            throw new IOException("could not delete AbstractDataEnvelope with identifier " + identifier + ",  raised unexpected exception", ex);
+        }
     }
 
     private IndexRequest buildIndexRequest(AbstractDataEnvelope dataEnvelope) {
@@ -121,20 +172,50 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         request.index(this.indexName);
         request.type(this.type);
         request.source(serializedDataEnvelope);
-        
+        request.timeout(this.requestTimeout);
+
         return request;
     }
-    
+
+    private IndexRequest buildIndexRequest(AbstractDataEnvelope dataEnvelope, String identifier) {
+        IndexRequest request = buildIndexRequest(dataEnvelope);
+        request.id(identifier);
+        request.timeout(this.requestTimeout);
+
+        return request;
+    }
+
+    private DeleteRequest buildDeleteRequest(String identifier) {
+        DeleteRequest request = new DeleteRequest();
+        request.id(identifier).index(this.indexName).timeout(this.requestTimeout);
+
+        return request;
+    }
+
+    private UpdateRequest buildUpdateRequest(String identifier, AbstractDataEnvelope dataEnvelope) {
+        Map<String, Object> serializedDataEnvelope = serializeDataEnvelope(dataEnvelope);
+
+        UpdateRequest request = new UpdateRequest();
+        request.index(this.indexName);
+        request.type(this.type);
+        request.id(identifier);
+        request.doc(serializedDataEnvelope);
+        request.timeout(this.requestTimeout);
+        request.upsert(buildIndexRequest(dataEnvelope, identifier)); //allow upsert (index if document with identifier does not exist)
+
+        return request;
+    }
+
     /**
      * @param response
      * @return id of indexed AbstractDataEnvelope
      */
-    private String processIndexResponse(IndexResponse response){
+    private String processIndexResponse(IndexResponse response) {
         return response.getId();
     }
 
     private Map<String, Object> serializeDataEnvelope(AbstractDataEnvelope dataEnvelope) {
-        GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest = getGeoshapeAreaOfInterst(dataEnvelope.getAreaOfInterest()); //make AreaOfInterest compatible with elasticsearch
+        GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest = AreaOfInterestConverter.getGeoshapeAreaOfInterest(dataEnvelope.getAreaOfInterest()); //make AreaOfInterest compatible with elasticsearch
         dataEnvelope.setAreaOfInterest(geoshapeAreaOfInterest);
 
         try {
@@ -143,23 +224,6 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         } catch (IOException ex) {
             throw new IllegalArgumentException("cannot serialize AbstractDataEnvelope as JSON" + System.lineSeparator() + dataEnvelope.toString(), ex);
         }
-    }
-
-    private GeoShapeCompatibilityAreaOfInterest getGeoshapeAreaOfInterst(AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest) {
-        GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest = new GeoShapeCompatibilityAreaOfInterest();
-
-        Float[] bbox = defaultAreaOfInterest.getExtent().toArray(new Float[0]); //geojson bbox format [minLon, minLat, maxLon, maxLat]
-        List<Float> topLeft = Arrays.asList(new Float[]{bbox[0], bbox[3]});
-        List<Float> bottomRight = Arrays.asList(new Float[]{bbox[2], bbox[1]});
-
-        List<List<Float>> geoshapeEnvelope = new ArrayList<>();
-        geoshapeEnvelope.add(topLeft);
-        geoshapeEnvelope.add(bottomRight);
-
-        geoshapeAreaOfInterest.setCoordinates(geoshapeEnvelope);
-        geoshapeAreaOfInterest.setType(GeoShapeCompatibilityAreaOfInterest.GeoShapeType.ENVELOPE);
-
-        return geoshapeAreaOfInterest;
     }
 
 }

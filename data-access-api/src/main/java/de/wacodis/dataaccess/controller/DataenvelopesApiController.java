@@ -2,8 +2,10 @@ package de.wacodis.dataaccess.controller;
 
 import de.wacodis.data.access.datawrapper.DataEnvelopeManipulator;
 import de.wacodis.data.access.datawrapper.DataEnvelopeSearcher;
+import de.wacodis.data.access.datawrapper.RequestResult;
 import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchDataEnvelopeManipulator;
 import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchDataEnvelopeSearcher;
+import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfiguration;
 import de.wacodis.dataaccess.elasticsearch.ElasticsearchClientFactory;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import java.io.IOException;
@@ -32,6 +34,9 @@ public class DataenvelopesApiController implements DataenvelopesApi {
     @Autowired
     ElasticsearchClientFactory elasticsearchClientFactory;
 
+    @Autowired
+    ElasticsearchDataEnvelopesAPIConfiguration elasticsearchConfig;
+
     @org.springframework.beans.factory.annotation.Autowired
     public DataenvelopesApiController(NativeWebRequest request) {
         this.request = request;
@@ -44,7 +49,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
     @Override
     public ResponseEntity retrieveDataEnvelope(String id) {
-        String elasticsearchUri = "http://localhost:9200";
+        String elasticsearchUri = this.elasticsearchConfig.getUri();
         RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
 
         try {
@@ -72,7 +77,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
     @Override
     public ResponseEntity<String> createResource(AbstractDataEnvelope abstractDataEnvelope) {
-        String elasticsearchUri = "http://localhost:9200";
+        String elasticsearchUri = this.elasticsearchConfig.getUri();
         RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
 
         try {
@@ -93,19 +98,50 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         }
     }
 
+    @Override
+    public ResponseEntity deleteDataEnvelope(String id) {
+        String elasticsearchUri = this.elasticsearchConfig.getUri();
+        RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
+
+        try {
+            DataEnvelopeManipulator manipulator = createDataEnvelopeManipulatorInstance(elasticsearchClient);
+            RequestResult deleteResult = manipulator.deleteDataEnvelope(id);
+
+            switch(deleteResult){
+                case DELETED:
+                    return ResponseEntity.status(204).build();
+                case NOTFOUND:
+                    return ResponseEntity.status(404).contentType(MediaType.TEXT_PLAIN).body("document " + id + " not found");
+                default:
+                    return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("unexpected result: " + deleteResult.toString());
+            }
+            
+        } catch (Exception ex) {
+            LOGGER.error("error while deleting document "+ id, ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.TEXT_PLAIN).body(ex.getMessage());
+        } finally {
+            try {
+                elasticsearchClient.close();
+                LOGGER.debug("closed elasticcsearch client for uri " + elasticsearchUri);
+            } catch (IOException ex) {
+                LOGGER.error("closing elasticsearch client for uri " + elasticsearchUri + " raised exception, could not close client", ex);
+            }
+        }
+    }
+
     private DataEnvelopeSearcher createDataEnvelopeSearcherInstance(RestHighLevelClient elasticsearchClient) {
-        String elasticsearchIndex = "dataenvelope";
-        long requestTimeout = 5000;
+        String elasticsearchIndex = this.elasticsearchConfig.getIndexName();
+        long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
 
         return new ElasticsearchDataEnvelopeSearcher(elasticsearchClient, elasticsearchIndex, requestTimeout);
     }
 
     private DataEnvelopeManipulator createDataEnvelopeManipulatorInstance(RestHighLevelClient elasticsearchClient) {
-        String elasticsearchIndex = "dataenvelope";
-        String type = "dataenvelope";
-        long requestTimeout = 5000;
+        String elasticsearchIndex = this.elasticsearchConfig.getIndexName();
+        String documentType = this.elasticsearchConfig.getType();
+        long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
 
-        return new ElasticsearchDataEnvelopeManipulator(elasticsearchClient, type, type, requestTimeout);
+        return new ElasticsearchDataEnvelopeManipulator(elasticsearchClient, elasticsearchIndex, documentType, requestTimeout);
     }
 
 }
