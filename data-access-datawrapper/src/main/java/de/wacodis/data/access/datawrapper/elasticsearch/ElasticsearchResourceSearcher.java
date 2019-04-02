@@ -12,6 +12,7 @@ import de.wacodis.data.access.datawrapper.ResourceSearchResponseToResourceConver
 import de.wacodis.data.access.datawrapper.ResourceSearcher;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.DataAccessSearchBodyElasticsearchBoolQueryProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.ElasticsearchQueryProvider;
+import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopeJsonDeserializerFactory;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
@@ -248,24 +249,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     private AbstractDataEnvelopeAreaOfInterest getDefaultAreaOfInterest(AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
         if (areaOfInterest instanceof GeoShapeCompatibilityAreaOfInterest) {
             GeoShapeCompatibilityAreaOfInterest geoShapeAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest) areaOfInterest;
-
-            if (!geoShapeAreaOfInterest.getType().equals(GeoShapeCompatibilityAreaOfInterest.GeoShapeType.ENVELOPE)) {
-                LOGGER.warn("areaOfInteres is of GeoShape type  " + geoShapeAreaOfInterest.getType().toString() + ", expected " + GeoShapeCompatibilityAreaOfInterest.GeoShapeType.ENVELOPE.toString() + ", return unchanged areaOfInterest");
-                return areaOfInterest;
-            }
-
-            AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = new AbstractDataEnvelopeAreaOfInterest();
-            Float[] extent = new Float[4]; //[minLon, minLat, maxLon, maxLat]
-            List<Float> coord1 = geoShapeAreaOfInterest.getCoordinates().get(0); //topLeft (lon, lat)
-            List<Float> coord2 = geoShapeAreaOfInterest.getCoordinates().get(1); //bottomRight (lon, lat)
-
-            extent[0] = coord1.get(0); //minLon
-            extent[1] = coord2.get(1); //minLat
-            extent[2] = coord2.get(0); //maxLon
-            extent[3] = coord1.get(1); //maxLat
-
-            defaultAreaOfInterest.setExtent(Arrays.asList(extent));
-            return defaultAreaOfInterest;
+            return AreaOfInterestConverter.getDefaultAreaOfInterest(geoShapeAreaOfInterest);
         } else if (areaOfInterest instanceof AbstractDataEnvelopeAreaOfInterest) { //areaOfInteres already is of default type
             return areaOfInterest;
         } else {

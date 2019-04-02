@@ -29,7 +29,7 @@ public interface DataEnvelopeManipulator {
      * @return updated DataEnvelope
      * @throws java.io.IOException
      */
-    AbstractDataEnvelope updateDataEnvelope(String identifier, AbstractDataEnvelope dataEnvelope) throws IOException;
+    RequestResponse<AbstractDataEnvelope> updateDataEnvelope(String identifier, AbstractDataEnvelope dataEnvelope) throws IOException;
     
 
     /**

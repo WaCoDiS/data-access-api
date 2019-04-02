@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import de.wacodis.data.access.datawrapper.DataEnvelopeManipulator;
+import de.wacodis.data.access.datawrapper.RequestResponse;
 import de.wacodis.data.access.datawrapper.RequestResult;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopeJsonDeserializerFactory;
@@ -115,30 +116,36 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
     }
 
     @Override
-    public AbstractDataEnvelope updateDataEnvelope(String identifier, AbstractDataEnvelope dataEnvelope) throws IOException {
+    public RequestResponse<AbstractDataEnvelope> updateDataEnvelope(String identifier, AbstractDataEnvelope dataEnvelope) throws IOException {
         try {
             UpdateRequest request = buildUpdateRequest(identifier, dataEnvelope);
             UpdateResponse response = this.elasticsearchClient.update(request, RequestOptions.DEFAULT);
             
             
-            if(response.status().equals(RestStatus.OK) || response.status().equals(RestStatus.CREATED)){ //upsert
-                if(response.getGetResult().isExists() && !response.getGetResult().isSourceEmpty()){
-                    String updatedDataEnvelopeJson = response.getGetResult().sourceAsString();
-                    ObjectMapper deserializer = this.jsonDeserializerFactory.getObjectMapper(updatedDataEnvelopeJson);
-                    AbstractDataEnvelope updatedDataEnvelope = deserializer.readValue(updatedDataEnvelopeJson, AbstractDataEnvelope.class);      
-                    AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(((GeoShapeCompatibilityAreaOfInterest)updatedDataEnvelope.getAreaOfInterest()));
-                    updatedDataEnvelope.setAreaOfInterest(defaultAreaOfInterest);
-                    
-                    return updatedDataEnvelope;
-                }else{
-                    throw new IOException("AbstractDataEnvelope with identifier " + identifier + " updated/created in index "+ this.indexName +" but response did not contain updated resource");
-                }
-            }else{
-                throw new IOException("could not update or create AbstractDataEnvelope with indentifier" + identifier + "  ,request got response" + response.status().toString());
+            switch (response.status()) {
+                case OK:
+                    if(response.getGetResult().isExists() && !response.getGetResult().isSourceEmpty()){
+                        String updatedDataEnvelopeJson = response.getGetResult().sourceAsString();
+                        ObjectMapper deserializer = this.jsonDeserializerFactory.getObjectMapper(updatedDataEnvelopeJson);
+                        AbstractDataEnvelope updatedDataEnvelope = deserializer.readValue(updatedDataEnvelopeJson, AbstractDataEnvelope.class);
+                        //set areaOfInterest conforming to Wacodis Data Models
+                        GeoShapeCompatibilityAreaOfInterest compatibilityAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest)updatedDataEnvelope.getAreaOfInterest();
+                        AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(compatibilityAreaOfInterest);
+                        updatedDataEnvelope.setAreaOfInterest(defaultAreaOfInterest);
+                        
+                        return new RequestResponse<>(RequestResult.MODIFIED, Optional.of(updatedDataEnvelope));
+                        
+                    }else{
+                        throw new IOException("AbstractDataEnvelope with identifier " + identifier + " updated in index "+ this.indexName +" but response did not contain updated resource");
+                    }
+                case NOT_FOUND:
+                    return new RequestResponse<>(RequestResult.MODIFIED, Optional.empty());
+                default:
+                    throw new IOException("could not update AbstractDataEnvelope with indentifier" + identifier + "  ,request got response" + response.status().toString());
             }
 
         } catch (Exception ex) {
-            throw new IOException("could not update AbstractDataEnvelope with identifier " + identifier + ",  raised unexpected exception", ex);
+            throw new IOException("error while updating AbstractDataEnvelope with identifier " + identifier + ",  raised unexpected exception", ex);
         }
     }   
     
@@ -201,7 +208,6 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         request.id(identifier);
         request.doc(serializedDataEnvelope);
         request.timeout(this.requestTimeout);
-        request.upsert(buildIndexRequest(dataEnvelope, identifier)); //allow upsert (index if document with identifier does not exist)
 
         return request;
     }

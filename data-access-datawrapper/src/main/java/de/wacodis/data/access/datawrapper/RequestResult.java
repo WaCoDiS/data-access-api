@@ -10,5 +10,5 @@ package de.wacodis.data.access.datawrapper;
  * @author <a href="mailto:arne.vogt@hs-bochum.de">Arne Vogt</a>
  */
 public enum RequestResult {
-    DELETED, CREATED, NOTFOUND, ERROR;
+    DELETED, CREATED, MODIFIED, NOTFOUND, ERROR;
 }
