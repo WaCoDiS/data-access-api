@@ -60,14 +60,15 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             Optional<AbstractDataEnvelope> responseDataEnvelope = searcher.retrieveDataEnvelopeById(id);
 
             if (responseDataEnvelope.isPresent()) {
-                return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(responseDataEnvelope.get());
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(responseDataEnvelope.get());
             } else {
-                return ResponseEntity.status(404).contentType(MediaType.TEXT_PLAIN).body("no DataEnvelope available for the given id " + id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body("no DataEnvelope available for the given id " + id);
             }
 
         } catch (Exception ex) {
             LOGGER.error("error while retrieving AbstractDataEnvelope for id " + id, ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            Error error = ErrorFactory.getErrorObject("unexpected error while retrieving resource " + id);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
         } finally {
             try {
                 elasticsearchClient.close();
@@ -79,7 +80,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
     }
 
     @Override
-    public ResponseEntity<String> createResource(AbstractDataEnvelope abstractDataEnvelope) {
+    public ResponseEntity createResource(AbstractDataEnvelope abstractDataEnvelope) {
         String elasticsearchUri = this.elasticsearchConfig.getUri();
         RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
 
@@ -90,7 +91,8 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.TEXT_PLAIN).body(dataEnvelopeIdentifier);
         } catch (Exception ex) {
             LOGGER.error("error while creating AbstractDataEnvelope", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.TEXT_PLAIN).body(ex.getMessage());
+            Error error = ErrorFactory.getErrorObject("unexpected error while creating resource" + System.lineSeparator() + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
         } finally {
             try {
                 elasticsearchClient.close();
@@ -112,16 +114,18 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
             switch (deleteResult) {
                 case DELETED:
-                    return ResponseEntity.status(204).build();
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
                 case NOTFOUND:
-                    return ResponseEntity.status(404).contentType(MediaType.TEXT_PLAIN).body("document " + id + " not found");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body("document " + id + " not found");
                 default:
-                    return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("unexpected result: " + deleteResult.toString());
+                    Error error = ErrorFactory.getErrorObject("unexpected result: " + deleteResult.toString());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
             }
 
         } catch (Exception ex) {
             LOGGER.error("error while deleting document " + id, ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.TEXT_PLAIN).body(ex.getMessage());
+            Error error = ErrorFactory.getErrorObject("unexpected error while deleting resource " + id);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
         } finally {
             try {
                 elasticsearchClient.close();

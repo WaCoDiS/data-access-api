@@ -8,6 +8,8 @@ import de.wacodis.dataaccess.configuration.ElasticsearchResourcesAPIConfiguratio
 import de.wacodis.dataaccess.elasticsearch.ElasticsearchClientFactory;
 import de.wacodis.dataaccess.model.AbstractResource;
 import de.wacodis.dataaccess.model.DataAccessResourceSearchBody;
+import de.wacodis.dataaccess.model.Error;
+import de.wacodis.dataaccess.util.ErrorFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -63,10 +65,13 @@ public class ResourcesApiController implements ResourcesApi {
             ResourceSearcher searcher = createResourceSearcherInstance(elasticsearchClient);
             Map<String, List<AbstractResource>> hits = searcher.query(dataAccessResourceSearchBody);
             LOGGER.info("metadata search succeded, with result:" + System.lineSeparator() + hits.toString());
+            
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(hits);
         } catch (IOException ex) {
-            LOGGER.error("error while querying metadata for search body " + System.lineSeparator() + dataAccessResourceSearchBody.toString(), ex);     
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.TEXT_PLAIN).body(ex.getMessage());
+            LOGGER.error("error while querying metadata for search body " + System.lineSeparator() + dataAccessResourceSearchBody.toString(), ex);
+            Error error = ErrorFactory.getErrorObject("error while querying resources " + System.lineSeparator() + ex.getMessage()); 
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
         }finally{
             try {
                 elasticsearchClient.close();
