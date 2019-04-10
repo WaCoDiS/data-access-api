@@ -8,6 +8,7 @@ import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchDataEnvelop
 import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchDataEnvelopeSearcher;
 import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfiguration;
 import de.wacodis.dataaccess.elasticsearch.ElasticsearchClientFactory;
+import de.wacodis.dataaccess.messaging.DataEnvelopeAcknowledgmentPublisherChannel;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import java.io.IOException;
 import java.util.Optional;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 import de.wacodis.dataaccess.model.Error;
 import de.wacodis.dataaccess.util.ErrorFactory;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
 
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
@@ -40,7 +43,10 @@ public class DataenvelopesApiController implements DataenvelopesApi {
     @Autowired
     ElasticsearchDataEnvelopesAPIConfiguration elasticsearchConfig;
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
+    DataEnvelopeAcknowledgmentPublisherChannel dataEnvelopeAcknowledger;
+
+    @Autowired
     public DataenvelopesApiController(NativeWebRequest request) {
         this.request = request;
     }
@@ -87,6 +93,8 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         try {
             DataEnvelopeManipulator manipulator = createDataEnvelopeManipulatorInstance(elasticsearchClient);
             String dataEnvelopeIdentifier = manipulator.createDataEnvelope(abstractDataEnvelope);
+            //acknowledge created DataEnvelope
+            publishDataEnvelopeAcknowledgement(abstractDataEnvelope);
 
             return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.TEXT_PLAIN).body(dataEnvelopeIdentifier);
         } catch (Exception ex) {
@@ -147,24 +155,28 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
             switch (response.getStatus()) {
                 case MODIFIED:
-                    Optional<AbstractDataEnvelope> updatedDataEnvelope =  response.getResponseObject();
-                    if(updatedDataEnvelope.isPresent()){
+                    Optional<AbstractDataEnvelope> updatedDataEnvelope = response.getResponseObject();
+                    if (updatedDataEnvelope.isPresent()) {
+                        //acknowledge updated DataEnvelope
+                        publishDataEnvelopeAcknowledgement(updatedDataEnvelope.get());
+
                         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(updatedDataEnvelope.get());
-                    }else{
+                    } else {
                         LOGGER.warn("update request succeded with status code 200 but no response object was submitted, returning empty body");
                         return ResponseEntity.status(HttpStatus.OK).build();
                     }
+
                 case NOTFOUND:
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body("no document with identifier " + id + "found");
                 default:
-                    Error error =  ErrorFactory.getErrorObject("update request for resource " + id + " responded with unexpected result: " + response.getStatus().toString());
+                    Error error = ErrorFactory.getErrorObject("update request for resource " + id + " responded with unexpected result: " + response.getStatus().toString());
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
             }
 
         } catch (Exception ex) {
             String errorMessage = "unexpected error while updating resource " + id + " in index " + this.elasticsearchConfig.getIndexName();
             LOGGER.error(errorMessage, ex);
-            Error error =  ErrorFactory.getErrorObject(errorMessage);
+            Error error = ErrorFactory.getErrorObject(errorMessage);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(errorMessage);
         } finally {
             try {
@@ -189,6 +201,13 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
 
         return new ElasticsearchDataEnvelopeManipulator(elasticsearchClient, elasticsearchIndex, documentType, requestTimeout);
+    }
+
+    private boolean publishDataEnvelopeAcknowledgement(AbstractDataEnvelope dataEnvelope) {
+        LOGGER.debug("publish acknowledgement of DataEnvelope:" + System.lineSeparator() + dataEnvelope.toString());
+
+        Message acknowledgement = MessageBuilder.withPayload(dataEnvelope).build();
+        return this.dataEnvelopeAcknowledger.acknowledgeDataEnvelope().send(acknowledgement);
     }
 
 }

@@ -1,4 +1,4 @@
-package de.wacodis.dataaccess.controller;
+ package de.wacodis.dataaccess.controller;
 
 import de.wacodis.data.access.datawrapper.ResourceSearchResponseToResourceConverter;
 import de.wacodis.data.access.datawrapper.ResourceSearcher;
