@@ -7,8 +7,11 @@ package de.wacodis.data.access.datawrapper.elasticsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.wacodis.data.access.datawrapper.DataEnvelopeSearcher;
+import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopeJsonDeserializerFactory;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
+import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.dataaccess.model.extension.elasticsearch.GeoShapeCompatibilityAreaOfInterest;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -77,6 +80,13 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         GetRequest request = buildGetRequest(identifier);
         GetResponse response = this.elasticsearchClient.get(request, RequestOptions.DEFAULT);
         Optional<AbstractDataEnvelope> responseDataEnvelope = processGetResponse(response);
+        
+        //convert to indexed AreaOfInterest to default AreaOfInterest (Wacodis Models)
+        if(responseDataEnvelope.isPresent()){
+            GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest =  (GeoShapeCompatibilityAreaOfInterest) responseDataEnvelope.get().getAreaOfInterest();
+            AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(geoshapeAreaOfInterest);
+            responseDataEnvelope.get().setAreaOfInterest(defaultAreaOfInterest);
+        }
 
         return responseDataEnvelope;
     }
