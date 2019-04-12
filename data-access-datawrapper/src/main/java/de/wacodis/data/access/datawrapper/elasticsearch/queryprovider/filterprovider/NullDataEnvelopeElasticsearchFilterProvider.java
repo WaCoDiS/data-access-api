@@ -5,7 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider;
 
-import de.wacodis.dataaccess.model.AbstractSubsetDefinition;
+import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import java.util.ArrayList;
 import java.util.List;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -14,11 +14,11 @@ import org.elasticsearch.index.query.QueryBuilder;
  *
  * @author <a href="mailto:arne.vogt@hs-bochum.de">Arne Vogt</a>
  */
-public class NullElasticsearchFilterProvider implements SubsetDefinitionElasticsearchFilterProvider{
+public class NullDataEnvelopeElasticsearchFilterProvider implements DataEnvelopeElasticsearchFilterProvider{
 
     @Override
-    public List<QueryBuilder> buildFiltersForSubsetDefinition(AbstractSubsetDefinition subset) {
-        return new ArrayList<>();
+    public List<QueryBuilder> buildFiltersForDataEnvelope(AbstractDataEnvelope envelope) {
+       return new ArrayList<>();
     }
     
 }

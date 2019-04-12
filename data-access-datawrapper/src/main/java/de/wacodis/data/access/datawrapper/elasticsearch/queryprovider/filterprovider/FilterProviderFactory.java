@@ -5,10 +5,14 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider;
 
+import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractSubsetDefinition;
 import de.wacodis.dataaccess.model.CatalogueSubsetDefinition;
+import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
 import de.wacodis.dataaccess.model.CopernicusSubsetDefinition;
 import de.wacodis.dataaccess.model.SensorWebSubsetDefinition;
+import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
+import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -29,9 +33,24 @@ public class FilterProviderFactory {
             return new SensorWebSubsetDefinitionElasticsearchFilterProvider();
         }else{
             LOGGER.warn("no specific " + SubsetDefinitionElasticsearchFilterProvider.class.getSimpleName() + " for SubsetDefinition " + subset.getIdentifier() + " of type " + subset.getClass().getSimpleName() + " available, return empty filter list");
-            return new NullElasticsearchFilterProvider();
+            return new NullSubsetDefintionElasticsearchFilterProvider();
         }
         
+    }
+    
+    
+    public DataEnvelopeElasticsearchFilterProvider getFilterProviderForDataEnvelope(AbstractDataEnvelope envelope){
+       
+        if(envelope instanceof GdiDeDataEnvelope){
+            return new GdiDeDataEnvelopeElasticsearchFilterProvider();
+        }else if(envelope instanceof CopernicusDataEnvelope){
+            return new CopernicusDataEnvelopeElasticsearchFilterProvider();
+        }else if(envelope instanceof SensorWebDataEnvelope){
+            return new SensorWebDataEnvelopeElasticsearchFilterProvider();
+        }else{
+            LOGGER.warn("no specific " + DataEnvelopeElasticsearchFilterProvider.class.getSimpleName() + " for DataEnvelope of type " + envelope.getClass().getSimpleName() + " available, return empty filter list");
+            return new NullDataEnvelopeElasticsearchFilterProvider();
+        } 
     }
     
     
