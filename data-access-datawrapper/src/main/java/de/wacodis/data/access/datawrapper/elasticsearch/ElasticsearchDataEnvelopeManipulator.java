@@ -123,7 +123,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
             
             
             switch (response.status()) {
-                case OK:
+                case OK:            
                     if(response.getGetResult().isExists() && !response.getGetResult().isSourceEmpty()){
                         String updatedDataEnvelopeJson = response.getGetResult().sourceAsString();
                         ObjectMapper deserializer = this.jsonDeserializerFactory.getObjectMapper(updatedDataEnvelopeJson);
@@ -208,6 +208,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         request.id(identifier);
         request.doc(serializedDataEnvelope);
         request.timeout(this.requestTimeout);
+        request.fetchSource(true); //append updated resource to response
 
         return request;
     }
