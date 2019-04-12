@@ -194,7 +194,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
 
     private DeleteRequest buildDeleteRequest(String identifier) {
         DeleteRequest request = new DeleteRequest();
-        request.id(identifier).index(this.indexName).timeout(this.requestTimeout);
+        request.id(identifier).index(this.indexName).type(this.type).timeout(this.requestTimeout);
 
         return request;
     }
