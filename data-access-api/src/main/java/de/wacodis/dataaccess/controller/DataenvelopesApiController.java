@@ -188,6 +188,38 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         }
     }
 
+    @Override
+    public ResponseEntity retrieveDataEnvelopeID(AbstractDataEnvelope abstractDataEnvelope) {
+        String elasticsearchUri = this.elasticsearchConfig.getUri();
+        RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
+
+        try {
+            DataEnvelopeSearcher searcher = createDataEnvelopeSearcherInstance(elasticsearchClient);
+            Optional<String> response = searcher.retrieveIdForDataEnvelope(abstractDataEnvelope); //id
+
+            if (response.isPresent()) { //match found
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response.get());
+            } else { //no match found
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).build();
+            }
+
+        } catch (Exception ex) {
+            String errorMessage = "unexpected error while searching existing DataEnvelopes in index " + this.elasticsearchConfig.getIndexName();
+            LOGGER.error(errorMessage + System.lineSeparator() + abstractDataEnvelope.toString(), ex);
+            Error error = ErrorFactory.getErrorObject(errorMessage);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(errorMessage);
+
+        } finally {
+            try {
+                elasticsearchClient.close();
+                LOGGER.debug("closed elasticcsearch client for uri " + elasticsearchUri);
+            } catch (IOException ex) {
+                LOGGER.error("closing elasticsearch client for uri " + elasticsearchUri + " raised exception, could not close client", ex);
+            }
+
+        }
+    }
+
     private DataEnvelopeSearcher createDataEnvelopeSearcherInstance(RestHighLevelClient elasticsearchClient) {
         String elasticsearchIndex = this.elasticsearchConfig.getIndexName();
         long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
