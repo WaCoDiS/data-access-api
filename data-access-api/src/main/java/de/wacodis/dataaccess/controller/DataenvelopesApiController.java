@@ -96,7 +96,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             //acknowledge created DataEnvelope
             publishDataEnvelopeAcknowledgement(abstractDataEnvelope);
 
-            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.TEXT_PLAIN).body(dataEnvelopeIdentifier);
+            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(dataEnvelopeIdentifier);
         } catch (Exception ex) {
             LOGGER.error("error while creating AbstractDataEnvelope", ex);
             Error error = ErrorFactory.getErrorObject("unexpected error while creating resource" + System.lineSeparator() + ex.getMessage());
