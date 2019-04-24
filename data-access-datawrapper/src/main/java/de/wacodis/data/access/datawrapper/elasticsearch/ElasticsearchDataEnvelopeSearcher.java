@@ -169,6 +169,7 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
             String hitIdentifier = hit.getId();
             String matchJson = hit.getSourceAsString();
             AbstractDataEnvelope matchedDataEnvelope = deserializeDataEnvelope(matchJson);
+            matchedDataEnvelope.setIdentifier(hitIdentifier);
             matches.add(matchedDataEnvelope);
         }
 
