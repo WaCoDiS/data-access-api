@@ -104,12 +104,14 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
     }
 
     @Override
-    public String createDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException {
+    public RequestResponse<AbstractDataEnvelope> createDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException {
         try {
             IndexRequest request = buildIndexRequest(dataEnvelope);
             IndexResponse response = this.elasticsearchClient.index(request, RequestOptions.DEFAULT);
-            String dataEnvelopeIdentifier = processIndexResponse(response);
-            return dataEnvelopeIdentifier;
+            String dataEnvelopeIdentifier = getIDFromIndexResponse(response);
+            dataEnvelope.setIdentifier(indexName);
+            
+            return new RequestResponse(RequestResult.CREATED, Optional.of(dataEnvelope));
         } catch (Exception ex) {
             throw new IOException("could not create AbstractDataEnvelope,  raised unexpected exception", ex);
         }
@@ -132,6 +134,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
                         GeoShapeCompatibilityAreaOfInterest compatibilityAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest)updatedDataEnvelope.getAreaOfInterest();
                         AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(compatibilityAreaOfInterest);
                         updatedDataEnvelope.setAreaOfInterest(defaultAreaOfInterest);
+                        updatedDataEnvelope.setIdentifier(response.getId());
                         
                         return new RequestResponse<>(RequestResult.MODIFIED, Optional.of(updatedDataEnvelope));
                         
@@ -180,7 +183,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         request.type(this.type);
         request.source(serializedDataEnvelope);
         request.timeout(this.requestTimeout);
-
+        
         return request;
     }
 
@@ -215,10 +218,12 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
 
     /**
      * @param response
-     * @return id of indexed AbstractDataEnvelope
+     * @return identifier of indexed AbstractDataEnvelope
      */
-    private String processIndexResponse(IndexResponse response) {
-        return response.getId();
+    private String getIDFromIndexResponse(IndexResponse response) {
+        String id = response.getId();
+
+        return id;
     }
 
     private Map<String, Object> serializeDataEnvelope(AbstractDataEnvelope dataEnvelope) {

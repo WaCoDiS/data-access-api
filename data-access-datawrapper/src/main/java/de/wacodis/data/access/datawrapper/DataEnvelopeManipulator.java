@@ -20,7 +20,7 @@ public interface DataEnvelopeManipulator {
      * @return id of stored DataEnvelope
      * @throws java.io.IOException
      */
-    String createDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException;
+    RequestResponse<AbstractDataEnvelope> createDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException;
     
     /**
      * update DataEnvelope

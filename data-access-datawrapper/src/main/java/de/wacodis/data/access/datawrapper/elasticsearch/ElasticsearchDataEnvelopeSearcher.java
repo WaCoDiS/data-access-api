@@ -7,6 +7,8 @@ package de.wacodis.data.access.datawrapper.elasticsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.wacodis.data.access.datawrapper.DataEnvelopeSearcher;
+import de.wacodis.data.access.datawrapper.RequestResponse;
+import de.wacodis.data.access.datawrapper.RequestResult;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider.DataEnvelopeElasticsearchFilterProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider.FilterProviderFactory;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
@@ -15,6 +17,7 @@ import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.dataaccess.model.extension.elasticsearch.GeoShapeCompatibilityAreaOfInterest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -103,18 +106,18 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
     }
 
     @Override
-    public Optional<String> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException {
+    public RequestResponse<List<AbstractDataEnvelope>> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException {
         SearchRequest request = buildSearchRequest(dataEnvelope);
         SearchResponse response = this.elasticsearchClient.search(request, RequestOptions.DEFAULT);
-        Optional<String> dataEnvelopeId = processSearchResponse(response);
+        Optional<List<AbstractDataEnvelope>> matchedDataEnvelopes = processSearchResponse(response);
 
-        return dataEnvelopeId;
+        return new RequestResponse(RequestResult.OK, matchedDataEnvelopes);
     }
 
     private SearchRequest buildSearchRequest(AbstractDataEnvelope dataEnvelope) {
         DataEnvelopeElasticsearchFilterProvider filterProvider = this.filterProviderFactory.getFilterProviderForDataEnvelope(dataEnvelope);
         List<QueryBuilder> filters = filterProvider.buildFiltersForDataEnvelope(dataEnvelope);
-        QueryBuilder query = appendFiltersToBoolQuery(filters);
+        QueryBuilder query = appendFiltersToQuery(filters);
 
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);
@@ -141,33 +144,42 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
     private Optional<AbstractDataEnvelope> processGetResponse(GetResponse response) throws IOException {
         if (response.isExists() && !response.isSourceEmpty()) {
             String dataEnvelopeJson = response.getSourceAsString();
-            ObjectMapper mapper = this.jsonDeserializerFactory.getObjectMapper(dataEnvelopeJson);
-            AbstractDataEnvelope responseDataEnvelope = mapper.readValue(dataEnvelopeJson, AbstractDataEnvelope.class);
+            AbstractDataEnvelope responseDataEnvelope = deserializeDataEnvelope(dataEnvelopeJson);
+            responseDataEnvelope.setIdentifier(response.getId());
+
             return Optional.of(responseDataEnvelope);
         } else {
-            LOGGER.debug("response of get request did not contain items");
+            LOGGER.info("response of get request did not contain items");
             return Optional.empty();
         }
     }
 
-    private QueryBuilder appendFiltersToBoolQuery(List<QueryBuilder> filters) {
+    private QueryBuilder appendFiltersToQuery(List<QueryBuilder> filters) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         filters.forEach(filter -> boolQuery.filter(filter));
 
         return boolQuery;
     }
 
-    private Optional<String> processSearchResponse(SearchResponse response) throws IOException {
+    private Optional<List<AbstractDataEnvelope>> processSearchResponse(SearchResponse response) throws IOException {
         SearchHits hits = response.getHits();
+        List<AbstractDataEnvelope> matches = new ArrayList<>();
 
-        if (hits.totalHits > 0) {
-            SearchHit firstHit = hits.getHits()[0]; //only first hit
-            String hitId = firstHit.getId();
-            return Optional.of(hitId);
-
-        } else {
-            return Optional.empty(); //no hit, no id
+        for (SearchHit hit : hits.getHits()) {
+            String hitIdentifier = hit.getId();
+            String matchJson = hit.getSourceAsString();
+            AbstractDataEnvelope matchedDataEnvelope = deserializeDataEnvelope(matchJson);
+            matches.add(matchedDataEnvelope);
         }
+
+        return Optional.of(matches);
+    }
+
+    private AbstractDataEnvelope deserializeDataEnvelope(String dataEnvelopeJson) throws IOException {
+        ObjectMapper mapper = this.jsonDeserializerFactory.getObjectMapper(dataEnvelopeJson);
+        AbstractDataEnvelope dataEnvelope = mapper.readValue(dataEnvelopeJson, AbstractDataEnvelope.class);
+
+        return dataEnvelope;
     }
 
 }

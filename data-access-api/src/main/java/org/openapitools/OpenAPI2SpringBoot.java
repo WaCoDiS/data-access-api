@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @SpringBootApplication
 @RefreshScope
-@ComponentScan(basePackages = {"org.openapitools", "de.wacodis.dataaccess.controller" , "de.wacodis.dataaccess.configuration", "de.wacodis.dataaccess.elasticsearch", "org.openapitools.configuration"})
+@ComponentScan(basePackages = {"org.openapitools", "de.wacodis.dataaccess.controller" , "de.wacodis.dataaccess.configuration", "de.wacodis.dataaccess.messaging" , "de.wacodis.dataaccess.elasticsearch", "org.openapitools.configuration"})
 public class OpenAPI2SpringBoot implements CommandLineRunner {
     
     

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 import de.wacodis.dataaccess.model.Error;
 import de.wacodis.dataaccess.util.ErrorFactory;
+import java.util.List;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 
@@ -92,11 +93,18 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
         try {
             DataEnvelopeManipulator manipulator = createDataEnvelopeManipulatorInstance(elasticsearchClient);
-            String dataEnvelopeIdentifier = manipulator.createDataEnvelope(abstractDataEnvelope);
-            //acknowledge created DataEnvelope
-            publishDataEnvelopeAcknowledgement(abstractDataEnvelope);
+            RequestResponse<AbstractDataEnvelope> createResponse = manipulator.createDataEnvelope(abstractDataEnvelope);
+            if (createResponse.getStatus().equals(RequestResult.CREATED) && createResponse.getResponseObject().isPresent()) {
+                AbstractDataEnvelope indexedDataEnvelope = createResponse.getResponseObject().get();
+                //acknowledge created DataEnvelope
+                publishDataEnvelopeAcknowledgement(indexedDataEnvelope);
 
-            return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(dataEnvelopeIdentifier);
+                return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(indexedDataEnvelope);
+            }else{
+                String message = "unable to create resources" + System.lineSeparator() + abstractDataEnvelope.toString();
+                Error error = ErrorFactory.getErrorObject(message);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
+            }
         } catch (Exception ex) {
             LOGGER.error("error while creating AbstractDataEnvelope", ex);
             Error error = ErrorFactory.getErrorObject("unexpected error while creating resource" + System.lineSeparator() + ex.getMessage());
@@ -195,10 +203,10 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
         try {
             DataEnvelopeSearcher searcher = createDataEnvelopeSearcherInstance(elasticsearchClient);
-            Optional<String> response = searcher.retrieveIdForDataEnvelope(abstractDataEnvelope); //id
+            RequestResponse<List<AbstractDataEnvelope>> response = searcher.retrieveIdForDataEnvelope(abstractDataEnvelope); //id
 
-            if (response.isPresent()) { //match found
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response.get());
+            if (response.getResponseObject().isPresent()) { //match found
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response.getResponseObject().get());
             } else { //no match found
                 return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).build();
             }

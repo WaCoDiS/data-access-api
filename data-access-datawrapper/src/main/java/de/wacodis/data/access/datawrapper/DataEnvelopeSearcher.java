@@ -7,6 +7,7 @@ package de.wacodis.data.access.datawrapper;
 
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,11 +25,11 @@ public interface DataEnvelopeSearcher {
     Optional<AbstractDataEnvelope> retrieveDataEnvelopeById(String identifier) throws IOException;
     
     /**
-     * retrieve ID of a already created AbstractDataEnvelope
+     * retrieve IDs of a already created AbstractDataEnvelope
      * @param dataEnvelope
      * @return 
      * @throws java.io.IOException 
      */
-    Optional<String> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException;
+    RequestResponse<List<AbstractDataEnvelope>> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException;
     
 }
