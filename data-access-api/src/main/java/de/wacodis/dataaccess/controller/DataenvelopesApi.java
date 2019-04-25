@@ -151,10 +151,7 @@ public interface DataenvelopesApi {
                         code = 200,
                         message = "resource available",
                         response = AbstractDataEnvelope.class),
-                @ApiResponse(
-                        code = 404,
-                        message = "no DataEnvelope available for the given id ",
-                        response = String.class),
+                @ApiResponse(code = 404,message = "no DataEnvelope available for the given id "),
                 @ApiResponse(code = 500, message = "unexpected error ", response = Error.class)
             })
     @RequestMapping(

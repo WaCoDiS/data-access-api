@@ -69,7 +69,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             if (responseDataEnvelope.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(responseDataEnvelope.get());
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body("no DataEnvelope available for the given id " + id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
         } catch (Exception ex) {
@@ -132,7 +132,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
                 case DELETED:
                     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
                 case NOTFOUND:
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body("document " + id + " not found");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                 default:
                     Error error = ErrorFactory.getErrorObject("unexpected result: " + deleteResult.toString());
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
@@ -175,7 +175,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
                     }
 
                 case NOTFOUND:
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body("no document with identifier " + id + "found");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                 default:
                     Error error = ErrorFactory.getErrorObject("update request for resource " + id + " responded with unexpected result: " + response.getStatus().toString());
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
@@ -207,8 +207,10 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
             if (response.getResponseObject().isPresent()) { //match found
                 return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response.getResponseObject().get());
-            } else { //no match found
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).build();
+            } else { //no response
+                LOGGER.error("expected list of AbstractDataEnvelope but no response object was available");
+                Error error = ErrorFactory.getErrorObject("unable to retrieve response for search request from server");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
             }
 
         } catch (Exception ex) {
