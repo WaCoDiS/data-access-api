@@ -122,8 +122,8 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);
         source.from(0); //retrieve all hits
-        source.size(1); //only retrieve first hit
-        source.fetchSource(false); //IDs only
+        source.size(10000); //max. allowed value
+        source.fetchSource(true); //IDs only
         source.query(query);
 
         SearchRequest request = new SearchRequest();
