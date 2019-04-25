@@ -109,7 +109,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
             IndexRequest request = buildIndexRequest(dataEnvelope);
             IndexResponse response = this.elasticsearchClient.index(request, RequestOptions.DEFAULT);
             String dataEnvelopeIdentifier = getIDFromIndexResponse(response);
-            dataEnvelope.setIdentifier(indexName);
+            dataEnvelope.setIdentifier(dataEnvelopeIdentifier);
             
             return new RequestResponse(RequestResult.CREATED, Optional.of(dataEnvelope));
         } catch (Exception ex) {
