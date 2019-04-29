@@ -26,6 +26,7 @@
         <spatial4j.version>0.7</spatial4j.version>
         <jts.version>1.16.1</jts.version>
         <springfox-version>2.8.0</springfox-version>
+        <surefire-plugin.version>2.22.1</surefire-plugin.version>
     </properties>
     
     <dependencyManagement>
@@ -85,4 +86,14 @@
             </dependency>           
         </dependencies>
     </dependencyManagement>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
