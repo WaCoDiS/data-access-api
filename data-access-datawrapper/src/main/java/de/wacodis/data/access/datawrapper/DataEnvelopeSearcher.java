@@ -30,6 +30,6 @@ public interface DataEnvelopeSearcher {
      * @return 
      * @throws java.io.IOException 
      */
-    RequestResponse<List<AbstractDataEnvelope>> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException;
+    RequestResponse<AbstractDataEnvelope> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException;
     
 }

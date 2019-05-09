@@ -203,16 +203,13 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
         try {
             DataEnvelopeSearcher searcher = createDataEnvelopeSearcherInstance(elasticsearchClient);
-            RequestResponse<List<AbstractDataEnvelope>> response = searcher.retrieveIdForDataEnvelope(abstractDataEnvelope); //id
+            RequestResponse<AbstractDataEnvelope> response = searcher.retrieveIdForDataEnvelope(abstractDataEnvelope); //id
 
             if (response.getResponseObject().isPresent()) { //match found
                 return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response.getResponseObject().get());
-            } else { //no response
-                LOGGER.error("expected list of AbstractDataEnvelope but no response object was available");
-                Error error = ErrorFactory.getErrorObject("unable to retrieve response for search request from server");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
+            } else { //no match found
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).build();
             }
-
         } catch (Exception ex) {
             String errorMessage = "unexpected error while searching existing DataEnvelopes in index " + this.elasticsearchConfig.getIndexName();
             LOGGER.error(errorMessage + System.lineSeparator() + abstractDataEnvelope.toString(), ex);

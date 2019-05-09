@@ -7,8 +7,6 @@ package de.wacodis.dataaccess.controller;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.Error;
 import io.swagger.annotations.*;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -24,7 +22,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
-        date = "2019-04-25T13:24:55.746+02:00[Europe/Berlin]")
+        date = "2019-05-09T16:12:40.348+02:00[Europe/Berlin]")
 @Validated
 @Api(value = "dataenvelopes", description = "the dataenvelopes API")
 public interface DataenvelopesApi {
@@ -151,7 +149,7 @@ public interface DataenvelopesApi {
                         code = 200,
                         message = "resource available",
                         response = AbstractDataEnvelope.class),
-                @ApiResponse(code = 404,message = "no DataEnvelope available for the given id "),
+                @ApiResponse(code = 404, message = "no DataEnvelope available for the given id "),
                 @ApiResponse(code = 500, message = "unexpected error ", response = Error.class)
             })
     @RequestMapping(
@@ -184,16 +182,14 @@ public interface DataenvelopesApi {
             value = "",
             nickname = "retrieveDataEnvelopeID",
             notes = "retrieve Id for DataEnvelope ",
-            response = List.class,
-            responseContainer = "Map",
+            response = AbstractDataEnvelope.class,
             tags = {})
     @ApiResponses(
             value = {
                 @ApiResponse(
                         code = 200,
-                        message = "ok",
-                        response = List.class,
-                        responseContainer = "Map"),
+                        message = "ok, matching existing DataEnvelope including identifier ",
+                        response = AbstractDataEnvelope.class),
                 @ApiResponse(code = 500, message = "unexpected error ", response = Error.class)
             })
     @RequestMapping(
@@ -201,11 +197,26 @@ public interface DataenvelopesApi {
             produces = {"application/json"},
             consumes = {"application/json"},
             method = RequestMethod.POST)
-    default ResponseEntity<Map<String, List<AbstractDataEnvelope>>> retrieveDataEnvelopeID(
+    default ResponseEntity<AbstractDataEnvelope> retrieveDataEnvelopeID(
             @ApiParam(value = "data envelope for the resource to be created ", required = true)
                     @Valid
                     @RequestBody
                     AbstractDataEnvelope abstractDataEnvelope) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    ApiUtil.setExampleResponse(
+                                            request,
+                                            "application/json",
+                                            "{  \"identifier\" : \"identifier\",  \"sourceType\" : \"SensorWebDataEnvelope\",  \"areaOfInterest\" : {    \"extent\" : [ -151.17018, -151.17018, -151.17018, -151.17018 ]  },  \"created\" : \"2000-01-23T04:56:07.000+00:00\",  \"modified\" : \"2000-01-23T04:56:07.000+00:00\",  \"timeFrame\" : {    \"startTime\" : \"2000-01-23T04:56:07.000+00:00\",    \"endTime\" : \"2000-01-23T04:56:07.000+00:00\"  }}");
+                                    break;
+                                }
+                            }
+                        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

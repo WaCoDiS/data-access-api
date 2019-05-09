@@ -106,12 +106,12 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
     }
 
     @Override
-    public RequestResponse<List<AbstractDataEnvelope>> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException {
+    public RequestResponse<AbstractDataEnvelope> retrieveIdForDataEnvelope(AbstractDataEnvelope dataEnvelope) throws IOException {
         SearchRequest request = buildSearchRequest(dataEnvelope);
         SearchResponse response = this.elasticsearchClient.search(request, RequestOptions.DEFAULT);
-        Optional<List<AbstractDataEnvelope>> matchedDataEnvelopes = processSearchResponse(response);
+        Optional<AbstractDataEnvelope> matchedDataEnvelope = processSearchResponse(response);
 
-        return new RequestResponse(RequestResult.OK, matchedDataEnvelopes);
+        return new RequestResponse(RequestResult.OK, matchedDataEnvelope);
     }
 
     private SearchRequest buildSearchRequest(AbstractDataEnvelope dataEnvelope) {
@@ -122,7 +122,7 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);
         source.from(0); //retrieve all hits
-        source.size(10000); //max. allowed value
+        source.size(1); //only get first hit
         source.fetchSource(true); //IDs only
         source.query(query);
 
@@ -161,19 +161,23 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         return boolQuery;
     }
 
-    private Optional<List<AbstractDataEnvelope>> processSearchResponse(SearchResponse response) throws IOException {
+    private Optional<AbstractDataEnvelope> processSearchResponse(SearchResponse response) throws IOException {
         SearchHits hits = response.getHits();
-        List<AbstractDataEnvelope> matches = new ArrayList<>();
 
-        for (SearchHit hit : hits.getHits()) {
+        if (hits.getTotalHits() > 0) {
+            if (hits.getTotalHits() > 1) {
+                LOGGER.warn("only expected 1 hit, but got " + hits.getTotalHits() + "hits, only first hit is considered");
+            }
+
+            SearchHit hit = hits.getAt(0); //first hit
             String hitIdentifier = hit.getId();
             String matchJson = hit.getSourceAsString();
             AbstractDataEnvelope matchedDataEnvelope = deserializeDataEnvelope(matchJson);
             matchedDataEnvelope.setIdentifier(hitIdentifier);
-            matches.add(matchedDataEnvelope);
+            return Optional.of(matchedDataEnvelope);
+        }else{
+            return Optional.empty();
         }
-
-        return Optional.of(matches);
     }
 
     private AbstractDataEnvelope deserializeDataEnvelope(String dataEnvelopeJson) throws IOException {
