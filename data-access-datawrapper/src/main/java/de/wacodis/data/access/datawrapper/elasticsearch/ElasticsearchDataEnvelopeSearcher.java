@@ -183,6 +183,12 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
     private AbstractDataEnvelope deserializeDataEnvelope(String dataEnvelopeJson) throws IOException {
         ObjectMapper mapper = this.jsonDeserializerFactory.getObjectMapper(dataEnvelopeJson);
         AbstractDataEnvelope dataEnvelope = mapper.readValue(dataEnvelopeJson, AbstractDataEnvelope.class);
+        
+        //format Extent
+        GeoShapeCompatibilityAreaOfInterest compatibilityAOI = (GeoShapeCompatibilityAreaOfInterest)dataEnvelope.getAreaOfInterest();
+        AbstractDataEnvelopeAreaOfInterest defaultAOI = AreaOfInterestConverter.getDefaultAreaOfInterest(compatibilityAOI);
+        dataEnvelope.setAreaOfInterest(defaultAOI);
+        
 
         return dataEnvelope;
     }
