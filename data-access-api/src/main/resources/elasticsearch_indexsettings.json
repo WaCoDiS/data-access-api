@@ -20,7 +20,7 @@
 				   {"type":  "geo_shape",
 					"tree": "quadtree",
 					"strategy": "recursive",
-					"precision": "30cm"
+					"precision": "100m"
 				   }
 			}
 		}
