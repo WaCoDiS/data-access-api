@@ -13,6 +13,7 @@ import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
 import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
 import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
+import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
 import de.wacodis.dataaccess.model.extension.elasticsearch.GeoShapeCompatibilityDataEnvelopeDeserializer;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,11 @@ public class DataEnvelopeJsonDeserializerFactory {
                 case SENSORWEBDATAENVELOPE:
                     typeReference = new SensorWebDataEnvelope();
                     break;
+                case WACODISPRODUCTDATAENVELOPE:
+                    typeReference = new WacodisProductDataEnvelope();
+                    break;
                 default:
-                    throw new IllegalArgumentException("cannot create DataEnvelope json deserializer for unknown source type" + srcType.toString());
+                    throw new IllegalArgumentException("cannot create DataEnvelope json deserializer for unknown source type: " + srcType.toString());
             }
 
             
