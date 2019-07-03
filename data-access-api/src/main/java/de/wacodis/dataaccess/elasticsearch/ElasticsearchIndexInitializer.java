@@ -7,6 +7,7 @@ package de.wacodis.dataaccess.elasticsearch;
 
 import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfiguration;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -40,7 +41,7 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
         RestHighLevelClient elasticsearchClient = getElasticsearchClient();
         ElasticsearchIndexCreator indexCreator = new ElasticsearchIndexCreator(elasticsearchClient); 
         
-        boolean isIndexAcknowledged = indexCreator.createIndex(this.elasticsearchConfig.getIndexName(), getSettingsFile(), this.elasticsearchConfig.getRequestTimeout_Millis());
+        boolean isIndexAcknowledged = indexCreator.createIndex(this.elasticsearchConfig.getIndexName(), getSettings(), this.elasticsearchConfig.getRequestTimeout_Millis());
         
         if(isIndexAcknowledged){
             LOGGER.info("successfully initialized elasticsearch index " + this.elasticsearchConfig.getIndexName() + ", server address: " + this.elasticsearchConfig.getUri());
@@ -52,14 +53,10 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
         return this.elasticsearchClientFactory.buildElasticsearchClient(this.elasticsearchConfig.getUri());
     }
     
-    private File getSettingsFile() throws URISyntaxException{
+    private InputStream getSettings() throws URISyntaxException {
         //get file from resources
         LOGGER.debug("searching for elasticsearch index settings file " + SETTINGSFILENAME + " in resources");
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        URL settingsFileURL = classloader.getResource(SETTINGSFILENAME);
-        File settingsFile = new File(settingsFileURL.toURI());
-        LOGGER.debug("found lasticsearch index settings file" + settingsFile.getAbsolutePath());
-        
-        return settingsFile;
+        return classloader.getResourceAsStream(SETTINGSFILENAME);
     }
 }

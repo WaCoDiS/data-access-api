@@ -9,6 +9,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -49,22 +52,31 @@ public class ElasticsearchIndexCreator {
 
         //start synchronous request
         LOGGER.debug("creating index " + indexName);
-        CreateIndexResponse response = this.elasticsearchClient.indices().create(request, RequestOptions.DEFAULT);
-        LOGGER.debug("creating index " + indexName + " acknowledged: " + response.isAcknowledged());
+        try {
+            CreateIndexResponse response = this.elasticsearchClient.indices().create(request, RequestOptions.DEFAULT);
+            LOGGER.debug("creating index " + indexName + " acknowledged: " + response.isAcknowledged());
+        } catch (ElasticsearchStatusException e) {
+            // if the index is already present, to not fail
+            if (e.getDetailedMessage().contains("resource_already_exists_exception")) {
+                LOGGER.warn("Index already present. If you observe misbahviour, the index might not be set up correctly.");
+            } else {
+                throw e;
+            }
+        }
         
-        return response.isAcknowledged();
+        return true;
     }
     
     /**
      * initiate elasticsearch index
      * @param indexName
-     * @param settingsJSONFile read settings from file (JSON)
+     * @param settingsStream read settings from stream (JSON)
      * @param timeoutMillis
      * @return true if index creation is acknowledged
      * @throws IOException
      */
-    public boolean createIndex(String indexName, File settingsJSONFile, long timeoutMillis) throws IOException {
-        String settingsJSON = readSettingsFromFile(settingsJSONFile);
+    public boolean createIndex(String indexName, InputStream settingsStream, long timeoutMillis) throws IOException {
+        String settingsJSON = readSettingsFromStream(settingsStream);
         return this.createIndex(indexName, settingsJSON, timeoutMillis);
     }
 
@@ -74,12 +86,12 @@ public class ElasticsearchIndexCreator {
      * @param settingsFilePath
      * @return content of settings file (JSON string)
      */
-    private String readSettingsFromFile(File settingsFile) throws IOException {
-        LOGGER.debug("reading elasticsearch index settings from file " + settingsFile.getAbsolutePath());
+    private String readSettingsFromStream(InputStream settingsStream) throws IOException {
+        LOGGER.debug("reading elasticsearch index settings from stream");
 
         StringBuilder settingsStringBuilder = new StringBuilder();
 
-        try (BufferedReader settingsReader = new BufferedReader(new FileReader(settingsFile))) {
+        try (BufferedReader settingsReader = new BufferedReader(new InputStreamReader(settingsStream))) {
             String line;
             while ((line = settingsReader.readLine()) != null) {
                 settingsStringBuilder.append(line);
@@ -88,7 +100,7 @@ public class ElasticsearchIndexCreator {
 
         String settingsStr = settingsStringBuilder.toString();
 
-        LOGGER.debug("successfully read elasticsearch index settings from file " + settingsFile.getAbsolutePath() + " Settings: " + System.lineSeparator() + settingsStr);
+        LOGGER.debug("successfully read elasticsearch index settings. Settings: " + System.lineSeparator() + settingsStr);
 
         return settingsStr;
     }
