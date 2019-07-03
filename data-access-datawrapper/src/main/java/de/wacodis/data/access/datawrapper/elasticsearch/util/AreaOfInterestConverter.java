@@ -42,6 +42,11 @@ public class AreaOfInterestConverter {
     public static AbstractDataEnvelopeAreaOfInterest getDefaultAreaOfInterest(GeoShapeCompatibilityAreaOfInterest areaOfInterest) {
         GeoShapeCompatibilityAreaOfInterest geoShapeAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest) areaOfInterest;
 
+        // TODO: is this a good idea on handling envelopes without geom?
+        if (geoShapeAreaOfInterest == null) {
+            return null;
+        }
+        
         if (!geoShapeAreaOfInterest.getType().equals(GeoShapeCompatibilityAreaOfInterest.GeoShapeType.ENVELOPE)) {
             throw new IllegalArgumentException("could not convert AreaOfInterest, expected input of type: " + GeoShapeCompatibilityAreaOfInterest.GeoShapeType.ENVELOPE.toString() + " got: " + areaOfInterest.getType().toString());
         }
