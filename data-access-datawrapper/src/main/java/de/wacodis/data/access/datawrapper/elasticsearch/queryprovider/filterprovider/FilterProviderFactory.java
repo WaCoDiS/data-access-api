@@ -13,6 +13,7 @@ import de.wacodis.dataaccess.model.CopernicusSubsetDefinition;
 import de.wacodis.dataaccess.model.SensorWebSubsetDefinition;
 import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
 import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
+import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -47,6 +48,8 @@ public class FilterProviderFactory {
             return new CopernicusDataEnvelopeElasticsearchFilterProvider();
         }else if(envelope instanceof SensorWebDataEnvelope){
             return new SensorWebDataEnvelopeElasticsearchFilterProvider();
+        }else if(envelope instanceof WacodisProductDataEnvelope){
+            return new WacodisProductDataEnvelopeElasticsearchFilterProvider();
         }else{
             LOGGER.warn("no specific " + DataEnvelopeElasticsearchFilterProvider.class.getSimpleName() + " for DataEnvelope of type " + envelope.getClass().getSimpleName() + " available, return empty filter list");
             return new NullDataEnvelopeElasticsearchFilterProvider();
