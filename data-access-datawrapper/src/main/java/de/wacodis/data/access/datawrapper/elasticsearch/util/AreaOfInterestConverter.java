@@ -20,6 +20,11 @@ public class AreaOfInterestConverter {
     public static GeoShapeCompatibilityAreaOfInterest getGeoshapeAreaOfInterest(AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest) {
         GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest = new GeoShapeCompatibilityAreaOfInterest();
 
+        // TODO: is this a good idea on handling envelopes without geom?
+        if (defaultAreaOfInterest == null) {
+            return null;
+        }
+        
         Float[] bbox = defaultAreaOfInterest.getExtent().toArray(new Float[0]); //geojson bbox format [minLon, minLat, maxLon, maxLat]
         List<Float> topLeft = Arrays.asList(new Float[]{bbox[0], bbox[3]});
         List<Float> bottomRight = Arrays.asList(new Float[]{bbox[2], bbox[1]});
