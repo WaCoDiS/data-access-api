@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
+import de.wacodis.dataaccess.model.DwdDataEnvelope;
 import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
 import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
@@ -54,6 +55,9 @@ public class DataEnvelopeJsonDeserializerFactory {
                     break;
                 case WACODISPRODUCTDATAENVELOPE:
                     typeReference = new WacodisProductDataEnvelope();
+                    break;
+                case DWDDATAENVELOPE:
+                    typeReference = new DwdDataEnvelope();
                     break;
                 default:
                     throw new IllegalArgumentException("cannot create DataEnvelope json deserializer for unknown source type: " + srcType.toString());
