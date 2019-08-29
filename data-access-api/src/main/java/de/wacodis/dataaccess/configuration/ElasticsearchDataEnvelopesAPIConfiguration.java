@@ -8,6 +8,7 @@ package de.wacodis.dataaccess.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
 
 /**
  *
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("spring.dataenvelopes-api.elasticsearch")
 @EnableConfigurationProperties
+@EnableRetry
 public class ElasticsearchDataEnvelopesAPIConfiguration {   
     private String uri;
     private String indexName;
