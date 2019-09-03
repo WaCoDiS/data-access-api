@@ -23,7 +23,7 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
     private String indexName;
     private String type;
     private long requestTimeout_Millis;
-    private long indexInitialization_RetryMaxAttempts;
+    private long indexInitialization_RetryMaxAttempts = 1;
     private long indexInitialization_RetryDelay_Millis;
     
     

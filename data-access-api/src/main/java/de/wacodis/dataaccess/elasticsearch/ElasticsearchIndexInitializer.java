@@ -56,7 +56,7 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
                     initStatus.isIndexAcknowledged = indexCreator.createIndex(elasticsearchConfig.getIndexName(), getSettings(), elasticsearchConfig.getRequestTimeout_Millis());
                 } catch (Exception e) {
                     //only retry on ConnectException
-                    if (e instanceof ConnectException) {
+                    if (IOException.class.isAssignableFrom(e.getClass())) {
                         throw e;
                     } else {
                         initStatus.exception = Optional.of(e); //memorize possible exception besides ConnectException, no retry in this case
