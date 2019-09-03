@@ -12,6 +12,7 @@ spring:
       requestTimeout_Millis: 5000
       indexInitialization_RetryMaxAttempts: 5
       indexInitialization_RetryDelay_Millis: 15000
+      indexInitialization_SettingsFile: ./src/main/resources/elasticsearch_indexsettings.json
   cloud:
     stream:
       bindings:

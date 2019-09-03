@@ -6,10 +6,8 @@
 package de.wacodis.dataaccess.elasticsearch;
 
 import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfiguration;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.URISyntaxException;
 import java.util.Optional;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.LoggerFactory;
@@ -53,7 +51,7 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
                 LOGGER.info("initializing elasticsearch index " + elasticsearchConfig.getIndexName() + ", server address: " + elasticsearchConfig.getUri() + ", attempt " + (context.getRetryCount()+1) + " of " + elasticsearchConfig.getIndexInitialization_RetryMaxAttempts());
 
                 try {
-                    initStatus.isIndexAcknowledged = indexCreator.createIndex(elasticsearchConfig.getIndexName(), getSettings(), elasticsearchConfig.getRequestTimeout_Millis());
+                    initStatus.isIndexAcknowledged = indexCreator.createIndex(elasticsearchConfig.getIndexName(), new FileInputStream(elasticsearchConfig.getIndexInitialization_SettingsFile()), elasticsearchConfig.getRequestTimeout_Millis());
                 } catch (Exception e) {
                     //only retry on ConnectException
                     if (IOException.class.isAssignableFrom(e.getClass())) {
@@ -82,13 +80,6 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
 
     private RestHighLevelClient getElasticsearchClient() {
         return this.elasticsearchClientFactory.buildElasticsearchClient(this.elasticsearchConfig.getUri());
-    }
-
-    private InputStream getSettings() throws URISyntaxException {
-        //get file from resources
-        LOGGER.debug("searching for elasticsearch index settings file " + SETTINGSFILENAME + " in resources");
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        return classloader.getResourceAsStream(SETTINGSFILENAME);
     }
 
     private RetryTemplate createRetryTemplate() {

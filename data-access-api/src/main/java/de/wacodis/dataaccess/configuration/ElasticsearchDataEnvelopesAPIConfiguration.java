@@ -25,8 +25,8 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
     private long requestTimeout_Millis;
     private int indexInitialization_RetryMaxAttempts = 1;
     private long indexInitialization_RetryDelay_Millis;
-    
-    
+    private String indexInitialization_SettingsFile;
+
     /**
      * get uri of elasticsearch instance
      * @return 
@@ -121,5 +121,21 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
      */
     public void setIndexInitialization_RetryDelay_Millis(int indexInitialization_RetryDelay_Millis) {
         this.indexInitialization_RetryDelay_Millis = indexInitialization_RetryDelay_Millis;
+    }
+    
+    /**
+     * get file path for index settings (json file)
+     * @return 
+     */
+    public String getIndexInitialization_SettingsFile() {
+        return indexInitialization_SettingsFile;
+    }
+
+    /**
+     * set file path for index settings (json file)
+     * @param indexInitialization_SettingsFile 
+     */
+    public void setIndexInitialization_SettingsFile(String indexInitialization_SettingsFile) {
+        this.indexInitialization_SettingsFile = indexInitialization_SettingsFile;
     }
 }
