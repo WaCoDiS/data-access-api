@@ -98,7 +98,7 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
         backOffPolicy.setBackOffPeriod(this.elasticsearchConfig.getRequestTimeout_Millis());
 
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts((int)this.elasticsearchConfig.getIndexInitialization_RetryMaxAttempts());
+        retryPolicy.setMaxAttempts(this.elasticsearchConfig.getIndexInitialization_RetryMaxAttempts());
 
         retryTemplate.setBackOffPolicy(backOffPolicy);
         retryTemplate.setRetryPolicy(retryPolicy);

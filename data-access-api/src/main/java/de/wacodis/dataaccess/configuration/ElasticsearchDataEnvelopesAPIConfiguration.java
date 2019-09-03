@@ -23,7 +23,7 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
     private String indexName;
     private String type;
     private long requestTimeout_Millis;
-    private long indexInitialization_RetryMaxAttempts = 1;
+    private int indexInitialization_RetryMaxAttempts = 1;
     private long indexInitialization_RetryDelay_Millis;
     
     
@@ -95,7 +95,7 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
      * get max attempts for index initialization during start up process
      * @return 
      */
-    public long getIndexInitialization_RetryMaxAttempts() {
+    public int getIndexInitialization_RetryMaxAttempts() {
         return indexInitialization_RetryMaxAttempts;
     }
 
@@ -103,7 +103,7 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
      * set max attempts for index initialization during start up process
      * @param indexInitialization_RetryMaxAttempts 
      */
-    public void setIndexInitialization_RetryMaxAttempts(long indexInitialization_RetryMaxAttempts) {
+    public void setIndexInitialization_RetryMaxAttempts(int indexInitialization_RetryMaxAttempts) {
         this.indexInitialization_RetryMaxAttempts = indexInitialization_RetryMaxAttempts;
     }
 
@@ -119,7 +119,7 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
      * set delay between atempts for index initialization during start up process
      * @param indexInitialization_RetryDelay_Millis 
      */
-    public void setIndexInitialization_RetryDelay_Millis(long indexInitialization_RetryDelay_Millis) {
+    public void setIndexInitialization_RetryDelay_Millis(int indexInitialization_RetryDelay_Millis) {
         this.indexInitialization_RetryDelay_Millis = indexInitialization_RetryDelay_Millis;
     }
 }
