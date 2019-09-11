@@ -1,4 +1,4 @@
-# OpenAPI generated server
+<!-- # OpenAPI generated server
 
 Spring Boot Server 
 
@@ -15,4 +15,69 @@ Start your server as a simple java application
 You can view the api documentation in swagger-ui by pointing to  
 http://localhost:8080/
 
-Change default port value in application.properties
+Change default port value in application.properties -->
+
+# WaCoDiS Data Access API
+
+This projects implements a REST API that persists and manages all relevant data within the KomMonitor project.
+
+**Table of Content**
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
+Create a nice table of content, please.
+
+<!-- /TOC -->
+
+## WaCoDiS Project Information
+General project information
+
+### Architecture Overview
+* Architekturdiagramm
+* Brief archictecture description
+
+## Overview  
+* Brief component description
+* OpenAPI Specification
+* Utilized technologies
+
+## Installation / Building Information
+* installation information (maven build, etc.)
+
+### Configuration
+* configuration information
+* configuration paramaters in application.yml
+
+### Deployment
+* JAR
+* WAR
+* Docker
+
+## User Guide
+TODO
+
+## Contribution - Developer Information
+This section contains information for developers.
+
+### How to Contribute
+* information about how to contribute
+
+### Branching
+[otional]
+
+### License and Third Party Lib POM Plugins
+[optional]
+
+## Contact
+|    Name   |   Organization    |    Mail    |
+| :-------------: |:-------------:| :-----:|
+| Sebastian Drost | Bochum University of Applied Sciences | sebastian.drost@hs-bochum.de |
+| Arne Vogt | Bochum University of Applied Sciences | arne.vogt@hs-bochum.de |
+| Andreas Wytzisk  | Bochum University of Applied Sciences | andreas.wytzisk@hs-bochum.de |
+| Matthes Rieke | 52° North GmbH | m.rieke@52north.org |
+
+## Credits and Contributing Organizations
+- Department of Geodesy, Bochum University of Applied Sciences, Bochum
+- 52° North Initiative for Geospatial Open Source Software GmbH, Münster
+- Wupperverband, Wuppertal
+- EFTAS Fernerkundung Technologietransfer GmbH, Münster
+
+The research project WaCoDiS is funded by the BMVI as part of the mFund programme
