@@ -91,4 +91,6 @@ The master branch provides sources for stable builds. The develop branch represe
 - Wupperverband, Wuppertal
 - EFTAS Fernerkundung Technologietransfer GmbH, Münster
 
-The research project WaCoDiS is funded by the BMVI as part of the mFund programme
+The research project WaCoDiS is funded by the BMVI as part of the [mFund programme](https://www.bmvi.de/DE/Themen/Digitales/mFund/Ueberblick/ueberblick.html)  
+<img src="https://wacodis.fbg-hsbo.de/wp-content/uploads/2018/04/mfund-logo.jpg" width="200">
+<img src="https://wacodis.fbg-hsbo.de/wp-content/uploads/2018/09/German-Federal-Ministry-of-Transport-and-Digital-Infrastructure.jpg" width="200">
