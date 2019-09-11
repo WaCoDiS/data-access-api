@@ -44,24 +44,35 @@ General project information
 
 ### Configuration
 * configuration information
-* configuration paramaters in application.yml
+* configuration paramaters in application.yml  
+uri scheme must match *http://host:port*
 
 ### Deployment
-* JAR
-* WAR
-* Docker
-
+This section describes deployment scenarios, options and preconditions.
+#### Preconditions
+* A instance of [elasticsearch](https://www.elastic.co/downloads/elasticsearch) must be available.  
+* When running data access as part of the WaCoDiS system, a running instance of [RabbitMQ message broker](https://www.rabbitmq.com/) must be available. Otherwise communication with other WaCoDis components fails.  
+  
+The server addresses are [configurable](#configuration).  
+  
+ * If configuration should be fetched from Configuration Server a running instance of [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server) must be available.
 ## User Guide
-TODO
+### Run Data Access
+Data Access is a Spring Boot application. Run *org.openapitools.OpenAPI2SpringBoot.java* to start the application.
+### Elasticsearch Index Initialization
+During the start up process, data access automatically initializes a search index that indexes metadata (DataEnvelopes) for available data sets. The index settings are defined in a json file which is by default */main/resources/elasticsearch_indexsettings.json*. The mappings section of this file should not be altered because data access needs an index that matches those specifications. The location of the index settings file is [configurable](#configuration).  
+If index intitialization fails because of a connection error it is retried after a timeout. The max. number of retries and the timeout is [configurable](#configuration). This configuration parameters can be used in deployment scenarios (for example docker compose) if elasticsearch is not available before data access is started.
 
 ## Contribution - Developer Information
 This section contains information for developers.
 
 ### How to Contribute
-* information about how to contribute
+#### Extending Data Access
+##### New Types of DataEnvelope and SubsetDefinition
+Data Access must be modified if new types of DataEnvelope or SubsetDefintion are added to [Wacodis schemas](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) in order to support the newly introduced data types. See the Wiki for further information.
 
 ### Branching
-[otional]
+The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development.
 
 ### License and Third Party Lib POM Plugins
 [optional]
