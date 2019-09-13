@@ -31,7 +31,11 @@ Create a nice table of content, please.
 General project information
 
 ### Architecture Overview
-* Architekturdiagramm
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/WaCoDiS/apis-and-workflows/master/architecture/wacodis_high_level_architecture.png" width="600" alt="Diagram of WaCoDiS high level architecture">
+</p>
+
 * Brief archictecture description
 
 ## Overview  
@@ -92,5 +96,7 @@ The master branch provides sources for stable builds. The develop branch represe
 - EFTAS Fernerkundung Technologietransfer GmbH, Münster
 
 The research project WaCoDiS is funded by the BMVI as part of the [mFund programme](https://www.bmvi.de/DE/Themen/Digitales/mFund/Ueberblick/ueberblick.html)  
-<img src="https://wacodis.fbg-hsbo.de/wp-content/uploads/2018/04/mfund-logo.jpg" width="200">
-<img src="https://wacodis.fbg-hsbo.de/wp-content/uploads/2018/09/German-Federal-Ministry-of-Transport-and-Digital-Infrastructure.jpg" width="200">
+<p align="center">
+  <img src="https://wacodis.fbg-hsbo.de/wp-content/uploads/2018/04/mfund-logo.jpg" width="200">
+  <img src="https://wacodis.fbg-hsbo.de/wp-content/uploads/2018/09/German-Federal-Ministry-of-Transport-and-Digital-Infrastructure.jpg" width="200">
+</p>
