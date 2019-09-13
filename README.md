@@ -78,8 +78,8 @@ parameters related to DataEnvelope acknowledgement messages
 | value     | description       | note  |
 | ------------- |-------------| -----|
 | destination     | topic used for DataEnvelope acknowledgement messages | e.g. *wacodis.dataenvelope.acknowledgment* |
-| binder      | defines the binder (message broker)   | see [binders](#spring/cloud/stream/binders/wacodis_rabbit), does not have to be changed from *wacodis_rabbit* |
-| content-type      | content type of  DataEnvelope acknowledgement messages (mime type)   | see [binders](#spring/cloud/stream/binders/wacodis_rabbit), does not have to be changed from *application/json* |
+| binder      | defines the binder (message broker)   | see [binders](#springcloudstreambinderswacodis_rabbit), does not have to be changed from *wacodis_rabbit* |
+| content-type      | content type of  DataEnvelope acknowledgement messages (mime type)   | see [binders](#springcloudstreambinderswacodis_rabbit), does not have to be changed from *application/json* |
 
 ##### spring/cloud/stream/binders/wacodis_rabbit
 parameters related to WaCoDis message broker
