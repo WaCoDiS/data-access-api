@@ -47,9 +47,51 @@ General project information
 * installation information (maven build, etc.)
 
 ### Configuration
-* configuration information
-* configuration paramaters in application.yml  
-uri scheme must match *http://host:port*
+Configuration is fetched from [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server). If config server is not available configuration values located at *main/resources/bootstrap.yml* are applied instead.  
+#### Parameters
+The following section contain descriptions for configuration parameters ordered by configuration section.
+
+##### spring/resources-api
+parameters related to the Resource API (*/resources/...*)  
+
+| value     | description       | note  |
+| ------------- |-------------| -----|
+| elasticsearch/uri     | elasticsearch server address | uri scheme must match *http://host:port* |
+| elasticsearch/index      | name of the index (containing DataEnvelopes) that should be queried   |  |
+| elasticsearch/requestTimeout_Millis  | request timeout (milliseconds) |  |
+
+##### spring/dataenvelopes-api
+parameters related to the DataEnvelope API (*/dataenvelopes/...*)  
+
+| value     | description     | note  |
+| ------------- |-------------| -----|
+| elasticsearch/uri     | elasticsearch server address | uri scheme must match *http://host:port* |
+| elasticsearch/index      | name of the index (containing DataEnvelopes) that should be queried   |  |
+| elasticsearch/requestTimeout_Millis  | request timeout (milliseconds) |  |
+| elasticsearch/indexInitialization_RetryMaxAttempts  | max attempts for index intitialization during start-up | [see Elasticsearch Index Initialization](#elasticsearch-index-initialization) |
+| elasticsearch/indexInitialization_RetryDelay_Millis  | delay between atempts for index intitialization during start-up (milliseconds) |  |
+| elasticsearch/indexInitialization_SettingsFile | location of settings file that is applied for index intitialization during start-up|  |
+
+##### spring/cloud/stream/bindings/acknowledgeDataEnvelope
+parameters related to DataEnvelope acknowledgement messages
+
+| value     | description       | note  |
+| ------------- |-------------| -----|
+| destination     | topic used for DataEnvelope acknowledgement messages | e.g. *wacodis.dataenvelope.acknowledgment* |
+| binder      | defines the binder (message broker)   | see [binders](#spring/cloud/stream/binders/wacodis_rabbit), does not have to be changed from *wacodis_rabbit* |
+| content-type      | content type of  DataEnvelope acknowledgement messages (mime type)   | see [binders](#spring/cloud/stream/binders/wacodis_rabbit), does not have to be changed from *application/json* |
+
+##### spring/cloud/stream/binders/wacodis_rabbit
+parameters related to WaCoDis message broker
+
+| value     | description       | note  |
+| ------------- |-------------| -----|
+| type     | type of message broker  | WaCoDiS uses [RabbitMQ message broker](https://www.rabbitmq.com/)|
+| environment/spring/rabbitmq/host | RabbitMQ host (WaCoDiS message broker) | e.g. *localhost* |
+| environment/spring/rabbitmq/host | RabbitMQ port (WaCoDiS message broker)   | e.g. *5672*|
+| environment/spring/rabbitmq/username | RabbitMQ username (WaCoDiS message broker)   | |
+| environment/spring/rabbitmq/password | RabbitMQ password (WaCoDiS message broker)   | |
+
 
 ### Deployment
 This section describes deployment scenarios, options and preconditions.
