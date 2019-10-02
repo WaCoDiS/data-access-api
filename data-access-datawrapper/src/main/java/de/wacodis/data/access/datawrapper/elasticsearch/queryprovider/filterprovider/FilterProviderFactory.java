@@ -16,6 +16,7 @@ import de.wacodis.dataaccess.model.SensorWebSubsetDefinition;
 import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
 import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
+import de.wacodis.dataaccess.model.WacodisProductSubsetDefinition;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -34,6 +35,8 @@ public class FilterProviderFactory {
             return new CatalogueSubsetDefinitionElasticsearchFilterProvider();
         } else if (subset instanceof SensorWebSubsetDefinition) {
             return new SensorWebSubsetDefinitionElasticsearchFilterProvider();
+        } else if (subset instanceof WacodisProductSubsetDefinition){
+            return new WacodisProductDataSubsetDefinitionElasticsearchFilterProvider();
         } else if (subset instanceof DwdSubsetDefinition) {
             return new DWDSubsetDefinitionElasticsearchFilterProvider();
         } else {

@@ -7,7 +7,7 @@ package de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterpro
 
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -25,13 +25,20 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
     @Override
     public List<QueryBuilder> buildFiltersForDataEnvelope(AbstractDataEnvelope envelope) {
         if (envelope instanceof WacodisProductDataEnvelope) {
+            List<QueryBuilder> queries = new ArrayList<>();
             WacodisProductDataEnvelope wacEnv = (WacodisProductDataEnvelope) envelope;
 
             QueryBuilder productCollectionQuery = QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, wacEnv.getProductCollection());
+            queries.add(productCollectionQuery);
             QueryBuilder serviceNameQuery = QueryBuilders.termQuery(SERVICENAME_ATTRIBUTE, wacEnv.getServiceName());
-            QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
+            queries.add(serviceNameQuery);
             
-            return Arrays.asList(new QueryBuilder[]{productCollectionQuery, serviceNameQuery, productTypeQuery});
+            if(wacEnv.getProductType() != null && !wacEnv.getProductType().trim().isEmpty()){
+                QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
+                queries.add(productTypeQuery);
+            }
+            
+            return queries;
         } else {
             throw new IllegalArgumentException("wrong type of DataEnvelope, envelope is of type " + envelope.getClass().getSimpleName() + ", expected " + WacodisProductDataEnvelope.class.getSimpleName());
         }
