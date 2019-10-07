@@ -2,11 +2,27 @@
 
 This projects implements a REST API that persists and manages metadata from all relevant datasets and datasources within the WaCoDiS monitoring system.
 
-**Table of Content**  
-TODO  
-Create a nice table of content, please.
+## Table of Content  
 
-
+1. [WaCoDiS Project Information](#wacodis-project-information)
+2. [Overview](#overview)
+3. [Installation / Building Information](#installation--building-information)
+  * [Configuration](#configuration)
+    * [Parameters](#parameters)
+  * [Deployment](#deployment)
+    * [Preconditions](#preconditions)
+4. [User Guide](#user-guide)
+  * [Run Data Access](#run-data-access)
+  * [Elasticsearch Index Initialization](#elasticsearch-index-initialization)
+5. [Contribution - Developer Information](#contribution---developer-information)
+  * [How to Contribute](#how-to-contribute)
+    * [Extending Data Access](#extending-data-access)
+      * [New Types of DataEnvelope and SubsetDefinition](#new-types-of-dataenvelope-and-subsetdefinition)
+  * [Branching](#branching) 
+  * [License and Third Party Lib POM Plugins](#license-and-third-party-lib-pom-plugins)
+6. [Contact](#contact)
+7. [Credits and Contributing Organizations](#credits-and-contributing-organizations)
+    
 ## WaCoDiS Project Information
 <p align="center">
   <img src="https://raw.githubusercontent.com/WaCoDiS/apis-and-workflows/master/misc/logos/wacodis.png" width="200">
