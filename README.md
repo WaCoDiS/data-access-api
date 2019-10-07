@@ -71,7 +71,9 @@ TODO
 * Utilized technologies
 
 ## Installation / Building Information
-WaCoDiS Data Access is a [maven project](https://maven.apache.org/install.html). To build this project from source maven has to be installed.  
+WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. In order to build Data Access from source _Java Development Kit_ (JDK) must be available. Data Access is tested with Oracle JDK 8. Unless stated otherwise later JDK versions can be used as well as OpenJDK.  
+Data Access is a [maven project](https://maven.apache.org/install.html). To build this project from source maven has to be installed.  
+  
 1. Build Data Models
   * change directory to _Data Access Models_ subfolder (_data-access-api/data-access-models_)
   * run `mvn clean install -p download-generate-models`
@@ -134,6 +136,7 @@ parameters related to WaCoDis message broker
 ### Deployment
 This section describes deployment scenarios, options and preconditions.
 #### Preconditions
+* In order to run Data Access Java Runtime Environment (JRE) (version >= 8) must be available. In order to [build Data Access from source](#installation--building-information) Java Development Kit (JDK) version >= 8) must be abailable. Data Access is tested with Oracle JDK 8.
 * A (running) instance of [elasticsearch](https://www.elastic.co/downloads/elasticsearch) must be available.  
 * When running data access as part of the WaCoDiS system, a running instance of [RabbitMQ message broker](https://www.rabbitmq.com/) must be available. Otherwise communication with other WaCoDis components fails.  
   
@@ -142,9 +145,10 @@ The server addresses are [configurable](#configuration).
  * If configuration should be fetched from Configuration Server a running instance of [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server) must be available.
 ## User Guide
 ### Run Data Access
-Data Access is a Spring Boot application. Run *org.openapitools.OpenAPI2SpringBoot.java* (Module: _WaCoDiS Data Access API_) to start the application. By default the service is available on port 8080. [Multiple ways to change the default port exist](https://www.baeldung.com/spring-boot-change-port). If the service started successfully (see [Preconditions](#preconditions)) the API description for WaCoDiS Data Access is available on _localhost:8080_ (provided default port was not changed).  
+Currently there are no pre-compiled binaries available for WaCoDiS Data Access. Data Access must be [built from source](#installation--building-information). Alternativley Docker can be used to run Data Access.
+
+Data Access is a Spring Boot application. Execute the compiled jar (`java -jar  data-access-api.jar`) or run *org.openapitools.OpenAPI2SpringBoot.java* in IDE (Module: _WaCoDiS Data Access API_) to start the data access service. By default the service is available on port 8080. [Multiple ways to change the default port exist](https://www.baeldung.com/spring-boot-change-port). If the service started successfully (see [Preconditions](#preconditions)) the API description for WaCoDiS Data Access is available on _localhost:8080_ (provided default port was not changed).  
   
-Currently there are no binaries available for WaCoDiS Data Access. Data Access must be [built from source](#installation--building-information).
 ### Elasticsearch Index Initialization
 During the start up process, data access automatically initializes a (Elasticsearch) search index that indexes metadata (DataEnvelopes) for available data sets. The index settings are defined in a json file which is by default */main/resources/elasticsearch_indexsettings.json*. The mappings section of this file should not be altered because data access needs an index that matches those specifications. The location of the index settings file is [configurable](#configuration).  
 If index intitialization fails because of a connection error it is retried after a timeout. The max. number of retries and the timeout is [configurable](#configuration). This configuration parameters can be used in deployment scenarios (for example docker compose) if elasticsearch is not available before data access is started.
