@@ -6,6 +6,7 @@ This projects implements a REST API that persists and manages metadata from all 
 
 1. [WaCoDiS Project Information](#wacodis-project-information)
 2. [Overview](#overview)
+  * [Architecture Overview](#architecture-overview)
 3. [Installation / Building Information](#installation--building-information)
   * [Configuration](#configuration)
     * [Parameters](#parameters)
