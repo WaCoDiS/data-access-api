@@ -71,9 +71,19 @@ TODO
 * Utilized technologies
 
 ## Installation / Building Information
-TODO
-* installation information (maven build, etc.)
-
+WaCoDiS Data Access is a [maven project](https://maven.apache.org/install.html). To build this project from source maven has to be installed.  
+1. Build Data Models
+  * change directory to _Data Access Models_ subfolder (_data-access-api/data-access-models_)
+  * run `mvn clean install -p download-generate-models`
+  
+  Two profiles are applicable for building data models module. The profile _download-generate-models_ fetches the latest version of [WaCoDiS Schema Definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) (OpenAPI) from Github and generates corresponding java classes. The profile _generate-models_ gets the schema definitions from a local file and generates corresponding java classes. By default the schema definitions are expected in the modules resource folder (_resources/definitions/wacodis-schemas.yml_). Alternatively, the file path can be configured in _pom.xml_.  
+    
+2. Build _Data Wrapper_ and _Data Access API_
+  * change directory to the projects home directory (_data_access_api_)
+  * * run `mvn clean install`  
+    
+The Data Wrapper module must be built before the API module if both modules are built separately.
+   
 ### Configuration
 Configuration is fetched from [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server). If config server is not available configuration values located at *main/resources/bootstrap.yml* are applied instead.  
 #### Parameters
@@ -124,7 +134,7 @@ parameters related to WaCoDis message broker
 ### Deployment
 This section describes deployment scenarios, options and preconditions.
 #### Preconditions
-* A instance of [elasticsearch](https://www.elastic.co/downloads/elasticsearch) must be available.  
+* A (running) instance of [elasticsearch](https://www.elastic.co/downloads/elasticsearch) must be available.  
 * When running data access as part of the WaCoDiS system, a running instance of [RabbitMQ message broker](https://www.rabbitmq.com/) must be available. Otherwise communication with other WaCoDis components fails.  
   
 The server addresses are [configurable](#configuration).  
@@ -132,7 +142,9 @@ The server addresses are [configurable](#configuration).
  * If configuration should be fetched from Configuration Server a running instance of [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server) must be available.
 ## User Guide
 ### Run Data Access
-Data Access is a Spring Boot application. Run *org.openapitools.OpenAPI2SpringBoot.java* (Module: _WaCoDiS Data Access API_)to start the application. By default the service is available on port 8080. [Multiple ways to change the default port exist](https://www.baeldung.com/spring-boot-change-port). If the service started successfully (see [Preconditions](#preconditions)) the API description for WaCoDiS Data Access is available on _localhost:8080_ (provided default port was not changed).
+Data Access is a Spring Boot application. Run *org.openapitools.OpenAPI2SpringBoot.java* (Module: _WaCoDiS Data Access API_) to start the application. By default the service is available on port 8080. [Multiple ways to change the default port exist](https://www.baeldung.com/spring-boot-change-port). If the service started successfully (see [Preconditions](#preconditions)) the API description for WaCoDiS Data Access is available on _localhost:8080_ (provided default port was not changed).  
+  
+Currently there are no binaries available for WaCoDiS Data Access. Data Access must be [built from source](#installation--building-information).
 ### Elasticsearch Index Initialization
 During the start up process, data access automatically initializes a (Elasticsearch) search index that indexes metadata (DataEnvelopes) for available data sets. The index settings are defined in a json file which is by default */main/resources/elasticsearch_indexsettings.json*. The mappings section of this file should not be altered because data access needs an index that matches those specifications. The location of the index settings file is [configurable](#configuration).  
 If index intitialization fails because of a connection error it is retried after a timeout. The max. number of retries and the timeout is [configurable](#configuration). This configuration parameters can be used in deployment scenarios (for example docker compose) if elasticsearch is not available before data access is started.
