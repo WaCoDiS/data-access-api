@@ -9,7 +9,7 @@ This projects implements a REST API that persists and manages metadata from all 
   * [Architecture Overview](#architecture-overview)
 3. [Installation / Building Information](#installation--building-information)
   * [Build from Source](#build-from-source)
-  * [Build using Docker](#using-docker)
+  * [Build using Docker](#build-using-docker)
   * [Configuration](#configuration)
     * [Parameters](#parameters)
   * [Deployment](#deployment)
