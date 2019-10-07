@@ -8,12 +8,15 @@ This projects implements a REST API that persists and manages metadata from all 
 2. [Overview](#overview)
   * [Architecture Overview](#architecture-overview)
 3. [Installation / Building Information](#installation--building-information)
+  * [Build from Source](#build-from-source)
+  * [Build using Docker](#using-docker)
   * [Configuration](#configuration)
     * [Parameters](#parameters)
   * [Deployment](#deployment)
     * [Preconditions](#preconditions)
 4. [User Guide](#user-guide)
   * [Run Data Access](#run-data-access)
+    * [Using Docker](#using-docker)
   * [Elasticsearch Index Initialization](#elasticsearch-index-initialization)
 5. [Contribution - Developer Information](#contribution---developer-information)
   * [How to Contribute](#how-to-contribute)
@@ -149,7 +152,7 @@ The server addresses are [configurable](#configuration).
  * If configuration should be fetched from Configuration Server a running instance of [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server) must be available.
 ## User Guide
 ### Run Data Access
-Currently there are no pre-compiled binaries available for WaCoDiS Data Access. Data Access must be [built from source](#installation--building-information). Alternativley Docker can be used to run Data Access.
+Currently there are no pre-compiled binaries available for WaCoDiS Data Access. Data Access must be [built from source](#installation--building-information). Alternatively Docker can be used to (build and) run WaCoDiS Data Access.
 
 Data Access is a Spring Boot application. Execute the compiled jar (`java -jar  data-access-api.jar`) or run *org.openapitools.OpenAPI2SpringBoot.java* in IDE (Module: _WaCoDiS Data Access API_) to start the data access service. By default the service is available on port 8080. [Multiple ways to change the default port exist](https://www.baeldung.com/spring-boot-change-port). If the service started successfully (see [Preconditions](#preconditions)) the API description for WaCoDiS Data Access is available on _localhost:8080_ (provided default port was not changed). 
 
