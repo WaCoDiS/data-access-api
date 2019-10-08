@@ -22,6 +22,8 @@ This projects implements a REST API that persists and manages metadata from all 
   * [How to Contribute](#how-to-contribute)
     * [Extending Data Access](#extending-data-access)
       * [New Types of DataEnvelope and SubsetDefinition](#new-types-of-dataenvelope-and-subsetdefinition)
+    * [Pending Developments](#pending-developments)
+      * [Creation of Resources from DataEnvelopes](#creation-of-resources-from-dataenvelopes)
   * [Branching](#branching) 
   * [License and Third Party Lib POM Plugins](#license-and-third-party-lib-pom-plugins)
 6. [Contact](#contact)
@@ -182,15 +184,15 @@ parameters related to WaCoDis message broker
 | environment/spring/rabbitmq/password | RabbitMQ password (WaCoDiS message broker)   | |
 
 ## Contribution - Developer Information
-This section contains information for developers.
+This section contains information for developers. [Extending Data Access](#extending-data-access) describes how Data Access can be extended with new functionalities. [Pending Developments](#pending-developments) lists enivsaged features that are not (fully) implemented yet. 
 
 ### How to Contribute
 #### Extending Data Access
 ##### New Types of DataEnvelope and SubsetDefinition
 Data Access must be modified if new types of DataEnvelope or SubsetDefintion are added to [Wacodis schemas](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) in order to support the newly introduced data types. See the [Wiki](https://github.com/WaCoDiS/data-access-api/wiki/Extending-Data-Access) for further information.
 
-### Pending Developments
-#### Creation Of Resources from DataEnvelopes
+#### Pending Developments
+##### Creation Of Resources from DataEnvelopes
 The _/resources/search_ endpoint of Data Access API demands the conversion from DataEnvelopes (metadata stored in Elasticsearch) to Resources (provides a URL for the actual data). This conversion is handled by a implementation of the interface [ResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/master/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/ResourceSearchResponseToResourceConverter.java). Currently the only implementation is [SimpleResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/SimpleResourceSearchResponseToResourceConverter.java) which does not yet feature all envisaged functionalities.  
 * no support for _GdiDeDataEnvelopes_ (support for _OGC Web Feature Service_ (WFS) is missing)  
   
