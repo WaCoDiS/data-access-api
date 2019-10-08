@@ -47,7 +47,7 @@ The _Core Engine_ schedules jobs for planned process executions based on the job
 Several observing routins requests certain datastores for new available data, such as in-situ measurements, Copernicus satellite data, sdi based geodata and services or meteorological data that are required for process executions.
 
 **[Data Wrapper](https://github.com/WaCoDiS/data-access-api)**  
-Information  about  all  incoming  required datasets are bundled by a are stored in a Metadata Storage. For the purpose of defining process inputs, the _Data Wrapper_ generates references to the required datasets from the metadata and provides these references to the Core Engine via a REST API. To provide an asynchronous Pub/Sub pattern, a [Metadata Connector](https://github.com/WaCoDiS/metadata-connector) will listen for new datasets and then interacts with the REST API.
+Information  about  all  incoming  required datasets are bundled and stored in a Metadata Storage. For the purpose of defining process inputs, the _Data Wrapper_ generates references to the required datasets from the metadata and provides these references to the Core Engine via a REST API. To provide an asynchronous Pub/Sub pattern, a [Metadata Connector](https://github.com/WaCoDiS/metadata-connector) will listen for new datasets and then interacts with the REST API.
 
 **[Web Processing Service](https://github.com/WaCoDiS/javaps-wacodis-backend)**  
 The  execution  of  analysis processes  provided  by  EO  Tools  is  encapsulated  by  a  OGC 
@@ -70,12 +70,26 @@ The messages exchanged via message broker follow a domain model that has been de
 ## Overview  
 TODO
 * Brief component description
+The purpose of WaCoDIS is to store metadata of available dataset 
+
+modules  
+API  (impl + app)
+DataWrapper (elasticsearch conectivity)
 * OpenAPI Specification
+endpoints, typical usage (wacodis context)
+While the data access web service is running the API description is available at _localhost:8080_.  
 * Utilized technologies
+java  
+WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language.
+elasticsearch  
+[spring boot](https://spring.io/projects/spring-boot)  
+stand alone application / server  
+maven  
+json
 
 ## Installation / Building Information
 ### Build from Source
-WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. In order to build Data Access from source _Java Development Kit_ (JDK) must be available. Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later JDK versions can be used.  
+In order to build Data Access from source _Java Development Kit_ (JDK) must be available. Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later JDK versions can be used.  
 Data Access is a [maven project](https://maven.apache.org/install.html). To build this project from source maven has to be installed.  
   
 1. Build Data Models
@@ -96,7 +110,7 @@ See [run section](#using-docker) for docker instructions.
 ### Deployment
 This section describes deployment scenarios, options and preconditions.
 #### Preconditions
-* In order to run Data Access Java Runtime Environment (JRE) (version >= 8) must be available. In order to [build Data Access from source](#installation--building-information) Java Development Kit (JDK) version >= 8) must be abailable. Data Access is tested with Oracle JDK 8.
+* In order to run Data Access Java Runtime Environment (JRE) (version >= 8) must be available. In order to [build Data Access from source](#installation--building-information) Java Development Kit (JDK) version >= 8) must be abailable. Data Access is tested with Oracle JDK 8 and OpenJDK 8.
 * A (running) instance of [elasticsearch](https://www.elastic.co/downloads/elasticsearch) must be available.  
 * When running data access as part of the WaCoDiS system, a running instance of [RabbitMQ message broker](https://www.rabbitmq.com/) must be available. Otherwise communication with other WaCoDis components fails.  
   
@@ -174,6 +188,22 @@ This section contains information for developers.
 #### Extending Data Access
 ##### New Types of DataEnvelope and SubsetDefinition
 Data Access must be modified if new types of DataEnvelope or SubsetDefintion are added to [Wacodis schemas](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) in order to support the newly introduced data types. See the [Wiki](https://github.com/WaCoDiS/data-access-api/wiki/Extending-Data-Access) for further information.
+
+### Pending Developments
+#### Creation Of Resources from DataEnvelopes
+The _/resources/search_ endpoint of Data Access API demands the conversion from DataEnvelopes (metadata stored in Elasticsearch) to Resources (provides a URL for the actual data). This conversion is handled by a implementation of the interface [ResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/master/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/ResourceSearchResponseToResourceConverter.java). Currently the only implementation is [SimpleResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/SimpleResourceSearchResponseToResourceConverter.java) which does not yet feature all envisaged functionalities.  
+* no support for _GdiDeDataEnvelopes_ (support for _OGC Web Feature Service_ (WFS) is missing)  
+  
+Currently only a resoruce containing the service url is returned for _GdiDeDataEnvelopes_. The full implementation should produce a WFS _getFeature_-request that takes into account the time frame and extent, as well as other attributes (e.g. feature type).
+
+* no support for SensorWebDataEnvelopes (support for _OGC Sensor Oberservation Service_ (SOS) is missing)  
+  
+Currently only a resoruce containing the service url is returned for _SensorWebDataEnvelopes_. The full implementation should produce a SOS _getOverservation_-request that takes into account the time frame and extent, as well as other attributes (e.g. procedure).
+  
+
+* [Copernicus Open Access Hub](https://scihub.copernicus.eu/) is the only supported data portal for sentinel imagery  
+  
+Support for [CODE-DE](https://code-de.org/en) is envisaged but not implemented.   To support further data portals than Copernicus Open Access Hub and CODE-De, in addtion to changes to the resources converter, the [WaCoDiS schema definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) have to be extended (enum CopernicusDataEnvelope.portal).  
 
 ### Branching
 The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development.
