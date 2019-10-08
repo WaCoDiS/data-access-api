@@ -80,6 +80,7 @@ DataWrapper (elasticsearch conectivity)
 * OpenAPI Specification
 endpoints, typical usage (wacodis context)
 While the data access web service is running the API description is available at _localhost:8080_.  
+  
 **Utilized technologies**
 * Java  
 WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. WaCoDiS Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later JDK versions can be used as well.
