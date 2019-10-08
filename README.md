@@ -102,7 +102,7 @@ This section describes deployment scenarios, options and preconditions.
   
 The server addresses are [configurable](#configuration).  
   
- * If configuration should be fetched from Configuration Server a running instance of [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server) must be available.
+ * If [configuration](#configuration) should be fetched from Configuration Server a running instance of [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server) must be available.
  
 ## User Guide
 ### Run Data Access
@@ -120,7 +120,8 @@ During the start up process, data access automatically initializes a (Elasticsea
 If index intitialization fails because of a connection error it is retried after a timeout. The max. number of retries and the timeout is [configurable](#configuration). This configuration parameters can be used in deployment scenarios (for example docker compose) if elasticsearch is not available before data access is started.
 
 ### Configuration
-Configuration is fetched from [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server). If config server is not available configuration values located at *main/resources/bootstrap.yml* are applied instead.  
+Configuration is fetched from [WaCoDiS Config Server](https://github.com/WaCoDiS/config-server).
+If config server is not available configuration values defined in *main/resources/bootstrap.yml* are applied instead. 
 
 #### Parameters
 The following section contain descriptions for configuration parameters ordered by configuration section.
