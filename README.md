@@ -196,11 +196,11 @@ Data Access must be modified if new types of DataEnvelope or SubsetDefintion are
 The _/resources/search_ endpoint of Data Access API demands the conversion from DataEnvelopes (metadata stored in Elasticsearch) to Resources (provides a URL for the actual data). This conversion is handled by a implementation of the interface [ResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/master/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/ResourceSearchResponseToResourceConverter.java). Currently the only implementation is [SimpleResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/SimpleResourceSearchResponseToResourceConverter.java) which does not yet feature all envisaged functionalities.  
 * no support for _GdiDeDataEnvelopes_ (support for _OGC Web Feature Service_ (WFS) is missing)  
   
-Currently only a resoruce containing the service url is returned for _GdiDeDataEnvelopes_. The full implementation should produce a WFS _getFeature_-request that takes into account the time frame and extent, as well as other attributes (e.g. feature type).
+Currently only a resource containing the service url is returned for _GdiDeDataEnvelopes_. The full implementation should produce a WFS _getFeature_-request that takes into account the time frame and extent, as well as other attributes (e.g. feature type).
 
 * no support for SensorWebDataEnvelopes (support for _OGC Sensor Oberservation Service_ (SOS) is missing)  
   
-Currently only a resoruce containing the service url is returned for _SensorWebDataEnvelopes_. The full implementation should produce a SOS _getOverservation_-request that takes into account the time frame and extent, as well as other attributes (e.g. procedure).
+Currently only a resource containing the service url is returned for _SensorWebDataEnvelopes_. The full implementation should produce a SOS _getOverservation_-request that takes into account the time frame and extent, as well as other attributes (e.g. procedure).
   
 
 * [Copernicus Open Access Hub](https://scihub.copernicus.eu/) is the only supported data portal for sentinel imagery  
