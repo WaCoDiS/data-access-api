@@ -83,17 +83,17 @@ While the data access web service is running the API description is available at
   
 **Utilized technologies**
 * Java  
-WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. WaCoDiS Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later JDK versions can be used as well.
+WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. WaCoDiS Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later Java versions can be used as well.
 * Maven  
-The project WaCoDiS Data Access uses the build-management tool [maven](https://maven.apache.org/)
+The project WaCoDiS Data Access uses the build-management tool Apache [maven](https://maven.apache.org/)
 * Spring Boot  
-WaCoDiS Data Access is a standalone application built with [spring boot](https://spring.io/projects/spring-boot) framework. Therfore, it is not necessary to deploy WaCoDiS Data Access manually with a web server.
+WaCoDiS Data Access is a standalone application built with the [spring boot](https://spring.io/projects/spring-boot) framework. Therfore, it is not necessary to deploy WaCoDiS Data Access manually with a web server.
 * Elasticsearch  
 For storing metadata of available data set WaCoDiS uses the search engine technology [Elasticsearch](https://www.elastic.co/downloads/elasticsearch). Elasticsearch is not part of WaCoDiS Data Access and therefore must be deployed separately in order [to run this application](#preconditions).  
 * RabbitMQ  
 For communication with other WaCoDiS components of the WaCoDiS system the message broker [RabbitMQ](https://www.rabbitmq.com/) is utilized. RabbitMQ is not part of WaCoDiS Data Access and therefore [must be deployed separately](#preconditions) if WaCoDIS Data Access is deployed as part of the whole WaCoDiS system. 
 * JSON  
-The Data Access RESTful API serves data as json. 
+The WaCoDiS Data Access RESTful API serves data as json. 
 
 ## Installation / Building Information
 ### Build from Source
