@@ -83,6 +83,7 @@ DataWrapper (elasticsearch conectivity)
 ### Data Access REST API  
 
 WaCoDIS Data Access provides a REST API for managing DataEnvelopes and searching Resources.  
+The OpenAPI Specfication of the data access API can be found in the [WaCoDiS APIs and Workflows repository](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/data-access-api.yml). While the data access web service is [running](#run-data-access) interactive API description is available at _localhost:8080_. The OpenAPI specifications for data types (DataEnvelope, SubsetDefinition, Resource, WacodisJobDefinition...) can be found in the [WaCoDiS APIs and Workflows repository](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml).
   
 **Endpoints:**  
   
@@ -98,12 +99,11 @@ The **HTTP-Delete** method of this endpoint is used for removing DataEnvelopes f
 Used for finding stored DataEnvelopes. A DataEnvelope is send to the service via **HTTP-POST** request. The service checks if a DataEnvelope with the same values is already exisiting in the metadata storage. If a matching DataEnvelope is found the indentifier ot this DataEnvelope is returned by the serivce.  
 
 #### Interaction with WaCoDiS Core Engine  
-  
+[WaCoDiS Core Engine](https://github.com/WaCoDiS/core-engine) use Data Access API to validate whether a WaCoDiS Job (WacodisJobDefinition) can be executed. Using data access, the core engine can check if all input data sets needed to execute a job exist. Within a WacodisJobDefinition SubsetDefinitions are used to describe inputs. Further a WacodisJobDefinition contains information about spatial and temporal extent of interest. By posting requests to the _/resources/search_ endpoint WaCoDiS Core Engine is able to find all available data that match a job definition. The response by the service contains Resources which provide references (URL) to data sets.
 #### Interaction with WaCoDiS Metadata Connector
-
-The OpenAPI Specfication of the data access API can be found in the [WaCoDiS APIs and Workflows repository](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/data-access-api.yml). While the data access web service is [running](#run-data-access) interactive API description is available at _localhost:8080_. The OpenAPI specifications for data types (DataEnvelope, SubsetDefinition, Resource) can be found in the [WaCoDiS APIs and Workflows repository](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml).
+[WaCoDiS Metadata Connector](https://github.com/WaCoDiS/metadata-connector) adds new DataEnvelopes (metadata of available data sets) to the metadata storage by sending requests to the Data Access API. Before adding new a new DataEnvelope the Metadata Connector checks if a similar DataEnvelope is already stored by using the _/dataenvelopes/search/_ point. If no matching DataEnvelope is found Metadata Connector simply adds the new DataEnvelope by posting a DataEnvelope to the _/dataenvelopes_ endpoint. If a matching DataEnvelope is found Metadata Connector uses the _/dataenvelopes/{id}_ endpoint to update stored entries.  
   
-**Utilized technologies**
+### Utilized technologies
 * Java  
 WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. WaCoDiS Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later Java versions can be used as well.
 * Maven  
