@@ -8,8 +8,9 @@ This projects implements a REST API that persists and manages metadata from all 
   * [Architecture Overview](#architecture-overview)
 2. [Overview](#overview)
   * [Data Access REST API](#data-access-rest-api)
-    * [Interaction with WaCoDiS Core Engine]()
-    * [Interaction with WaCoDiS Metadata Connector]()
+    * [Interaction with WaCoDiS Core Engine](#interaction-with-wacodis-core-engine)
+    * [Interaction with WaCoDiS Metadata Connector](#interaction-with-wacodis-metadata-connector)
+  * [Utilized Technologies](#utilized-technologies)
 3. [Installation / Building Information](#installation--building-information)
   * [Build from Source](#build-from-source)
   * [Build using Docker](#build-using-docker)
@@ -103,7 +104,7 @@ Used for finding stored DataEnvelopes. A DataEnvelope is send to the service via
 #### Interaction with WaCoDiS Metadata Connector
 [WaCoDiS Metadata Connector](https://github.com/WaCoDiS/metadata-connector) adds new DataEnvelopes (metadata of available data sets) to the metadata storage by sending requests to the Data Access API. Before adding new a new DataEnvelope the Metadata Connector checks if a similar DataEnvelope is already stored by using the _/dataenvelopes/search/_ point. If no matching DataEnvelope is found Metadata Connector simply adds the new DataEnvelope by posting a DataEnvelope to the _/dataenvelopes_ endpoint. If a matching DataEnvelope is found Metadata Connector uses the _/dataenvelopes/{id}_ endpoint to update stored entries.  
   
-### Utilized technologies
+### Utilized Technologies
 * Java  
 WaCoDiS Data Access uses (as most of the WaCoDiS components) the java programming language. WaCoDiS Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later Java versions can be used as well.
 * Maven  
