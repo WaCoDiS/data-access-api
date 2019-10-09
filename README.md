@@ -5,8 +5,11 @@ This projects implements a REST API that persists and manages metadata from all 
 ## Table of Content  
 
 1. [WaCoDiS Project Information](#wacodis-project-information)
-2. [Overview](#overview)
   * [Architecture Overview](#architecture-overview)
+2. [Overview](#overview)
+  * [Data Access REST API](#data-access-rest-api)
+    * [Interaction with WaCoDiS Core Engine]()
+    * [Interaction with WaCoDiS Metadata Connector]()
 3. [Installation / Building Information](#installation--building-information)
   * [Build from Source](#build-from-source)
   * [Build using Docker](#build-using-docker)
@@ -77,9 +80,28 @@ The purpose of WaCoDIS is to store metadata of available dataset
 modules  
 API  (impl + app)
 DataWrapper (elasticsearch conectivity)
-* OpenAPI Specification
-endpoints, typical usage (wacodis context)
-While the data access web service is running the API description is available at _localhost:8080_.  
+### Data Access REST API  
+
+WaCoDIS Data Access provides a REST API for managing DataEnvelopes and searching Resources.  
+  
+**Endpoints:**  
+  
+* **/resources/search**  
+Used for finding available Resources that match SubsetDefinitions. The body for a **HTTP-Post** request contains a DataResourceAccessSearchBody which defines a spatial extent, a time frame and a list of SubsetDefinition. The service's response is a map which uses the transmitted SubsetDefinitions as keys and lists of matching resources as values. Resources can be either GetResources which contain a URL that references the actual data directly or a PostResources which contains a URL and a HTTP-Post body.
+* **/dataenvelopes**  
+Used for adding new DataEnvelopes to the metadata storage. The DataEnvelope to add is contained in the body of a **HTTP-Post** request. The _identifier_ attribute of a DataEnvelope is assigned by the Data Access Service. The response contains the newly added DataEnvelope including the assigned identifier.
+* **/dataenvelopes/{id}**  
+The **HTTP-GET** method of this endpoint is used for retrieving a DataEnvelope by its identifier (which was assigned by Data Access when adding the DataEnvelope to the metadata storage).  
+The **HTTP-PUT** method of this endpoint is used for updating stored DataEnvelopes which already have an indentifier assigned by Data Access.   
+The **HTTP-Delete** method of this endpoint is used for removing DataEnvelopes from metadata storage.
+* **/dataenvelopes/search**  
+Used for finding stored DataEnvelopes. A DataEnvelope is send to the service via **HTTP-POST** request. The service checks if a DataEnvelope with the same values is already exisiting in the metadata storage. If a matching DataEnvelope is found the indentifier ot this DataEnvelope is returned by the serivce.  
+
+#### Interaction with WaCoDiS Core Engine  
+  
+#### Interaction with WaCoDiS Metadata Connector
+
+The OpenAPI Specfication of the data access API can be found in the [WaCoDiS APIs and Workflows repository](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/data-access-api.yml). While the data access web service is [running](#run-data-access) interactive API description is available at _localhost:8080_. The OpenAPI specifications for data types (DataEnvelope, SubsetDefinition, Resource) can be found in the [WaCoDiS APIs and Workflows repository](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml).
   
 **Utilized technologies**
 * Java  
