@@ -7,6 +7,7 @@ This projects implements a REST API that persists and manages metadata from all 
 1. [WaCoDiS Project Information](#wacodis-project-information)
   * [Architecture Overview](#architecture-overview)
 2. [Overview](#overview)
+  * [Modules](#modules)
   * [Data Access REST API](#data-access-rest-api)
     * [Interaction with WaCoDiS Core Engine](#interaction-with-wacodis-core-engine)
     * [Interaction with WaCoDiS Metadata Connector](#interaction-with-wacodis-metadata-connector)
@@ -76,11 +77,21 @@ The messages exchanged via message broker follow a domain model that has been de
 ## Overview  
 TODO
 * Brief component description
-The purpose of WaCoDIS is to store metadata of available dataset 
+The purpose of WaCoDIS is to store metadata of available dataset
 
-modules  
-API  (impl + app)
-DataWrapper (elasticsearch conectivity)
+### Modules 
+The WaCoDiS Data Access project consists of three (maven) modules. 
+
+**WaCoDiS Data Access API**  
+This module implements the [Data Access REST API](#data-access-rest-api) specified with [OpenAPI](https://swagger.io/docs/specification/about/).  
+**WaCoDiS Data Access DataWrapper**  
+This module is responsible for retrieving, modifying and searching data from the metadata storage (Elasticsearch Index).
+Furthermore, the Data Wrapper module implements the conversions of DataEnvelopes (Metadata) that are stored in the metadata storage into Resources that contain a reference to the usable data set.  
+[The conversion is currently not yet implemented for all data types](#creation-of-resources-from-dataenvelopes).  
+The connection to Elasticsearch is realized with [Elasticsearch Java High Level REST Client](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html).  
+**WaCoDIS Data Access Models**  
+This module contains Java classes that reflect the basic data model. This includes the data types specified with OpenAPI in the _WaCoDiS apis-and workflows_ repository.
+
 ### Data Access REST API  
 
 WaCoDIS Data Access provides a REST API for managing DataEnvelopes and searching Resources.  
@@ -115,6 +126,8 @@ WaCoDiS Data Access is a standalone application built with the [spring boot](htt
 For storing metadata of available data set WaCoDiS uses the search engine technology [Elasticsearch](https://www.elastic.co/downloads/elasticsearch). Elasticsearch is not part of WaCoDiS Data Access and therefore must be deployed separately in order [to run this application](#preconditions).  
 * RabbitMQ  
 For communication with other WaCoDiS components of the WaCoDiS system the message broker [RabbitMQ](https://www.rabbitmq.com/) is utilized. RabbitMQ is not part of WaCoDiS Data Access and therefore [must be deployed separately](#preconditions) if WaCoDIS Data Access is deployed as part of the whole WaCoDiS system. 
+* OpenAPI  
+OpenAPI is used for the specification of Data Access REST API and data models.  
 * JSON  
 The WaCoDiS Data Access RESTful API serves data as json. 
 
