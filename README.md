@@ -7,6 +7,7 @@ This projects implements a REST API that persists and manages metadata from all 
 1. [WaCoDiS Project Information](#wacodis-project-information)
   * [Architecture Overview](#architecture-overview)
 2. [Overview](#overview)
+  * [Core Data Types](#core-data-types)
   * [Modules](#modules)
   * [Data Access REST API](#data-access-rest-api)
     * [Interaction with WaCoDiS Core Engine](#interaction-with-wacodis-core-engine)
@@ -71,13 +72,26 @@ For each product service backend a certain helper component will import the eart
 </p>
 
 The WaCoDiS monitoring system architecture is designed in a modular fashion and follows a  publish/subscribe pattern. The different components are loosely connected to each other via messages that are passed through a message broker. Each module subscribes to messages of interest at the message broker. This approach enables an independent and asynchronous handling of specific events.  
-
+  
+  
 The messages exchanged via message broker follow a domain model that has been defined by the OpenAPI specification. You can find these definitions and other documentation in the [apis-and-workflows repo](https://github.com/WaCoDiS/apis-and-workflows).
 
 ## Overview  
-TODO
-* Brief component description
-The purpose of WaCoDIS is to store metadata of available dataset
+WaCoDiS Data Access offers the capabilities to search the metadata of available data sets. For metadata that match the search criteria, the WaCoDiS Data Access generates resources that reference the actual data sets. WaCoDiS Data Access comprises a storage that contains the metadata of the available data sets. The metadata storage is realized by an Elasticsearch search index. WaCoDiS Data Access is a web service that allows not only the search for resources but also data management (add, update or delete metadata). Within the WaCoDiS system, WaCoDiS Data Access is used to obtain retrievable resources for input data required for automated data processings.
+
+### Core Data Types
+* **DataEnvelope**  
+The metadata about an existing dataset is described by the _AbstractDataEnvelope_ (DataEnvelope) data format. There are different subtypes for different data sources (e.g _SensorWebDataEnvelope_ or _CopernicusDataEnvelope).    
+* **Resource**  
+Access to the actual data records is described by the _AbstractResource_ (Resources) data format. There are the subtypes _GetResources_ and _PostResources_. A GetResources contains only a URL while a PostResource contains a URL and a body for a HTTP-POST request.  
+* **Job**  
+A _WacodisJobDefinition_ (Job) describes a processing that is to be executed automatically according to a defined schedule. The WacodisJobDefinition contains (among other attributes) the input data required for execution, as well as the time frame and area of interest. 
+* **SubsetDefinition**  
+The required inputs of a job are described by the data format _AbstractSubsetDefinition_ (SubsetDefinition). Ther are different subtypes for different types of input data (e.g _SensorWebSubsetDefinition_ or _CopernicusSubsetDefinition_). There is usually a subtype of AbstractSubsetDefinition that corresponds to a subtype of AbstractDataEnvelope.  
+  
+In the terminology of WaCoDiS:  WaCoDiS Data Access' purpose is to find stored DataEnvelopes that match specific SubsetDefinitions.  If suitable DataEnvelopes are found, the WaCoDiS Data Access creates GetResources or PostResources which are used to retrieve the actual data. The search criteria usually result from the attributes of a WacodisJobDefinition.  
+   
+The formal definition of these data types is done with OpenAPI and is available in the [apis-and-workflows repo](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml).
 
 ### Modules 
 The WaCoDiS Data Access project consists of three (maven) modules. 
