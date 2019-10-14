@@ -96,14 +96,14 @@ The formal definition of these data types is done with OpenAPI and is available 
 ### Modules 
 The WaCoDiS Data Access project consists of three (maven) modules. 
 
-**WaCoDiS Data Access API**  
+* **WaCoDiS Data Access API**  
 This module implements the [Data Access REST API](#data-access-rest-api) specified with [OpenAPI](https://swagger.io/docs/specification/about/).  
-**WaCoDiS Data Access DataWrapper**  
+* **WaCoDiS Data Access DataWrapper**  
 This module is responsible for retrieving, modifying and searching data from the metadata storage (Elasticsearch Index).
 Furthermore, the Data Wrapper module implements the conversions of DataEnvelopes (Metadata) that are stored in the metadata storage into Resources that contain a reference to the usable data set.  
 [The conversion is currently not yet implemented for all data types](#creation-of-resources-from-dataenvelopes).  
 The connection to Elasticsearch is realized with [Elasticsearch Java High Level REST Client](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html).  
-**WaCoDIS Data Access Models**  
+* **WaCoDIS Data Access Models**  
 This module contains Java classes that reflect the basic data model. This includes the data types specified with OpenAPI in the _WaCoDiS apis-and workflows_ repository.
 
 ### Data Access REST API  
