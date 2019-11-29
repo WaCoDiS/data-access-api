@@ -38,7 +38,6 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.LoggerFactory;
-import de.wacodis.data.access.datawrapper.resourceconverter.DataEnvelopeToResourceConverter;
 import de.wacodis.data.access.datawrapper.resourceconverter.DataEnvelopeToResourceConversionHelper;
 
 /**
