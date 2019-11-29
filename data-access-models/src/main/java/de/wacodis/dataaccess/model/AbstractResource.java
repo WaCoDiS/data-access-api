@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
  * abstract type for a remote resource that can be identified by an URL
  */
 @ApiModel(description = "abstract type for a remote resource that can be identified by an URL")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-29T10:16:33.967+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-29T15:46:46.355+01:00[Europe/Berlin]")
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "method", visible = true)
 @JsonSubTypes({
