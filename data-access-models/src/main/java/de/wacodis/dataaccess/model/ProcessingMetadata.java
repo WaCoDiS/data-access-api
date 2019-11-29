@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
  * extensible datatype for metadata that describes the processing of a product 
  */
 @ApiModel(description = "extensible datatype for metadata that describes the processing of a product ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-26T12:42:51.508+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-29T10:16:33.967+01:00[Europe/Berlin]")
 
 public class ProcessingMetadata  implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -29,9 +29,6 @@ public class ProcessingMetadata  implements Serializable {
 
   @JsonProperty("created")
   private DateTime created = null;
-
-  @JsonProperty("modified")
-  private DateTime modified = null;
 
   public ProcessingMetadata areaOfInterest(AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
     this.areaOfInterest = areaOfInterest;
@@ -99,28 +96,6 @@ public class ProcessingMetadata  implements Serializable {
     this.created = created;
   }
 
-  public ProcessingMetadata modified(DateTime modified) {
-    this.modified = modified;
-    return this;
-  }
-
-  /**
-   * time on which the dataset was modified last 
-   * @return modified
-  **/
-  @ApiModelProperty(required = true, value = "time on which the dataset was modified last ")
-  @NotNull
-
-  @Valid
-
-  public DateTime getModified() {
-    return modified;
-  }
-
-  public void setModified(DateTime modified) {
-    this.modified = modified;
-  }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -133,13 +108,12 @@ public class ProcessingMetadata  implements Serializable {
     ProcessingMetadata processingMetadata = (ProcessingMetadata) o;
     return Objects.equals(this.areaOfInterest, processingMetadata.areaOfInterest) &&
         Objects.equals(this.timeFrame, processingMetadata.timeFrame) &&
-        Objects.equals(this.created, processingMetadata.created) &&
-        Objects.equals(this.modified, processingMetadata.modified);
+        Objects.equals(this.created, processingMetadata.created);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(areaOfInterest, timeFrame, created, modified);
+    return Objects.hash(areaOfInterest, timeFrame, created);
   }
 
   @Override
@@ -150,7 +124,6 @@ public class ProcessingMetadata  implements Serializable {
     sb.append("    areaOfInterest: ").append(toIndentedString(areaOfInterest)).append("\n");
     sb.append("    timeFrame: ").append(toIndentedString(timeFrame)).append("\n");
     sb.append("    created: ").append(toIndentedString(created)).append("\n");
-    sb.append("    modified: ").append(toIndentedString(modified)).append("\n");
     sb.append("}");
     return sb.toString();
   }

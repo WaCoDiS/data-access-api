@@ -15,9 +15,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * DwdDataEnvelope
+ * describes specific information about a dataset from the German Weather Services
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-26T12:42:51.508+01:00[Europe/Berlin]")
+@ApiModel(description = "describes specific information about a dataset from the German Weather Services")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-29T10:16:33.967+01:00[Europe/Berlin]")
 
 public class DwdDataEnvelope extends AbstractDataEnvelope implements Serializable {
   private static final long serialVersionUID = 1L;
