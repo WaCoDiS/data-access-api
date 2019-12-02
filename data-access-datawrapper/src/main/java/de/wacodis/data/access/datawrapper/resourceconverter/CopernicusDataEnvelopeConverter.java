@@ -24,6 +24,7 @@ public class CopernicusDataEnvelopeConverter implements DataEnvelopeToResourceCo
         String productID = dataEnvelope.getDatasetId().toString();
         String url = SCIEHUB_URL + "('" + productID + "')/$value"; //TODO reflect portal and make url configurable
         resource.setUrl(url);
+        resource.setMethod(AbstractResource.MethodEnum.GETRESOURCE);
         
         return resource;
     }
