@@ -95,13 +95,6 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         GetResponse response = this.elasticsearchClient.get(request, RequestOptions.DEFAULT);
         Optional<AbstractDataEnvelope> responseDataEnvelope = processGetResponse(response);
 
-        //convert to indexed AreaOfInterest to default AreaOfInterest (Wacodis Models)
-        if (responseDataEnvelope.isPresent()) {
-            GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest) responseDataEnvelope.get().getAreaOfInterest();
-            AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(geoshapeAreaOfInterest);
-            responseDataEnvelope.get().setAreaOfInterest(defaultAreaOfInterest);
-        }
-
         return responseDataEnvelope;
     }
 
