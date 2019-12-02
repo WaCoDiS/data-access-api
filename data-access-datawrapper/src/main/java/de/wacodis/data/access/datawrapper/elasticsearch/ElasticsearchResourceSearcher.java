@@ -39,6 +39,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.LoggerFactory;
 import de.wacodis.data.access.datawrapper.resourceconverter.DataEnvelopeToResourceConversionHelper;
+import org.elasticsearch.action.index.IndexResponse;
 
 /**
  *
@@ -57,7 +58,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     private final ElasticsearchQueryProvider queryProvider;
 
     /**
-     * 
+     *
      * @param elasticsearchClient elasticsearch high level REST client
      * @param indexName elasticsearch index
      * @param requestTimeout_millis timeout per request
@@ -187,6 +188,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             ObjectMapper responseDeserializer = this.jsonDeserializerFactory.getObjectMapper(jsonResponse);
             AbstractDataEnvelope responseDataEnvelope = responseDeserializer.readValue(jsonResponse, AbstractDataEnvelope.class);
             responseDataEnvelope.setAreaOfInterest(getDefaultAreaOfInterest(responseDataEnvelope.getAreaOfInterest()));
+            responseDataEnvelope.setIdentifier(hit.getId());
             responseDataEnvelopes.add(responseDataEnvelope);
         }
 
@@ -196,12 +198,12 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     private List<AbstractResource> getResourcesForResponse(ResourceSearchResponseContainer response) {
         List<AbstractResource> resources = new ArrayList<>();
         List<AbstractDataEnvelope> responseDataEnvelopes = response.getResponseDataEnvelopes();
-        
-        for(AbstractDataEnvelope dataEnvelope : responseDataEnvelopes){
+
+        for (AbstractDataEnvelope dataEnvelope : responseDataEnvelopes) {
             AbstractResource resource = DataEnvelopeToResourceConversionHelper.convertToResource(dataEnvelope);
             resources.add(resource);
         }
-        
+
         return resources;
     }
 
@@ -216,7 +218,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
 
         return failures;
     }
-    
+
     private String getExceptionMessageForFailures(List<Exception> failures) {
         StringBuilder sb = new StringBuilder();
 
@@ -242,4 +244,5 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             return areaOfInterest;
         }
     }
+
 }
