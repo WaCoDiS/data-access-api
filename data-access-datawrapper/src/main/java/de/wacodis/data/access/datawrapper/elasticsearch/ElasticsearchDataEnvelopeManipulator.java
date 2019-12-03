@@ -110,7 +110,11 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
             IndexResponse response = this.elasticsearchClient.index(request, RequestOptions.DEFAULT);
             String dataEnvelopeIdentifier = getIDFromIndexResponse(response);
             dataEnvelope.setIdentifier(dataEnvelopeIdentifier);
-            
+
+            if (dataEnvelope.getAreaOfInterest() instanceof GeoShapeCompatibilityAreaOfInterest) {
+                dataEnvelope.setAreaOfInterest(AreaOfInterestConverter.getDefaultAreaOfInterest((GeoShapeCompatibilityAreaOfInterest)dataEnvelope.getAreaOfInterest()));
+            }
+
             return new RequestResponse(RequestResult.CREATED, Optional.of(dataEnvelope));
         } catch (Exception ex) {
             throw new IOException("could not create AbstractDataEnvelope,  raised unexpected exception", ex);
@@ -122,24 +126,23 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         try {
             UpdateRequest request = buildUpdateRequest(identifier, dataEnvelope);
             UpdateResponse response = this.elasticsearchClient.update(request, RequestOptions.DEFAULT);
-            
-            
+
             switch (response.status()) {
-                case OK:            
-                    if(response.getGetResult().isExists() && !response.getGetResult().isSourceEmpty()){
+                case OK:
+                    if (response.getGetResult().isExists() && !response.getGetResult().isSourceEmpty()) {
                         String updatedDataEnvelopeJson = response.getGetResult().sourceAsString();
                         ObjectMapper deserializer = this.jsonDeserializerFactory.getObjectMapper(updatedDataEnvelopeJson);
                         AbstractDataEnvelope updatedDataEnvelope = deserializer.readValue(updatedDataEnvelopeJson, AbstractDataEnvelope.class);
                         //set areaOfInterest conforming to Wacodis Data Models
-                        GeoShapeCompatibilityAreaOfInterest compatibilityAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest)updatedDataEnvelope.getAreaOfInterest();
+                        GeoShapeCompatibilityAreaOfInterest compatibilityAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest) updatedDataEnvelope.getAreaOfInterest();
                         AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(compatibilityAreaOfInterest);
                         updatedDataEnvelope.setAreaOfInterest(defaultAreaOfInterest);
                         updatedDataEnvelope.setIdentifier(response.getId());
-                        
+
                         return new RequestResponse<>(RequestResult.MODIFIED, Optional.of(updatedDataEnvelope));
-                        
-                    }else{
-                        throw new IOException("AbstractDataEnvelope with identifier " + identifier + " updated in index "+ this.indexName +" but response did not contain updated resource");
+
+                    } else {
+                        throw new IOException("AbstractDataEnvelope with identifier " + identifier + " updated in index " + this.indexName + " but response did not contain updated resource");
                     }
                 case NOT_FOUND:
                     return new RequestResponse<>(RequestResult.MODIFIED, Optional.empty());
@@ -150,8 +153,8 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         } catch (Exception ex) {
             throw new IOException("error while updating AbstractDataEnvelope with identifier " + identifier + ",  raised unexpected exception", ex);
         }
-    }   
-    
+    }
+
     @Override
     public RequestResult deleteDataEnvelope(String identifier) throws IOException {
         try {
@@ -183,7 +186,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
         request.type(this.type);
         request.source(serializedDataEnvelope);
         request.timeout(this.requestTimeout);
-        
+
         return request;
     }
 
