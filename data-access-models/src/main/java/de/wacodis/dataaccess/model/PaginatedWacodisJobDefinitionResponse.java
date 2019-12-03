@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
  * represents a paginated reponse for WaCoDiS job definitions
  */
 @ApiModel(description = "represents a paginated reponse for WaCoDiS job definitions")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-11-29T15:46:46.355+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-12-03T09:18:03.201+01:00[Europe/Berlin]")
 
 public class PaginatedWacodisJobDefinitionResponse extends PaginatedResponse implements Serializable {
   private static final long serialVersionUID = 1L;
