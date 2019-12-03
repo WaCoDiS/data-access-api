@@ -32,7 +32,7 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
             //QueryBuilder productCollectionQuery = QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, wacEnv.getProductCollection());
             QueryBuilder processQuery = QueryBuilders.termQuery(PROCESS_ATTRIBUTE, wacEnv.getProcess());
             queries.add(processQuery);
-            QueryBuilder backendTypeQuery = QueryBuilders.termQuery(BACKENDTYPE_ATTRIBUTE, wacEnv.getBackendType().getBackendType().name());
+            QueryBuilder backendTypeQuery = QueryBuilders.termQuery(BACKENDTYPE_ATTRIBUTE, wacEnv.getServiceDefinition().getBackendType().name());
 
             if (wacEnv.getProductType() != null && !wacEnv.getProductType().trim().isEmpty()) {
                 QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
