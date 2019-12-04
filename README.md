@@ -150,7 +150,10 @@ The WaCoDiS Data Access RESTful API serves data as json.
 In order to build Data Access from source _Java Development Kit_ (JDK) must be available. Data Access is tested with Oracle JDK 8 and OpenJDK 8. Unless stated otherwise later JDK versions can be used.  
 Data Access is a [maven project](https://maven.apache.org/install.html). To build this project from source maven has to be installed.  
   
-1. Build Data Models
+1. (optional) Build Data Models
+
+The _Wacodis Data Access Models_ submodule already contains java classes that are genereated from [Wacodis Schemas](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml). To manually generate classes from the schema definitions (e.g. to reflect changes to the schemas) follow the steps below. 
+
   * change directory to _Data Access Models_ subfolder (_data-access-api/data-access-models_)
   * run `mvn clean install -p download-generate-models`
   
