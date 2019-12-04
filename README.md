@@ -252,22 +252,17 @@ Data Access must be modified if new types of DataEnvelope or SubsetDefintion are
 
 #### Pending Developments
 ##### Creation Of Resources from DataEnvelopes
-The _/resources/search_ endpoint of Data Access API demands the conversion from DataEnvelopes (metadata stored in Elasticsearch) to Resources (provides a URL for the actual data). This conversion is handled by a implementation of the interface [ResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/master/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/ResourceSearchResponseToResourceConverter.java). Currently the only implementation is [SimpleResourceSearchResponseToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/SimpleResourceSearchResponseToResourceConverter.java) which does not yet feature all envisaged functionalities.  
-* no support for _GdiDeDataEnvelopes_ (support for _OGC Web Feature Service_ (WFS) is missing)  
+The _/resources/search_ endpoint of Data Access API demands the conversion from DataEnvelopes (metadata stored in Elasticsearch) to Resources (provides a URL for the actual data). This conversion is handled by a implementation of the interface [DataEnvelopeToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/DataEnvelopeToResourceConverter.java). Each subtype of _AbstractDataEnvelope_ needs an implementation of this interface. Currently the only working implementation is [CopernicusDataEnvelopeConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/CopernicusDataEnvelopeConverter.java) which handles the conversion from _CopernicusDataEnvelope_ to a subtype of _AbstractResource_. Further information on implementing _DataEnvelopeToResourceConcerter_ can be found in the [wiki](https://github.com/WaCoDiS/data-access-api/wiki/Extending-Data-Access#dataenvelopetoresourceconverter).
+   
+   
+*Missing Features* 
+* support for  subtypes of _AbstractDataEnvelope_ other than _CopernicusDataEnvelope_
+* [Copernicus Open Access Hub](https://scihub.copernicus.eu/) is the only supported data portal for sentinel imagery. 
   
-Currently only a resource containing the service url is returned for _GdiDeDataEnvelopes_. The full implementation should produce a WFS _getFeature_-request that takes into account the time frame and extent, as well as other attributes (e.g. feature type).
-
-* no support for SensorWebDataEnvelopes (support for _OGC Sensor Oberservation Service_ (SOS) is missing)  
-  
-Currently only a resource containing the service url is returned for _SensorWebDataEnvelopes_. The full implementation should produce a SOS _getOverservation_-request that takes into account the time frame and extent, as well as other attributes (e.g. procedure).
-  
-
-* [Copernicus Open Access Hub](https://scihub.copernicus.eu/) is the only supported data portal for sentinel imagery  
-  
-Support for [CODE-DE](https://code-de.org/en) is envisaged but not implemented.   To support further data portals than Copernicus Open Access Hub and CODE-De, in addtion to changes to the resources converter, the [WaCoDiS schema definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) have to be extended (enum CopernicusDataEnvelope.portal).  
+Support for [CODE-DE](https://code-de.org/en) is envisaged but not implemented. To support CODE-DE the [CopernicusDataEnvelopeConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/CopernicusDataEnvelopeConverter.java) must be edited. To support further data portals than Copernicus Open Access Hub and CODE-De, in addtion to changes to the _DataEnvelopeToResourceConverter_, the [WaCoDiS schema definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) have to be extended (enum CopernicusDataEnvelope.portal) first.  
 
 ### Branching
-The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development.
+The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development. It is advised to create new, seperate branches for new features (e.g _feature/myNewFeature_).
 
 ### License and Third Party Lib POM Plugins
 [optional]
