@@ -5,6 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.resourceconverter;
 
+import de.wacodis.data.access.datawrapper.ResourceSearchContext;
 import de.wacodis.dataaccess.model.AbstractResource;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
 import de.wacodis.dataaccess.model.GetResource;
@@ -18,7 +19,7 @@ public class CopernicusDataEnvelopeConverter implements DataEnvelopeToResourceCo
      private final static String SCIEHUB_URL = "https://scihub.copernicus.eu/dhus/odata/v1/Products";
 
     @Override
-    public AbstractResource convertToResource(CopernicusDataEnvelope dataEnvelope) {
+    public AbstractResource convertToResource(CopernicusDataEnvelope dataEnvelope, ResourceSearchContext searchContext) {
         GetResource resource = new GetResource();
 
         String productID = dataEnvelope.getDatasetId().toString();

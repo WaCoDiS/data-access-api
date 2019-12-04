@@ -5,6 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.resourceconverter;
 
+import de.wacodis.data.access.datawrapper.ResourceSearchContext;
 import de.wacodis.dataaccess.model.AbstractResource;
 import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 
@@ -12,7 +13,7 @@ import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 public class SensorWebDataEnvelopeConverter implements DataEnvelopeToResourceConverter<SensorWebDataEnvelope> {
 
     @Override
-    public AbstractResource convertToResource(SensorWebDataEnvelope dataEnvelope) {
+    public AbstractResource convertToResource(SensorWebDataEnvelope dataEnvelope, ResourceSearchContext context) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

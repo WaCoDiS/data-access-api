@@ -39,7 +39,6 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.LoggerFactory;
 import de.wacodis.data.access.datawrapper.resourceconverter.DataEnvelopeToResourceConversionHelper;
-import org.elasticsearch.action.index.IndexResponse;
 
 /**
  *
@@ -200,7 +199,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
         List<AbstractDataEnvelope> responseDataEnvelopes = response.getResponseDataEnvelopes();
 
         for (AbstractDataEnvelope dataEnvelope : responseDataEnvelopes) {
-            AbstractResource resource = DataEnvelopeToResourceConversionHelper.convertToResource(dataEnvelope);
+            AbstractResource resource = DataEnvelopeToResourceConversionHelper.convertToResource(dataEnvelope, response.getSearchContext());
             resources.add(resource);
         }
 

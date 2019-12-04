@@ -5,6 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.resourceconverter;
 
+import de.wacodis.data.access.datawrapper.ResourceSearchContext;
 import de.wacodis.dataaccess.model.AbstractResource;
 import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
 
@@ -12,7 +13,7 @@ import de.wacodis.dataaccess.model.GdiDeDataEnvelope;
 public class GdiDeDataEnvelopeConverter implements DataEnvelopeToResourceConverter<GdiDeDataEnvelope> {
 
     @Override
-    public AbstractResource convertToResource(GdiDeDataEnvelope dataEnvelope) {
+    public AbstractResource convertToResource(GdiDeDataEnvelope dataEnvelope, ResourceSearchContext searchContext) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -5,6 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.resourceconverter;
 
+import de.wacodis.data.access.datawrapper.ResourceSearchContext;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractResource;
 
@@ -15,7 +16,7 @@ import de.wacodis.dataaccess.model.AbstractResource;
  */
 public interface DataEnvelopeToResourceConverter<T extends AbstractDataEnvelope> {
     
-    AbstractResource convertToResource(T dataEnvelope);
+    AbstractResource convertToResource(T dataEnvelope, ResourceSearchContext context);
     
     Class<T>  supportedDataEnvelopeType();
 }

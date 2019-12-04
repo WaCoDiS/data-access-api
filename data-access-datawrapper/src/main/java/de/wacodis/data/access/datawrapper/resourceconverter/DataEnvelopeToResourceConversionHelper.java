@@ -5,6 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.resourceconverter;
 
+import de.wacodis.data.access.datawrapper.ResourceSearchContext;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractResource;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
@@ -21,16 +22,16 @@ public class DataEnvelopeToResourceConversionHelper {
     private static final DataEnvelopeToResourceConverter<GdiDeDataEnvelope> GDIDECONVERTER = new GdiDeDataEnvelopeConverter();
     private static final DataEnvelopeToResourceConverter<SensorWebDataEnvelope> SENSORWEBCONVERTER = new SensorWebDataEnvelopeConverter();
 
-    public static AbstractResource convertToResource(AbstractDataEnvelope dataEnvelope) {
+    public static AbstractResource convertToResource(AbstractDataEnvelope dataEnvelope, ResourceSearchContext searchContext) {
         AbstractResource resource = null;
 
         //to be extended for further subtypes of AbstractDataEnvelope
         if (dataEnvelope instanceof CopernicusDataEnvelope) {
-            resource = COPERNICUSCONVERTER.convertToResource((CopernicusDataEnvelope) dataEnvelope);
+            resource = COPERNICUSCONVERTER.convertToResource((CopernicusDataEnvelope) dataEnvelope, searchContext);
         } else if (dataEnvelope instanceof GdiDeDataEnvelope) {
-            resource = GDIDECONVERTER.convertToResource((GdiDeDataEnvelope) dataEnvelope);
+            resource = GDIDECONVERTER.convertToResource((GdiDeDataEnvelope) dataEnvelope, searchContext);
         } else if (dataEnvelope instanceof SensorWebDataEnvelope) {
-            resource = SENSORWEBCONVERTER.convertToResource((SensorWebDataEnvelope) dataEnvelope);
+            resource = SENSORWEBCONVERTER.convertToResource((SensorWebDataEnvelope) dataEnvelope, searchContext);
         } else {
             throw new IllegalArgumentException("unable to convert AbstractDataEnvelope " + dataEnvelope.getIdentifier() + " to AbstractResource, no converter for type " + dataEnvelope.getClass().getSimpleName());
         }
