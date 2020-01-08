@@ -5,10 +5,10 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider;
 
+import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider.productbackend.BackendTypeFilterFactory;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -21,23 +21,20 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
 
     private final static String PRODUCTTYPE_ATTRIBUTE = "productType";
     private final static String PROCESS_ATTRIBUTE = "process";
-    private final static String BACKENDTYPE_ATTRIBUTE = "backendType";
-
+    private final static String DATAENVELOPEREFERENCES_ATTRIBUTE = "dataEnvelopeReferences";
     @Override
     public List<QueryBuilder> buildFiltersForDataEnvelope(AbstractDataEnvelope envelope) {
         if (envelope instanceof WacodisProductDataEnvelope) {
             WacodisProductDataEnvelope wacEnv = (WacodisProductDataEnvelope) envelope;
             List<QueryBuilder> queries = new ArrayList<>();
 
-            //QueryBuilder productCollectionQuery = QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, wacEnv.getProductCollection());
             QueryBuilder processQuery = QueryBuilders.termQuery(PROCESS_ATTRIBUTE, wacEnv.getProcess());
             queries.add(processQuery);
-            QueryBuilder backendTypeQuery = QueryBuilders.termQuery(BACKENDTYPE_ATTRIBUTE, wacEnv.getServiceDefinition().getBackendType().name());
-
-            if (wacEnv.getProductType() != null && !wacEnv.getProductType().trim().isEmpty()) {
-                QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
-                queries.add(productTypeQuery);
-            }
+            QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
+            queries.add(productTypeQuery);
+            QueryBuilder dataEnvReferencesQuery = QueryBuilders.termsQuery(DATAENVELOPEREFERENCES_ATTRIBUTE, wacEnv.getDataEnvelopeReferences()); // TODO should be 'and' instead of 'or' operator
+            queries.add(dataEnvReferencesQuery);
+            queries.addAll(BackendTypeFilterFactory.getFilterForBackend(wacEnv.getServiceDefinition()));
 
             return queries;
         } else {
@@ -45,4 +42,14 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
         }
     }
 
+    
+    private List<QueryBuilder> getQueryForDataEnvelopeReference(List<String> dataEnvelopeIDs){
+        List<QueryBuilder> queries = new ArrayList<>();
+        
+        for(String dataEnvelopeID : dataEnvelopeIDs){
+            queries.add(QueryBuilders.termQuery(DATAENVELOPEREFERENCES_ATTRIBUTE, dataEnvelopeID));
+        }
+        
+        return queries;
+    }
 }
