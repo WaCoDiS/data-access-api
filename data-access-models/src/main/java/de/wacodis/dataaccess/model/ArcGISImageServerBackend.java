@@ -3,8 +3,8 @@ package de.wacodis.dataaccess.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import de.wacodis.dataaccess.model.AbstractBackend;
+import de.wacodis.dataaccess.model.ProductBackend;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
  * contains specific information about a ArcGIS Image Server product backend
  */
 @ApiModel(description = "contains specific information about a ArcGIS Image Server product backend")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-12-03T09:18:03.201+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-01-08T12:30:08.823+01:00[Europe/Berlin]")
 
 public class ArcGISImageServerBackend extends AbstractBackend implements Serializable {
   private static final long serialVersionUID = 1L;

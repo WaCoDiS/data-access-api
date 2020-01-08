@@ -26,7 +26,7 @@ public class WacodisProductDataSubsetDefinitionElasticsearchFilterProvider imple
     @Override
     public List<QueryBuilder> buildFiltersForSubsetDefinition(AbstractSubsetDefinition subset) {
         if (subset instanceof WacodisProductSubsetDefinition) {
-            List<QueryBuilder> queries = new ArrayList<>();
+            /*List<QueryBuilder> queries = new ArrayList<>();
             WacodisProductSubsetDefinition productSubset = (WacodisProductSubsetDefinition) subset;
 
             QueryBuilder serviceURLFilter = QueryBuilders.termQuery(SERVICEURL_ATTRIBUTE, productSubset.getServiceUrl());
@@ -38,8 +38,8 @@ public class WacodisProductDataSubsetDefinitionElasticsearchFilterProvider imple
                 QueryBuilder productTypeFilter = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, productSubset.getProductType());
                 queries.add(productTypeFilter);
             }
-
-            return queries;
+            */
+            return new ArrayList<QueryBuilder>();
         } else {
             throw new IllegalArgumentException("wrong type of SubsetDefinition, subset is of type " + subset.getClass().getSimpleName() + ", expected " + DwdSubsetDefinition.class.getSimpleName());
         }

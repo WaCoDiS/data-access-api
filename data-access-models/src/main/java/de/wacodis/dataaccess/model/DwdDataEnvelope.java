@@ -18,7 +18,7 @@ import javax.validation.constraints.*;
  * describes specific information about a dataset from the German Weather Services
  */
 @ApiModel(description = "describes specific information about a dataset from the German Weather Services")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2019-12-03T09:18:03.201+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-01-08T12:30:08.823+01:00[Europe/Berlin]")
 
 public class DwdDataEnvelope extends AbstractDataEnvelope implements Serializable {
   private static final long serialVersionUID = 1L;
