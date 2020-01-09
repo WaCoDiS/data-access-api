@@ -22,6 +22,7 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
     private final static String PRODUCTTYPE_ATTRIBUTE = "productType";
     private final static String PROCESS_ATTRIBUTE = "process";
     private final static String DATAENVELOPEREFERENCES_ATTRIBUTE = "dataEnvelopeReferences";
+
     @Override
     public List<QueryBuilder> buildFiltersForDataEnvelope(AbstractDataEnvelope envelope) {
         if (envelope instanceof WacodisProductDataEnvelope) {
@@ -32,9 +33,11 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
             queries.add(processQuery);
             QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
             queries.add(productTypeQuery);
-            QueryBuilder dataEnvReferencesQuery = QueryBuilders.termsQuery(DATAENVELOPEREFERENCES_ATTRIBUTE, wacEnv.getDataEnvelopeReferences()); // TODO should be 'and' instead of 'or' operator
-            queries.add(dataEnvReferencesQuery);
-            queries.addAll(BackendTypeFilterFactory.getFilterForBackend(wacEnv.getServiceDefinition()));
+            queries.addAll(BackendTypeFilterFactory.getFilterForBackend(wacEnv.getServiceDefinition())); //match backend (serviceDefinition)
+
+            List<QueryBuilder> dataEnvReferencesQuery = QueryBuilders.boolQuery().must(); //match all dataenvelope references
+            dataEnvReferencesQuery.addAll(getQueriesForDataEnvelopeReferences(wacEnv.getDataEnvelopeReferences()));
+            queries.addAll(dataEnvReferencesQuery);
 
             return queries;
         } else {
@@ -42,14 +45,13 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
         }
     }
 
-    
-    private List<QueryBuilder> getQueryForDataEnvelopeReference(List<String> dataEnvelopeIDs){
+    private List<QueryBuilder> getQueriesForDataEnvelopeReferences(List<String> dataEnvelopeIDs) {
         List<QueryBuilder> queries = new ArrayList<>();
-        
-        for(String dataEnvelopeID : dataEnvelopeIDs){
+
+        for (String dataEnvelopeID : dataEnvelopeIDs) {
             queries.add(QueryBuilders.termQuery(DATAENVELOPEREFERENCES_ATTRIBUTE, dataEnvelopeID));
         }
-        
+
         return queries;
     }
 }

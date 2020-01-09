@@ -29,7 +29,10 @@ public class ArcGISImageServerBackendFilterProvider implements ProductBackendFil
         queries.addAll(abstractFilterProvider.getFiltersForBackend(backend)); //filters for attributes of super type
         queries.add(QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, backend.getProductCollection()));
         queries.add(QueryBuilders.termQuery(BASEURL_ATTRIBUTE, backend.getBaseUrl()));
-        queries.add(QueryBuilders.termsQuery(SERVICETYPES_ATTRIBUTE, backend.getServiceTypes())); // TODO should be 'and' instead of 'or' operator
+        
+        List<QueryBuilder> serviceTypeQuery = QueryBuilders.boolQuery().filter(); //match all service types
+        serviceTypeQuery.addAll(getQueriesForServiceTypes(backend.getServiceTypes()));
+        queries.addAll(serviceTypeQuery);
 
         return queries;
     }
@@ -37,6 +40,16 @@ public class ArcGISImageServerBackendFilterProvider implements ProductBackendFil
     @Override
     public Class<ArcGISImageServerBackend> supportedBackendType() {
         return ArcGISImageServerBackend.class;
+    }
+
+    private List<QueryBuilder> getQueriesForServiceTypes(List<String> serviceTypes) {
+        List<QueryBuilder> queries = new ArrayList<>();
+
+        serviceTypes.forEach((serviceType) -> {
+            queries.add(QueryBuilders.termQuery(SERVICETYPES_ATTRIBUTE, serviceType));
+        });
+
+        return queries;
     }
 
 }
