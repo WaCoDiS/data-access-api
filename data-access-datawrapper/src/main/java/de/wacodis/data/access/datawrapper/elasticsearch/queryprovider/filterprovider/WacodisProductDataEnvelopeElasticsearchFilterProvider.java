@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.Script;
 
 /**
  *
@@ -38,6 +39,9 @@ public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements Da
             List<QueryBuilder> dataEnvReferencesQuery = QueryBuilders.boolQuery().must(); //match all dataenvelope references
             dataEnvReferencesQuery.addAll(getQueriesForDataEnvelopeReferences(wacEnv.getDataEnvelopeReferences()));
             queries.addAll(dataEnvReferencesQuery);
+            //script query ensures that matching data envelope in elasticsearch index does not contain more dataEnvelopeReferences than wacEnv
+            String matchCountScript = String.format("doc['%s'].values.length == %d", DATAENVELOPEREFERENCES_ATTRIBUTE, wacEnv.getDataEnvelopeReferences().size()); 
+            queries.add(QueryBuilders.scriptQuery(new Script(matchCountScript)));
 
             return queries;
         } else {

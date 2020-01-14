@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.Script;
 
 /**
  *
@@ -29,10 +30,13 @@ public class ArcGISImageServerBackendFilterProvider implements ProductBackendFil
         queries.addAll(abstractFilterProvider.getFiltersForBackend(backend)); //filters for attributes of super type
         queries.add(QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, backend.getProductCollection()));
         queries.add(QueryBuilders.termQuery(BASEURL_ATTRIBUTE, backend.getBaseUrl()));
-        
+
         List<QueryBuilder> serviceTypeQuery = QueryBuilders.boolQuery().filter(); //match all service types
         serviceTypeQuery.addAll(getQueriesForServiceTypes(backend.getServiceTypes()));
         queries.addAll(serviceTypeQuery);
+         //script query ensures that matching data envelope (serviceDefinition) in elasticsearch index does not contain more serviceTypes than backend
+        String matchCountScript = String.format("doc['%s'].values.length == %d", SERVICETYPES_ATTRIBUTE, backend.getServiceTypes().size());
+        queries.add(QueryBuilders.scriptQuery(new Script(matchCountScript)));
 
         return queries;
     }
