@@ -132,7 +132,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
 
         inputs.forEach(input -> { //add individual request for each input to multisearch request
             SearchRequest singleRequest = buildSearchRequestForSubsetDefintion(input, areaOfInterest, timeFrame); //request for input
-            multiSearch.add(singleRequest);
+            multiSearch.add(singleRequest);      
         });
 
         return multiSearch;
@@ -148,7 +148,8 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
      */
     private SearchRequest buildSearchRequestForSubsetDefintion(AbstractSubsetDefinition subset, AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame) {
         QueryBuilder query = this.queryProvider.buildQueryForSubsetDefinition(subset, areaOfInterest, timeFrame);
-
+        LOGGER.debug("resource search: add elasticsearch query for input {} to multisearch, query:\n{}", subset.getIdentifier(), query);
+        
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);
         source.from(0); //retrieve all hits
