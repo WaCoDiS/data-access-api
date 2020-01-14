@@ -44,7 +44,7 @@ public class AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvide
         QueryBuilder endTimeFilter = getTimeFrameEndTimeFilter(timeFrame);
 
         boolQuery.filter(spatialFilter).filter(startTimeFilter).filter(endTimeFilter); //add all filters (logical and)
-
+        
         return boolQuery;
     }
 

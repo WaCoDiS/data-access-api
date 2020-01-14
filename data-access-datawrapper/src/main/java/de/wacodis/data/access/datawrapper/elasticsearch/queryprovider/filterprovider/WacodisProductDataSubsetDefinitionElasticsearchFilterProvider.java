@@ -5,7 +5,6 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider;
 
-import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider.productbackend.BackendTypeFilterFactory;
 import de.wacodis.dataaccess.model.AbstractSubsetDefinition;
 import de.wacodis.dataaccess.model.DwdSubsetDefinition;
 import de.wacodis.dataaccess.model.WacodisProductSubsetDefinition;
@@ -20,7 +19,7 @@ import org.elasticsearch.index.query.QueryBuilders;
  */
 public class WacodisProductDataSubsetDefinitionElasticsearchFilterProvider implements SubsetDefinitionElasticsearchFilterProvider {
 
-    private final static String BACKENDTYPE_ATTRIBUTE = "backendType";
+    private final static String BACKENDTYPE_ATTRIBUTE = "serviceDefinition.backendType";
     private final static String PRODUCTTYPE_ATTRIBUTE = "productType";
 
     @Override
