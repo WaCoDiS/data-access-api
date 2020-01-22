@@ -52,7 +52,6 @@ public class WacodisProductDataEnvelopeConverterTest {
 
     @Test
     public void testConvertToResource() {
-        System.out.println("convertToResource");
         WacodisProductDataEnvelope dataEnvelope = getProductDataEnvelope();
         ResourceSearchContext context = getSearchContext();
         AbstractResource resource = new WacodisProductDataEnvelopeConverter().convertToResource(dataEnvelope, context);

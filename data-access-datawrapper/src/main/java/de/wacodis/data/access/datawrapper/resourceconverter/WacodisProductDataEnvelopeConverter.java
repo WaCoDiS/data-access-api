@@ -34,6 +34,7 @@ public class WacodisProductDataEnvelopeConverter implements DataEnvelopeToResour
     private final static String RESPONSE_FORMAT = "image";
     private final static String BBOX_SRS = "4326";
     private final static String IMAGE_FORMAT = "tiff";
+    private final static int DEFAULTPIXELSIZE_METERS = 20;
 
     @Override
     public AbstractResource convertToResource(WacodisProductDataEnvelope dataEnvelope, ResourceSearchContext context) {
@@ -60,19 +61,20 @@ public class WacodisProductDataEnvelopeConverter implements DataEnvelopeToResour
         if (backend instanceof ArcGISImageServerBackend) {
             ArcGISImageServerBackend imageServerBackend = (ArcGISImageServerBackend) backend;
             String path = imageServerBackend.getProductCollection();
-            List<NameValuePair> queryParams = new ArrayList<>();
+//            List<NameValuePair> queryParams = new ArrayList<>();
 
             if (imageServerBackend.getServiceTypes().contains(IMAGESERVER_SERVICETYPE)) {
                 path += "/" + IMAGESERVER_LITERAL;
-                path += "/" + IMAGESERVER_OPERATION;
-
-                NameValuePair bboxFilter = new BasicNameValuePair("bbox", getFormattedBBoxParam(context.getInputAreaOfInterest()));
-                NameValuePair bboxSRSFilter = new BasicNameValuePair("bboxSR", BBOX_SRS);
-                NameValuePair formatFilter = new BasicNameValuePair("f", RESPONSE_FORMAT);
-                NameValuePair imageFormatFilter = new BasicNameValuePair("format", IMAGE_FORMAT);
-                NameValuePair timeFilter = new BasicNameValuePair("time",getFormattedTimeParam(context.getInputTimeFrame()));
-
-                queryParams.addAll(Arrays.asList(bboxFilter, bboxSRSFilter, formatFilter, imageFormatFilter, timeFilter));
+                
+//                path += "/" + IMAGESERVER_OPERATION;
+//
+//                NameValuePair bboxFilter = new BasicNameValuePair("bbox", getFormattedBBoxParam(context.getInputAreaOfInterest()));
+//                NameValuePair bboxSRSFilter = new BasicNameValuePair("bboxSR", BBOX_SRS);
+//                NameValuePair formatFilter = new BasicNameValuePair("f", RESPONSE_FORMAT);
+//                NameValuePair imageFormatFilter = new BasicNameValuePair("format", IMAGE_FORMAT);
+//                NameValuePair timeFilter = new BasicNameValuePair("time", getFormattedTimeParam(context.getInputTimeFrame()));
+//                
+//                queryParams.addAll(Arrays.asList(bboxFilter, bboxSRSFilter, formatFilter, imageFormatFilter, timeFilter));
             } else {
                 throw new UnsupportedOperationException("cannot for create resource from WacodisProductDataEnvelope " + dataEnvelope.getIdentifier() + ", only service type ImageServer is supported for ArcGISImageServerBackend");
             }
@@ -81,7 +83,7 @@ public class WacodisProductDataEnvelopeConverter implements DataEnvelopeToResour
                 URI url = URI.create(imageServerBackend.getBaseUrl());
                 url = new URIBuilder(url)
                         .setPath(url.getPath() + "/" + path)
-                        .setParameters(queryParams)
+//                        .setParameters(queryParams)
                         .build()
                         .normalize();
                 GetResource resource = new GetResource();
