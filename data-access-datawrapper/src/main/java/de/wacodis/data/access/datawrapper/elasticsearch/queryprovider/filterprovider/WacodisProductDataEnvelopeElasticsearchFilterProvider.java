@@ -5,36 +5,57 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider;
 
+import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider.productbackend.BackendTypeFilterFactory;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.WacodisProductDataEnvelope;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.Script;
 
 /**
  *
  * @author Matthes Rieke
  */
 public class WacodisProductDataEnvelopeElasticsearchFilterProvider implements DataEnvelopeElasticsearchFilterProvider {
-    
-    private final static String PRODUCTCOLLECTION_ATTRIBUTE = "productCollection";
-    private final static String SERVICENAME_ATTRIBUTE = "serviceName";
+
     private final static String PRODUCTTYPE_ATTRIBUTE = "productType";
+    private final static String PROCESS_ATTRIBUTE = "process";
+    private final static String DATAENVELOPEREFERENCES_ATTRIBUTE = "dataEnvelopeReferences";
 
     @Override
     public List<QueryBuilder> buildFiltersForDataEnvelope(AbstractDataEnvelope envelope) {
         if (envelope instanceof WacodisProductDataEnvelope) {
             WacodisProductDataEnvelope wacEnv = (WacodisProductDataEnvelope) envelope;
+            List<QueryBuilder> queries = new ArrayList<>();
 
-            QueryBuilder productCollectionQuery = QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, wacEnv.getProductCollection());
-            QueryBuilder serviceNameQuery = QueryBuilders.termQuery(SERVICENAME_ATTRIBUTE, wacEnv.getServiceName());
+            QueryBuilder processQuery = QueryBuilders.termQuery(PROCESS_ATTRIBUTE, wacEnv.getProcess());
+            queries.add(processQuery);
             QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, wacEnv.getProductType());
-            
-            return Arrays.asList(new QueryBuilder[]{productCollectionQuery, serviceNameQuery, productTypeQuery});
+            queries.add(productTypeQuery);
+            queries.addAll(BackendTypeFilterFactory.getFilterForBackend(wacEnv.getServiceDefinition())); //match backend (serviceDefinition)
+
+            List<QueryBuilder> dataEnvReferencesQuery = QueryBuilders.boolQuery().must(); //match all dataenvelope references
+            dataEnvReferencesQuery.addAll(getQueriesForDataEnvelopeReferences(wacEnv.getDataEnvelopeReferences()));
+            queries.addAll(dataEnvReferencesQuery);
+            //script query ensures that matching data envelope in elasticsearch index does not contain more dataEnvelopeReferences than wacEnv
+            String matchCountScript = String.format("doc['%s'].values.length == %d", DATAENVELOPEREFERENCES_ATTRIBUTE, wacEnv.getDataEnvelopeReferences().size()); 
+            queries.add(QueryBuilders.scriptQuery(new Script(matchCountScript)));
+
+            return queries;
         } else {
             throw new IllegalArgumentException("wrong type of DataEnvelope, envelope is of type " + envelope.getClass().getSimpleName() + ", expected " + WacodisProductDataEnvelope.class.getSimpleName());
         }
     }
 
+    private List<QueryBuilder> getQueriesForDataEnvelopeReferences(List<String> dataEnvelopeIDs) {
+        List<QueryBuilder> queries = new ArrayList<>();
+
+        for (String dataEnvelopeID : dataEnvelopeIDs) {
+            queries.add(QueryBuilders.termQuery(DATAENVELOPEREFERENCES_ATTRIBUTE, dataEnvelopeID));
+        }
+
+        return queries;
+    }
 }

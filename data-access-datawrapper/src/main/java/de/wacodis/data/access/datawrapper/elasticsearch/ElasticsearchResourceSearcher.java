@@ -6,9 +6,8 @@
 package de.wacodis.data.access.datawrapper.elasticsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.wacodis.data.access.datawrapper.NullResourceSearchResponseToResourceConverter;
+import de.wacodis.data.access.datawrapper.ResourceSearchContext;
 import de.wacodis.data.access.datawrapper.ResourceSearchResponseContainer;
-import de.wacodis.data.access.datawrapper.ResourceSearchResponseToResourceConverter;
 import de.wacodis.data.access.datawrapper.ResourceSearcher;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.DataAccessSearchBodyElasticsearchBoolQueryProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.ElasticsearchQueryProvider;
@@ -23,7 +22,6 @@ import de.wacodis.dataaccess.model.DataAccessResourceSearchBody;
 import de.wacodis.dataaccess.model.extension.elasticsearch.GeoShapeCompatibilityAreaOfInterest;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +38,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.LoggerFactory;
+import de.wacodis.data.access.datawrapper.resourceconverter.DataEnvelopeToResourceConversionHelper;
 
 /**
  *
@@ -54,19 +53,16 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     private String indexName;
     private TimeValue requestTimeout;
     private RestHighLevelClient elasticsearchClient;
-    private ResourceSearchResponseToResourceConverter responseConverter;
     private final DataEnvelopeJsonDeserializerFactory jsonDeserializerFactory;
     private final ElasticsearchQueryProvider queryProvider;
 
     /**
-     * 
+     *
      * @param elasticsearchClient elasticsearch high level REST client
      * @param indexName elasticsearch index
-     * @param responseConverter applied to extract AbstracResource from AbstractDataEnvelope
      * @param requestTimeout_millis timeout per request
      */
-    public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName, ResourceSearchResponseToResourceConverter responseConverter, long requestTimeout_millis) {
-        this.responseConverter = responseConverter;
+    public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName, long requestTimeout_millis) {
         this.elasticsearchClient = elasticsearchClient;
         this.indexName = indexName;
         this.requestTimeout = new TimeValue(requestTimeout_millis, TimeUnit.MILLISECONDS);
@@ -79,28 +75,9 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
      *
      * @param elasticsearchClient
      * @param indexName
-     * @param responseConverter
-     */
-    public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName, ResourceSearchResponseToResourceConverter responseConverter) {
-        this(elasticsearchClient, indexName, responseConverter, DEFAULTTIMEOUT_MILLIS);
-    }
-
-    /**
-     * use NullResourceSearchResponseToResourceConverter, use default timeout 10000 milliseconds
-     *
-     * @param elasticsearchClient
-     * @param indexName
      */
     public ElasticsearchResourceSearcher(RestHighLevelClient elasticsearchClient, String indexName) {
-        this(elasticsearchClient, indexName, new NullResourceSearchResponseToResourceConverter(), DEFAULTTIMEOUT_MILLIS);
-    }
-
-    public ResourceSearchResponseToResourceConverter getResponseConverter() {
-        return responseConverter;
-    }
-
-    public void setResponseConverter(ResourceSearchResponseToResourceConverter responseConverter) {
-        this.responseConverter = responseConverter;
+        this(elasticsearchClient, indexName, DEFAULTTIMEOUT_MILLIS);
     }
 
     public String getIndexName() {
@@ -155,7 +132,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
 
         inputs.forEach(input -> { //add individual request for each input to multisearch request
             SearchRequest singleRequest = buildSearchRequestForSubsetDefintion(input, areaOfInterest, timeFrame); //request for input
-            multiSearch.add(singleRequest);
+            multiSearch.add(singleRequest);      
         });
 
         return multiSearch;
@@ -171,7 +148,8 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
      */
     private SearchRequest buildSearchRequestForSubsetDefintion(AbstractSubsetDefinition subset, AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame) {
         QueryBuilder query = this.queryProvider.buildQueryForSubsetDefinition(subset, areaOfInterest, timeFrame);
-
+        LOGGER.debug("resource search: add elasticsearch query for input {} to multisearch, query:\n{}", subset.getIdentifier(), query);
+        
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);
         source.from(0); //retrieve all hits
@@ -194,7 +172,8 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             SearchResponse response = searchResponse.getResponses()[i].getResponse();
             List<AbstractDataEnvelope> responseDataEnvelopes = processHits(response.getHits());
 
-            ResourceSearchResponseContainer responseHelper = new ResourceSearchResponseContainer(searchBody.getAreaOfInterest(), searchBody.getTimeFrame(), input, responseDataEnvelopes);
+            ResourceSearchContext searchContext = new ResourceSearchContext(searchBody.getAreaOfInterest(), searchBody.getTimeFrame(), input);
+            ResourceSearchResponseContainer responseHelper = new ResourceSearchResponseContainer(responseDataEnvelopes, searchContext);
             resources.put(input.getIdentifier(), getResourcesForResponse(responseHelper));
         }
 
@@ -209,6 +188,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             ObjectMapper responseDeserializer = this.jsonDeserializerFactory.getObjectMapper(jsonResponse);
             AbstractDataEnvelope responseDataEnvelope = responseDeserializer.readValue(jsonResponse, AbstractDataEnvelope.class);
             responseDataEnvelope.setAreaOfInterest(getDefaultAreaOfInterest(responseDataEnvelope.getAreaOfInterest()));
+            responseDataEnvelope.setIdentifier(hit.getId());
             responseDataEnvelopes.add(responseDataEnvelope);
         }
 
@@ -216,7 +196,14 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     }
 
     private List<AbstractResource> getResourcesForResponse(ResourceSearchResponseContainer response) {
-        List<AbstractResource> resources = this.responseConverter.convertToResource(response);
+        List<AbstractResource> resources = new ArrayList<>();
+        List<AbstractDataEnvelope> responseDataEnvelopes = response.getResponseDataEnvelopes();
+
+        for (AbstractDataEnvelope dataEnvelope : responseDataEnvelopes) {
+            AbstractResource resource = DataEnvelopeToResourceConversionHelper.convertToResource(dataEnvelope, response.getSearchContext());
+            resources.add(resource);
+        }
+
         return resources;
     }
 
@@ -257,4 +244,5 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             return areaOfInterest;
         }
     }
+
 }

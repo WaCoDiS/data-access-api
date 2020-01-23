@@ -35,7 +35,7 @@ public class ElasticsearchCompatibilityDataEnvelopeSerializer {
      * @throws IOException 
      */
     public Map<String, Object> serialize(AbstractDataEnvelope dataEnvelope) throws IOException{
-        //parsing json as map removes duplicate fields in json strin (which can occur with jackson type inheritance)
+        //parsing json as map removes duplicate fields in json string (which can occur with jackson type inheritance)
         String dataEnvelopeJson = serializer.writeValueAsString(dataEnvelope);
         Map<String, Object> result = serializer.readValue(dataEnvelopeJson, new TypeReference<Map<String, Object>>(){}); //
         

@@ -6,9 +6,6 @@
 package de.wacodis.data.access.datawrapper;
 
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
-import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.dataaccess.model.AbstractDataEnvelopeTimeFrame;
-import de.wacodis.dataaccess.model.AbstractSubsetDefinition;
 import java.util.List;
 
 /**
@@ -17,29 +14,19 @@ import java.util.List;
  */
 public class ResourceSearchResponseContainer {
     
-    private final AbstractDataEnvelopeAreaOfInterest inputAreaOfInterest;
-    private final AbstractDataEnvelopeTimeFrame inputTimeFrame;
-    private final AbstractSubsetDefinition inputSubset;
+ 
     private final List<AbstractDataEnvelope> responseDataEnvelopes;
+    private final ResourceSearchContext searchContext;
 
-    public ResourceSearchResponseContainer(AbstractDataEnvelopeAreaOfInterest inputAreaOfInterest, AbstractDataEnvelopeTimeFrame inputTimeFrame, AbstractSubsetDefinition inputSubset, List<AbstractDataEnvelope> responseDataEnvelopes) {
-        this.inputAreaOfInterest = inputAreaOfInterest;
-        this.inputTimeFrame = inputTimeFrame;
-        this.inputSubset = inputSubset;
+    public ResourceSearchResponseContainer(List<AbstractDataEnvelope> responseDataEnvelopes, ResourceSearchContext searchContext) {
         this.responseDataEnvelopes = responseDataEnvelopes;
+        this.searchContext = searchContext;
     }
 
-
-    public AbstractDataEnvelopeAreaOfInterest getInputAreaOfInterest() {
-        return inputAreaOfInterest;
-    }
-
-    public AbstractDataEnvelopeTimeFrame getInputTimeFrame() {
-        return inputTimeFrame;
-    }
-
-    public AbstractSubsetDefinition getInputSubset() {
-        return inputSubset;
+    
+    
+    public ResourceSearchContext getSearchContext() {
+        return searchContext;
     }
 
     public List<AbstractDataEnvelope> getResponseDataEnvelopes() {

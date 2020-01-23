@@ -17,7 +17,6 @@ import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.dataaccess.model.extension.elasticsearch.GeoShapeCompatibilityAreaOfInterest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -95,13 +94,6 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         GetResponse response = this.elasticsearchClient.get(request, RequestOptions.DEFAULT);
         Optional<AbstractDataEnvelope> responseDataEnvelope = processGetResponse(response);
 
-        //convert to indexed AreaOfInterest to default AreaOfInterest (Wacodis Models)
-        if (responseDataEnvelope.isPresent()) {
-            GeoShapeCompatibilityAreaOfInterest geoshapeAreaOfInterest = (GeoShapeCompatibilityAreaOfInterest) responseDataEnvelope.get().getAreaOfInterest();
-            AbstractDataEnvelopeAreaOfInterest defaultAreaOfInterest = AreaOfInterestConverter.getDefaultAreaOfInterest(geoshapeAreaOfInterest);
-            responseDataEnvelope.get().setAreaOfInterest(defaultAreaOfInterest);
-        }
-
         return responseDataEnvelope;
     }
 
@@ -118,6 +110,7 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         DataEnvelopeElasticsearchFilterProvider filterProvider = this.filterProviderFactory.getFilterProviderForDataEnvelope(dataEnvelope);
         List<QueryBuilder> filters = filterProvider.buildFiltersForDataEnvelope(dataEnvelope);
         QueryBuilder query = appendFiltersToQuery(filters);
+        LOGGER.debug("dataenvelope search: prepare elasticsearch query for data envelope of type {}, query:\n{}", dataEnvelope.getSourceType(), query);
 
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);

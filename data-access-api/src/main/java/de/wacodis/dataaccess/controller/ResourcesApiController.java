@@ -1,8 +1,6 @@
  package de.wacodis.dataaccess.controller;
 
-import de.wacodis.data.access.datawrapper.ResourceSearchResponseToResourceConverter;
 import de.wacodis.data.access.datawrapper.ResourceSearcher;
-import de.wacodis.data.access.datawrapper.SimpleResourceSearchResponseToResourceConverter;
 import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchResourceSearcher;
 import de.wacodis.dataaccess.configuration.ElasticsearchResourcesAPIConfiguration;
 import de.wacodis.dataaccess.elasticsearch.ElasticsearchClientFactory;
@@ -85,9 +83,8 @@ public class ResourcesApiController implements ResourcesApi {
     private ResourceSearcher createResourceSearcherInstance(RestHighLevelClient elasticsearchClient){
         String elasticsearchIndex = this.elasticsearchConfig.getIndexName();
         long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
-        ResourceSearchResponseToResourceConverter responseConverter = new SimpleResourceSearchResponseToResourceConverter();
         
-        ElasticsearchResourceSearcher searcher = new ElasticsearchResourceSearcher(elasticsearchClient, elasticsearchIndex, responseConverter, requestTimeout);
+        ElasticsearchResourceSearcher searcher = new ElasticsearchResourceSearcher(elasticsearchClient, elasticsearchIndex, requestTimeout);
         return searcher;
     }
    
