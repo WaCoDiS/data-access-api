@@ -56,7 +56,7 @@ public class ElasticsearchIndexCreator {
         } catch (ElasticsearchStatusException e) {
             // if the index is already present, to not fail
             if (e.getDetailedMessage().contains("resource_already_exists_exception")) {
-                LOGGER.warn("Index already present. If you observe misbahviour, the index might not be set up correctly.");
+                LOGGER.warn("Index already present. If you observe misbehaviour, the index might not be set up correctly.");
             } else {
                 throw e;
             }

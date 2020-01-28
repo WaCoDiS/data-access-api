@@ -7,8 +7,13 @@ package de.wacodis.dataaccess.elasticsearch;
 
 import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfiguration;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +53,11 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
             @Override
             public Void doWithRetry(RetryContext context) throws Exception { //in case of ConncetException this method is called multiple times (according to retry configuration) 
 
-                LOGGER.info("initializing elasticsearch index " + elasticsearchConfig.getIndexName() + ", server address: " + elasticsearchConfig.getUri() + ", attempt " + (context.getRetryCount()+1) + " of " + elasticsearchConfig.getIndexInitialization_RetryMaxAttempts());
+                LOGGER.info("initializing elasticsearch index " + elasticsearchConfig.getIndexName() + ", server address: " + elasticsearchConfig.getUri() + ", attempt " + (context.getRetryCount() + 1) + " of " + elasticsearchConfig.getIndexInitialization_RetryMaxAttempts());
 
                 try {
-                    initStatus.isIndexAcknowledged = indexCreator.createIndex(elasticsearchConfig.getIndexName(), new FileInputStream(elasticsearchConfig.getIndexInitialization_SettingsFile()), elasticsearchConfig.getRequestTimeout_Millis());
+                    InputStream indexSettings = getIndexSettingsAsStream();
+                    initStatus.isIndexAcknowledged = indexCreator.createIndex(elasticsearchConfig.getIndexName(), indexSettings, elasticsearchConfig.getRequestTimeout_Millis());
                 } catch (Exception e) {
                     //only retry on ConnectException
                     if (IOException.class.isAssignableFrom(e.getClass())) {
@@ -68,8 +74,8 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
         //throw occuring exception (besides ConnectException)
         if (initStatus.exception.isPresent()) {
             throw initStatus.exception.get();
-        } 
-        
+        }
+
         //check if index creation was successful
         if (initStatus.isIndexAcknowledged) {
             LOGGER.info("successfully initialized elasticsearch index " + this.elasticsearchConfig.getIndexName() + ", server address: " + this.elasticsearchConfig.getUri());
@@ -95,6 +101,29 @@ public class ElasticsearchIndexInitializer implements ApplicationRunner {
         retryTemplate.setRetryPolicy(retryPolicy);
 
         return retryTemplate;
+    }
+
+    private String removeLeadingSlash(String path) {
+        if (path.startsWith("/") || path.startsWith("\\")) {
+            return removeLeadingSlash(path.substring(1));
+        } else {
+            return path;
+        }
+    }
+
+    private InputStream getIndexSettingsAsStream() {
+        InputStream indexSettings;
+
+        try {
+            LOGGER.info("read elasticsearch index settings from file {}", this.elasticsearchConfig.getIndexInitialization_SettingsFile());
+            indexSettings = new FileInputStream(this.elasticsearchConfig.getIndexInitialization_SettingsFile().trim());
+        } catch (FileNotFoundException ex) {
+            LOGGER.info("could not read elasticsearch index settings, file {} not found, use default index settings from application resources", this.elasticsearchConfig.getIndexInitialization_SettingsFile());
+            String defaultIndexSettingsPath = removeLeadingSlash(this.elasticsearchConfig.getIndexInitialization_SettingsFile_Resources().trim());
+            indexSettings = getClass().getClassLoader().getResourceAsStream(defaultIndexSettingsPath);
+        }
+
+        return indexSettings;
     }
 
     private class InitializationStatus {
