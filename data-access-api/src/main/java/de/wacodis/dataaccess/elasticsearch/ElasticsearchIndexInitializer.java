@@ -10,10 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +31,6 @@ import org.springframework.stereotype.Component;
 public class ElasticsearchIndexInitializer implements ApplicationRunner {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticsearchIndexInitializer.class);
-
-    private final static String SETTINGSFILENAME = "elasticsearch_indexsettings.json";
 
     @Autowired
     private ElasticsearchDataEnvelopesAPIConfiguration elasticsearchConfig;
