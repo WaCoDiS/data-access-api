@@ -1,0 +1,14 @@
+version: "3"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    expose:
+      - 9200
+      - 9300
+    volumes:
+      # after first bootup, adjust the ownership of the directory: `chown -R 1000:1000 ./persistence`
+      - ./persistence:/usr/share/elasticsearch/data
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
