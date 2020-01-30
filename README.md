@@ -217,7 +217,7 @@ parameters related to the DataEnvelope API (*/dataenvelopes/...*)
 | elasticsearch/requestTimeout_Millis  | request timeout (milliseconds) |  |
 | elasticsearch/indexInitialization_RetryMaxAttempts  | max attempts for index intitialization during start-up | [see Elasticsearch Index Initialization](#elasticsearch-index-initialization) |
 | elasticsearch/indexInitialization_RetryDelay_Millis  | delay between atempts for index intitialization during start-up (milliseconds) |  |
-| elasticsearch/indexInitialization_SettingsFile | location of settings file that is applied for index intitialization during start-up|  |
+| elasticsearch/indexInitialization_SettingsFile | location of settings file that is applied for index intitialization during start-up, if value is not provided default settings file from application resources is used|  |
 
 ##### spring/cloud/stream/bindings/acknowledgeDataEnvelope
 parameters related to DataEnvelope acknowledgement messages
