@@ -18,7 +18,7 @@ import javax.validation.constraints.*;
  * describes specific metadata information about a Copernicus dataset
  */
 @ApiModel(description = "describes specific metadata information about a Copernicus dataset")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-01-23T15:44:59.980+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-02-03T12:26:16.411+01:00[Europe/Berlin]")
 
 public class CopernicusDataEnvelope extends AbstractDataEnvelope implements Serializable {
   private static final long serialVersionUID = 1L;
