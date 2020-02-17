@@ -12,6 +12,13 @@
         <module>data-access-models</module>
         <module>data-access-datawrapper</module>
     </modules>
+        
+    <scm>
+		<url>https://github.com/WaCoDiS/data-access-api/</url>
+		<connection>scm:git:git://github.com/WaCoDiS/data-access-api.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/WaCoDiS/data-access-api.git</developerConnection>
+		<tag>v1.0.0</tag>
+	</scm>
     
     <properties>
         <java.version>1.8</java.version>

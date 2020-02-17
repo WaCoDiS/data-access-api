@@ -2,13 +2,13 @@
 FROM maven:3.5.4-jdk-8-alpine as BUILD
 
 COPY . /app
-RUN mvn -f /app/pom.xml clean package -DskipTests
+RUN mvn -f /app/pom.xml clean package -DskipTests -Dapp.finalName=data-access-api
 
 
 #run
-FROM openjdk:alpine
+FROM adoptopenjdk/openjdk8:alpine
 
-COPY --from=BUILD /app/data-access-api/target/data-access-api-0.0.1-SNAPSHOT.jar /app/data-access-api.jar
+COPY --from=BUILD /app/data-access-api/target/data-access-api.jar /app.jar
 EXPOSE 8080
 
-CMD ["java", "-jar", "/app/data-access-api.jar"]
+CMD ["java", "-jar", "/app.jar"]

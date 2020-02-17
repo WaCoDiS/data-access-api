@@ -2,3 +2,6 @@
 /data-access-models/target/
 /data-access-datawrapper/target/
 /data-access-api/target/
+
+.project
+.settings
