@@ -110,6 +110,7 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         DataEnvelopeElasticsearchFilterProvider filterProvider = this.filterProviderFactory.getFilterProviderForDataEnvelope(dataEnvelope);
         List<QueryBuilder> filters = filterProvider.buildFiltersForDataEnvelope(dataEnvelope);
         QueryBuilder query = appendFiltersToQuery(filters);
+        LOGGER.debug("dataenvelope search: prepare elasticsearch query for data envelope of type {}, query:\n{}", dataEnvelope.getSourceType(), query);
 
         SearchSourceBuilder source = new SearchSourceBuilder();
         source.timeout(this.requestTimeout);

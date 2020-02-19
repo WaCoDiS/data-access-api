@@ -19,8 +19,7 @@ import org.elasticsearch.index.query.QueryBuilders;
  */
 public class WacodisProductDataSubsetDefinitionElasticsearchFilterProvider implements SubsetDefinitionElasticsearchFilterProvider {
 
-    private final static String PRODUCTCOLLECTION_ATTRIBUTE = "productCollection";
-    private final static String SERVICEURL_ATTRIBUTE = "serviceName";
+    private final static String BACKENDTYPE_ATTRIBUTE = "serviceDefinition.backendType";
     private final static String PRODUCTTYPE_ATTRIBUTE = "productType";
 
     @Override
@@ -29,15 +28,10 @@ public class WacodisProductDataSubsetDefinitionElasticsearchFilterProvider imple
             List<QueryBuilder> queries = new ArrayList<>();
             WacodisProductSubsetDefinition productSubset = (WacodisProductSubsetDefinition) subset;
 
-            QueryBuilder serviceURLFilter = QueryBuilders.termQuery(SERVICEURL_ATTRIBUTE, productSubset.getServiceUrl());
-            queries.add(serviceURLFilter);
-            QueryBuilder collectionFilter = QueryBuilders.termQuery(PRODUCTCOLLECTION_ATTRIBUTE, productSubset.getProductCollection());
+            QueryBuilder collectionFilter = QueryBuilders.termQuery(BACKENDTYPE_ATTRIBUTE, productSubset.getBackendType());
             queries.add(collectionFilter);
-            
-            if(productSubset.getProductType() != null && !productSubset.getProductType().trim().isEmpty()){
-                QueryBuilder productTypeFilter = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, productSubset.getProductType());
-                queries.add(productTypeFilter);
-            }
+            QueryBuilder productTypeFilter = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, productSubset.getProductType());
+            queries.add(productTypeFilter);
 
             return queries;
         } else {

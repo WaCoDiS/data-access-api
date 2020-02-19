@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.wacodis</groupId>
     <artifactId>data-access</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>WaCoDiS Data Access</name>
     <packaging>pom</packaging>
     
@@ -12,6 +12,13 @@
         <module>data-access-models</module>
         <module>data-access-datawrapper</module>
     </modules>
+        
+    <scm>
+		<url>https://github.com/WaCoDiS/data-access-api/</url>
+		<connection>scm:git:git://github.com/WaCoDiS/data-access-api.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/WaCoDiS/data-access-api.git</developerConnection>
+		<tag>v1.0.0</tag>
+	</scm>
     
     <properties>
         <java.version>1.8</java.version>
@@ -19,7 +26,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <wacodis-data-access.version>0.0.1-SNAPSHOT</wacodis-data-access.version>
+        <wacodis-data-access.version>1.0.1-SNAPSHOT</wacodis-data-access.version>
         <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
         <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>  
         <elasticsearch.version>6.6.2</elasticsearch.version>

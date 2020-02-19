@@ -12,7 +12,8 @@ spring:
       requestTimeout_Millis: 5000
       indexInitialization_RetryMaxAttempts: 5
       indexInitialization_RetryDelay_Millis: 15000
-      indexInitialization_SettingsFile: ./src/main/resources/elasticsearch_indexsettings.json
+      # path to custom elasticsearch index settings file, if not provided default settings file from application resources is applied
+      # indexInitialization_SettingsFile: ./src/main/resources/elasticsearch_indexsettings.json
   cloud:
     stream:
       bindings:

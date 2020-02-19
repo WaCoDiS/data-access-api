@@ -8,10 +8,15 @@
     <parent>
         <groupId>de.wacodis</groupId>
         <artifactId>data-access</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     
+    <properties>
+        <app.finalName>${project.artifactId}-${project.version}</app.finalName>
+    </properties>
+
     <build>
+        <finalName>${app.finalName}</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>

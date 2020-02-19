@@ -5,6 +5,7 @@
  */
 package de.wacodis.dataaccess.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -18,14 +19,24 @@ import org.springframework.retry.annotation.EnableRetry;
 @ConfigurationProperties("spring.dataenvelopes-api.elasticsearch")
 @EnableConfigurationProperties
 @EnableRetry
-public class ElasticsearchDataEnvelopesAPIConfiguration {   
+public class ElasticsearchDataEnvelopesAPIConfiguration {
+    @Value("${spring.dataenvelopes-api.elasticsearch.uri:http://localhost:9200}")
     private String uri;
+    @Value("${spring.dataenvelopes-api.elasticsearch.indexName:dataenvelope}")
     private String indexName;
+    @Value("${spring.dataenvelopes-api.elasticsearch.type:dataenvelope}")
     private String type;
+    @Value("${spring.dataenvelopes-api.elasticsearch.requestTimeout_Millis:5000}")
     private long requestTimeout_Millis;
-    private int indexInitialization_RetryMaxAttempts = 1;
+    @Value("${spring.dataenvelopes-api.elasticsearch.indexInitialization_RetryMaxAttempts:1}")
+    private int indexInitialization_RetryMaxAttempts;
+    @Value("${spring.dataenvelopes-api.elasticsearch.indexInitialization_RetryDelay_Millis:15000}")
     private long indexInitialization_RetryDelay_Millis;
+    @Value("${spring.dataenvelopes-api.elasticsearch.indexInitialization_SettingsFile:./src/main/resources/elasticsearch_indexsettings.json}")
     private String indexInitialization_SettingsFile;
+    //only used if indexInitialization_SettingsFile is not provided or not file not found, relativ path from src/main/resources, without leading slash
+    @Value("${spring.dataenvelopes-api.elasticsearch.indexInitialization_SettingsFile_Resources:elasticsearch_indexsettings.json}")
+    private String indexInitialization_SettingsFile_Resources;
 
     /**
      * get uri of elasticsearch instance
@@ -137,5 +148,21 @@ public class ElasticsearchDataEnvelopesAPIConfiguration {
      */
     public void setIndexInitialization_SettingsFile(String indexInitialization_SettingsFile) {
         this.indexInitialization_SettingsFile = indexInitialization_SettingsFile;
+    }
+
+    /**
+     * //only used if indexInitialization_SettingsFile is not provided or not file not found, relativ path from src/main/resources, without leading slash
+     * @return 
+     */
+    public String getIndexInitialization_SettingsFile_Resources() {
+        return indexInitialization_SettingsFile_Resources;
+    }
+
+    /**
+     * //only used if indexInitialization_SettingsFile is not provided or not file not found, relativ path from src/main/resources, without leading slash
+     * @param indexInitialization_SettingsFile_Resources 
+     */
+    public void setIndexInitialization_SettingsFile_Resources(String indexInitialization_SettingsFile_Resources) {
+        this.indexInitialization_SettingsFile_Resources = indexInitialization_SettingsFile_Resources;
     }
 }
