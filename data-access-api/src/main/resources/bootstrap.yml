@@ -24,10 +24,8 @@ spring:
       binders:
         wacodis_rabbit:
           type: rabbit
-          environment:
-            spring:
-              rabbitmq:
-                host: wacodis.demo.52north.org
-                port: 5672
-                username: rabbitmq
-                password: wacojo2018
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
