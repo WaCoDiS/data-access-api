@@ -44,6 +44,7 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticsearchDataEnvelopeSearcher.class);
 
     private static final int DEFAULTTIMEOUT_MILLIS = 10000;
+    private static final String DATAENVELOPE_SOURCETYPE_ATTRIBUTE = "sourceType";
 
     private RestHighLevelClient elasticsearchClient;
     private String type;
@@ -109,7 +110,7 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
     private SearchRequest buildSearchRequest(AbstractDataEnvelope dataEnvelope) {
         DataEnvelopeElasticsearchFilterProvider filterProvider = this.filterProviderFactory.getFilterProviderForDataEnvelope(dataEnvelope);
         List<QueryBuilder> filters = filterProvider.buildFiltersForDataEnvelope(dataEnvelope);
-        QueryBuilder query = appendFiltersToQuery(filters);
+        QueryBuilder query = appendFiltersToQuery(dataEnvelope, filters);
         LOGGER.debug("dataenvelope search: prepare elasticsearch query for data envelope of type {}, query:\n{}", dataEnvelope.getSourceType(), query);
 
         SearchSourceBuilder source = new SearchSourceBuilder();
@@ -147,10 +148,13 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
         }
     }
 
-    private QueryBuilder appendFiltersToQuery(List<QueryBuilder> filters) {
+    private QueryBuilder appendFiltersToQuery(AbstractDataEnvelope dataEnvelope, List<QueryBuilder> filters) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         filters.forEach(filter -> boolQuery.filter(filter));
-
+        //match source type 
+        QueryBuilder srcTypeFilter = getSourceTypeFilter(dataEnvelope);
+        boolQuery.filter(srcTypeFilter); 
+        
         return boolQuery;
     }
 
@@ -185,5 +189,14 @@ public class ElasticsearchDataEnvelopeSearcher implements DataEnvelopeSearcher {
 
         return dataEnvelope;
     }
-
+    
+    
+    /**
+     * match sourceType
+     * @param dataEnvelope
+     * @return 
+     */
+    private QueryBuilder getSourceTypeFilter(AbstractDataEnvelope dataEnvelope){
+        return QueryBuilders.termQuery(DATAENVELOPE_SOURCETYPE_ATTRIBUTE, dataEnvelope.getSourceType().toString());
+    }
 }
