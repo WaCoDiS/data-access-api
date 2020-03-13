@@ -22,11 +22,11 @@ import org.elasticsearch.index.query.QueryBuilders;
  */
 public class DataAccessSearchBodyElasticsearchBoolQueryProvider implements ElasticsearchQueryProvider {
 
-    private final AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvider abstractSubsetDefinitionFilterProvider;
+    private final SubsetDefinitionCommonAttributesElasticsearchBoolQueryProvider abstractSubsetDefinitionFilterProvider;
     private final FilterProviderFactory filterProviderFactory;
 
     public DataAccessSearchBodyElasticsearchBoolQueryProvider() {
-        this.abstractSubsetDefinitionFilterProvider = new AbstractSubsetDefinitionAttributesOnlyElasticsearchBoolQueryProvider();
+        this.abstractSubsetDefinitionFilterProvider = new SubsetDefinitionCommonAttributesElasticsearchBoolQueryProvider();
         this.filterProviderFactory = new FilterProviderFactory();
     }
         
@@ -35,7 +35,7 @@ public class DataAccessSearchBodyElasticsearchBoolQueryProvider implements Elast
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         List<QueryBuilder> filters = new ArrayList<>();
         
-        filters.addAll(getFiltersForSpatioTemporalAttributes(areaOfInterest, timeFrame));
+        filters.addAll(getFilterForCommonAttributes(subset, areaOfInterest, timeFrame));
         filters.addAll(getFiltersForSubsetDefinition(subset));
         
         filters.forEach(filter -> boolQuery.filter(filter)); //add all filters to Query (logical and)
@@ -51,10 +51,10 @@ public class DataAccessSearchBodyElasticsearchBoolQueryProvider implements Elast
         return filters;
     }
     
-    private List<QueryBuilder> getFiltersForSpatioTemporalAttributes(AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame){
-        BoolQueryBuilder spatioTemporalQuery = this.abstractSubsetDefinitionFilterProvider.buildQueryForSubsetDefinition(areaOfInterest, timeFrame);
+    private List<QueryBuilder> getFilterForCommonAttributes(AbstractSubsetDefinition subset, AbstractDataEnvelopeAreaOfInterest areaOfInterest, AbstractDataEnvelopeTimeFrame timeFrame){
+        BoolQueryBuilder abstractAttributesQueries = this.abstractSubsetDefinitionFilterProvider.buildQueryForSubsetDefinition(subset, areaOfInterest, timeFrame);
         
-        return spatioTemporalQuery.filter();
+        return abstractAttributesQueries.filter();
     }
     
    
