@@ -8,7 +8,7 @@
     <parent>
         <groupId>de.wacodis</groupId>
         <artifactId>data-access</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
     
     <properties>
@@ -22,7 +22,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
                 <executions>
                     <execution>
                         <goals>
