@@ -20,5 +20,5 @@ jobs:
         java-version: ${{matrix.jdk-version}}
     - name: Checkout Data Access
       uses: actions/checkout@v2
-    - name: Build Data Access with Maven and JDK ${{matrix.jdk-version}} on ${{matrix.os}
+    - name: Build Data Access with Maven and JDK ${{matrix.jdk-version}} on ${{matrix.os}}
       run: mvn -B clean package --file pom.xml
