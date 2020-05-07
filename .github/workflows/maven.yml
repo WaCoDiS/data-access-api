@@ -1,4 +1,4 @@
-name: Build WaCoDiS Data Access on ${{matrix.os} with JDK ${{matrix.jdk-version}}
+name: Build WaCoDiS Data Access
 
 on: 
   push:
