@@ -1,0 +1,24 @@
+name: Build WaCoDiS Data Access
+
+on: 
+  push:
+    branches: 
+      - develop
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy: 
+      matrix:
+        os: [ubuntu-latest]
+        jdk-version: [1.8]
+
+    steps:
+    - name: Set up JDK ${{matrix.jdk-version}}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{matrix.jdk-version}}
+    - name: Checkout Data Access
+      uses: actions/checkout@v2
+    - name: Build Data Access with Maven
+      run: mvn -B clean package --file pom.xml
