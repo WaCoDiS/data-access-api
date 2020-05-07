@@ -158,7 +158,7 @@ The _Wacodis Data Access Models_ submodule already contains java classes that ar
   * change directory to _Data Access Models_ subfolder (_data-access-api/data-access-models_)
   * run `mvn clean install -p download-generate-models`
   
-  Two profiles are applicable for building data models module. The profile _download-generate-models_ fetches the latest version of [WaCoDiS Schema Definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) (OpenAPI) from Github and generates corresponding java classes. The profile _generate-models_ gets the schema definitions from a local file and generates corresponding java classes. By default the schema definitions are expected in the modules resource folder (_resources/definitions/wacodis-schemas.yml_). Alternatively, the file path can be configured in _pom.xml_.  
+  Two profiles are applicable for building data models module. The profile _download-generate-models_ fetches the latest version of [WaCoDiS Schema Definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) (OpenAPI) from Github and generates corresponding java classes. If another branch of the Wacodis schemas than the master branch is to be used for generating model classes, the URL in the pom.xml file must be changed accordingly. The profile _generate-models_ gets the schema definitions from a local file and generates corresponding java classes. By default the schema definitions are expected in the modules resource folder (_resources/definitions/wacodis-schemas.yml_). Alternatively, the file path can be configured in _pom.xml_.  
   
   __When building data models make sure to follow the instructions on [updating Data Access Models](#updating-data-access-models).__
   
@@ -267,7 +267,7 @@ Change *include* propterty of annotation *JsonTypeInfo* to *JsonTypeInfo.As.EXIS
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "sourceType", visible = true)
 ```
   
-
+If the model classes are not based on the master branch of the Wacodis data model other components of the WaCoDiS system might not be compatible anymore. Therefore, it is adviced to create a new branch if the model classes deviate from master branch of the WaCoDiS schema.
 #### Pending Developments
 ##### Creation Of Resources from DataEnvelopes
 The _/resources/search_ endpoint of Data Access API demands the conversion from DataEnvelopes (metadata stored in Elasticsearch) to Resources (provides a URL for the actual data). This conversion is handled by a implementation of the interface [DataEnvelopeToResourceConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/DataEnvelopeToResourceConverter.java). Each subtype of _AbstractDataEnvelope_ needs an implementation of this interface. Currently the only working implementation is [CopernicusDataEnvelopeConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/CopernicusDataEnvelopeConverter.java) which handles the conversion from _CopernicusDataEnvelope_ to a subtype of _AbstractResource_. Further information on implementing _DataEnvelopeToResourceConcerter_ can be found in the [wiki](https://github.com/WaCoDiS/data-access-api/wiki/Extending-Data-Access#dataenvelopetoresourceconverter).
