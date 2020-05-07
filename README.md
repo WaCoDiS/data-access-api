@@ -28,6 +28,7 @@ This projects implements a REST API that persists and manages metadata from all 
   * [How to Contribute](#how-to-contribute)
     * [Extending Data Access](#extending-data-access)
       * [New Types of DataEnvelope and SubsetDefinition](#new-types-of-dataenvelope-and-subsetdefinition)
+      * [Updating Data Access Models](#updating-data-access-models)
     * [Pending Developments](#pending-developments)
       * [Creation of Resources from DataEnvelopes](#creation-of-resources-from-dataenvelopes)
   * [Branching](#branching) 
@@ -158,7 +159,9 @@ The _Wacodis Data Access Models_ submodule already contains java classes that ar
   * run `mvn clean install -p download-generate-models`
   
   Two profiles are applicable for building data models module. The profile _download-generate-models_ fetches the latest version of [WaCoDiS Schema Definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) (OpenAPI) from Github and generates corresponding java classes. The profile _generate-models_ gets the schema definitions from a local file and generates corresponding java classes. By default the schema definitions are expected in the modules resource folder (_resources/definitions/wacodis-schemas.yml_). Alternatively, the file path can be configured in _pom.xml_.  
-    
+  
+  __When building data models make sure to follow the instructions on [updating Data Access Models](#updating-data-access-models).__
+  
 2. Build _Data Wrapper_ and _Data Access API_
   * change directory to the projects root directory (_data_access_api_)
   * * run `mvn clean install`  
@@ -249,6 +252,21 @@ This section contains information for developers. [Extending Data Access](#exten
 #### Extending Data Access
 ##### New Types of DataEnvelope and SubsetDefinition
 Data Access must be modified if new types of DataEnvelope or SubsetDefintion are added to [Wacodis schemas](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) in order to support the newly introduced data types. See the [Wiki](https://github.com/WaCoDiS/data-access-api/wiki/Extending-Data-Access) for further information.
+##### Updating Data Access Models
+If the Wacodis data model changes, the classes in the Data Access Models module must reflect these changes. To do this, the model classes must be generated again (see [build from source (optional) Build Data Models](#build-from-source)).  
+  
+If the classes were created again, some annotations in these classes __must__ be changed as follows. 
+1. AbstractBackend.java  
+Change *include* propterty of annotation *JsonTypeInfo* to *JsonTypeInfo.As.EXISTING_PROPERTY*.
+```
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "backendType", visible = true)
+```
+2. AbstractDataEnvelope.java  
+Change *include* propterty of annotation *JsonTypeInfo* to *JsonTypeInfo.As.EXISTING_PROPERTY*.
+```
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "sourceType", visible = true)
+```
+  
 
 #### Pending Developments
 ##### Creation Of Resources from DataEnvelopes
