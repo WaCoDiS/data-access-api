@@ -3,7 +3,7 @@ name: Build WaCoDiS Data Access
 on: 
   push:
     branches: 
-      - develop
+      - master
 
 jobs:
   build:
