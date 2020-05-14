@@ -32,32 +32,32 @@ public class CopernicusDataEnvelopeElasticsearchFilterProvider implements DataEn
     @Override
     public List<QueryBuilder> buildFiltersForDataEnvelope(AbstractDataEnvelope envelope) {
         if (envelope instanceof CopernicusDataEnvelope) {
-            List<QueryBuilder> filters;
+            List<QueryBuilder> filters = new ArrayList<>();
             CopernicusDataEnvelope copernicusEnvelope = (CopernicusDataEnvelope) envelope;
 
             //filters for mandatory attributes
             QueryBuilder datasetIdQuery = QueryBuilders.termQuery(DATASETID_ATTRIBUTE, copernicusEnvelope.getDatasetId());
             QueryBuilder satelliteQuery = QueryBuilders.termQuery(SATELLITE_ATTRIBUTE, copernicusEnvelope.getSatellite().toString());
             //QueryBuilder portalQuery = QueryBuilders.termQuery(PORTAL_ATTRIBUTE, copernicusEnvelope.getPortal().toString());
-            filters = Arrays.asList(new QueryBuilder[]{datasetIdQuery, satelliteQuery});
+            filters.addAll(Arrays.asList(datasetIdQuery, satelliteQuery));
 
             //filters for optional attributes
             List<QueryBuilder> optionalFilters = new ArrayList<>();
             if (copernicusEnvelope.getInstrument() != null) {
-                QueryBuilder instrumentFilter = QueryBuilders.termQuery(INSTRUMENT_ATTRIBUTE, copernicusEnvelope.getInstrument());
-                optionalFilters.add(instrumentFilter);
+                QueryBuilder instrumentQuery = QueryBuilders.termQuery(INSTRUMENT_ATTRIBUTE, copernicusEnvelope.getInstrument());
+                optionalFilters.add(instrumentQuery);
             }
             if (copernicusEnvelope.getSensorMode() != null) {
-                QueryBuilder sensorModeFilter = QueryBuilders.termQuery(SENSORMODE_ATTRIBUTE, copernicusEnvelope.getSensorMode());
-                optionalFilters.add(sensorModeFilter);
+                QueryBuilder sensorModeQuery = QueryBuilders.termQuery(SENSORMODE_ATTRIBUTE, copernicusEnvelope.getSensorMode());
+                optionalFilters.add(sensorModeQuery);
             }
             if (copernicusEnvelope.getProductType() != null) {
-                QueryBuilder productTypeFilter = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, copernicusEnvelope.getProductType());
-                optionalFilters.add(productTypeFilter);
+                QueryBuilder productTypeQuery = QueryBuilders.termQuery(PRODUCTTYPE_ATTRIBUTE, copernicusEnvelope.getProductType());
+                optionalFilters.add(productTypeQuery);
             }
             if (copernicusEnvelope.getProductLevel() != null) {
-                QueryBuilder productLevelFilter = QueryBuilders.termQuery(PRODUCTLEVEL_ATTRIBUTE, copernicusEnvelope.getProductLevel());
-                optionalFilters.add(productLevelFilter);
+                QueryBuilder productLevelQuery = QueryBuilders.termQuery(PRODUCTLEVEL_ATTRIBUTE, copernicusEnvelope.getProductLevel());
+                optionalFilters.add(productLevelQuery);
             }
 
             filters.addAll(optionalFilters);
