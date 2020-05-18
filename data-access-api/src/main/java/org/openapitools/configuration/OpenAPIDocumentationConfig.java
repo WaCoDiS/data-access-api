@@ -36,13 +36,14 @@ public class OpenAPIDocumentationConfig {
     }
 
     @Bean
-    public Docket customImplementation(ServletContext servletContext, @Value("${openapi.waCoDiSDataAccess.base-path:/dataAccess}") String basePath) {
+    public Docket customImplementation(ServletContext servletContext, @Value("${openapi.waCoDiSDataAccess.base-path_api-docs:/dataAccess}") String basePath) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("de.wacodis.dataaccess.controller"))
                     .build()
                 .directModelSubstitute(org.joda.time.LocalDate.class, java.sql.Date.class)
                 .directModelSubstitute(org.joda.time.DateTime.class, java.util.Date.class)
+                .pathProvider(new BasePathAwareRelativePathProvider(servletContext, basePath))
                 .apiInfo(apiInfo());
     }
 
