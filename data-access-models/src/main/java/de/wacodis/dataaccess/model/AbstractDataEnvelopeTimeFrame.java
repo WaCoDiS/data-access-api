@@ -14,7 +14,7 @@ import javax.validation.constraints.*;
  * time frame the dataset covers/must intersect
  */
 @ApiModel(description = "time frame the dataset covers/must intersect")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-14T14:51:34.082+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-26T17:47:17.450+02:00[Europe/Berlin]")
 
 public class AbstractDataEnvelopeTimeFrame  implements Serializable {
   private static final long serialVersionUID = 1L;

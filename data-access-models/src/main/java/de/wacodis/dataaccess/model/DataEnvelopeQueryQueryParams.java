@@ -4,7 +4,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.wacodis.dataaccess.model.AbstractSubsetDefinition;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -12,28 +11,33 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * contains information for defining a subset definition for static process inputs
+ * DataEnvelopeQueryQueryParams
  */
-@ApiModel(description = "contains information for defining a subset definition for static process inputs")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-26T17:47:17.450+02:00[Europe/Berlin]")
 
-public class StaticSubsetDefinition extends AbstractSubsetDefinition implements Serializable {
+public class DataEnvelopeQueryQueryParams  implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @JsonProperty("value")
-  private String value = null;
+  private Object value = null;
 
   /**
-   * determines how the value should be interpreted 
+   * comparators other than 'equals' only apply to numeric or date values, string values are always checked for equality 
    */
-  public enum DataTypeEnum {
-    TEXT("text"),
+  public enum ComparatorEnum {
+    EQUALS("equals"),
     
-    NUMERIC("numeric");
+    LESSER("lesser"),
+    
+    GREATER("greater"),
+    
+    LESSEROREQUALS("lesserOrEquals"),
+    
+    GREATEROREQUALS("greaterOrEquals");
 
     private String value;
 
-    DataTypeEnum(String value) {
+    ComparatorEnum(String value) {
       this.value = value;
     }
 
@@ -44,8 +48,8 @@ public class StaticSubsetDefinition extends AbstractSubsetDefinition implements 
     }
 
     @JsonCreator
-    public static DataTypeEnum fromValue(String text) {
-      for (DataTypeEnum b : DataTypeEnum.values()) {
+    public static ComparatorEnum fromValue(String text) {
+      for (ComparatorEnum b : ComparatorEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
           return b;
         }
@@ -54,49 +58,47 @@ public class StaticSubsetDefinition extends AbstractSubsetDefinition implements 
     }
   }
 
-  @JsonProperty("dataType")
-  private DataTypeEnum dataType = null;
+  @JsonProperty("comparator")
+  private ComparatorEnum comparator = null;
 
-  public StaticSubsetDefinition value(String value) {
+  public DataEnvelopeQueryQueryParams value(Object value) {
     this.value = value;
     return this;
   }
 
   /**
-   * string encoded value 
+   * Get value
    * @return value
   **/
-  @ApiModelProperty(required = true, value = "string encoded value ")
-  @NotNull
+  @ApiModelProperty(value = "")
 
 
-  public String getValue() {
+  public Object getValue() {
     return value;
   }
 
-  public void setValue(String value) {
+  public void setValue(Object value) {
     this.value = value;
   }
 
-  public StaticSubsetDefinition dataType(DataTypeEnum dataType) {
-    this.dataType = dataType;
+  public DataEnvelopeQueryQueryParams comparator(ComparatorEnum comparator) {
+    this.comparator = comparator;
     return this;
   }
 
   /**
-   * determines how the value should be interpreted 
-   * @return dataType
+   * comparators other than 'equals' only apply to numeric or date values, string values are always checked for equality 
+   * @return comparator
   **/
-  @ApiModelProperty(required = true, value = "determines how the value should be interpreted ")
-  @NotNull
+  @ApiModelProperty(value = "comparators other than 'equals' only apply to numeric or date values, string values are always checked for equality ")
 
 
-  public DataTypeEnum getDataType() {
-    return dataType;
+  public ComparatorEnum getComparator() {
+    return comparator;
   }
 
-  public void setDataType(DataTypeEnum dataType) {
-    this.dataType = dataType;
+  public void setComparator(ComparatorEnum comparator) {
+    this.comparator = comparator;
   }
 
 
@@ -108,24 +110,23 @@ public class StaticSubsetDefinition extends AbstractSubsetDefinition implements 
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    StaticSubsetDefinition staticSubsetDefinition = (StaticSubsetDefinition) o;
-    return Objects.equals(this.value, staticSubsetDefinition.value) &&
-        Objects.equals(this.dataType, staticSubsetDefinition.dataType) &&
-        super.equals(o);
+    DataEnvelopeQueryQueryParams dataEnvelopeQueryQueryParams = (DataEnvelopeQueryQueryParams) o;
+    return Objects.equals(this.value, dataEnvelopeQueryQueryParams.value) &&
+        Objects.equals(this.comparator, dataEnvelopeQueryQueryParams.comparator);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(value, dataType, super.hashCode());
+    return Objects.hash(value, comparator);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class StaticSubsetDefinition {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("class DataEnvelopeQueryQueryParams {\n");
+    
     sb.append("    value: ").append(toIndentedString(value)).append("\n");
-    sb.append("    dataType: ").append(toIndentedString(dataType)).append("\n");
+    sb.append("    comparator: ").append(toIndentedString(comparator)).append("\n");
     sb.append("}");
     return sb.toString();
   }

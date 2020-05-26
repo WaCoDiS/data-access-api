@@ -14,7 +14,7 @@ import javax.validation.constraints.*;
  * if present, this describe the execution pattern of a WacodisJobDefinition. if not present, the WacodisJobDefinition is treated as a one-time execution. Only one of the properties shall be provided. 
  */
 @ApiModel(description = "if present, this describe the execution pattern of a WacodisJobDefinition. if not present, the WacodisJobDefinition is treated as a one-time execution. Only one of the properties shall be provided. ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-14T14:51:34.082+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-26T17:47:17.450+02:00[Europe/Berlin]")
 
 public class WacodisJobDefinitionExecution  implements Serializable {
   private static final long serialVersionUID = 1L;
