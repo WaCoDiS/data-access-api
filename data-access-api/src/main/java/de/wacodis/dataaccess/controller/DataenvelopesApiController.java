@@ -10,6 +10,7 @@ import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfigur
 import de.wacodis.dataaccess.elasticsearch.ElasticsearchClientFactory;
 import de.wacodis.dataaccess.messaging.DataEnvelopeAcknowledgmentPublisherChannel;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
+import de.wacodis.dataaccess.model.DataEnvelopeQuery;
 import java.io.IOException;
 import java.util.Optional;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -225,6 +226,11 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             }
 
         }
+    }
+
+    @Override
+    public ResponseEntity<List<AbstractDataEnvelope>> queryExistingDataEnvelopes(DataEnvelopeQuery dataEnvelopeQuery) {
+        return DataenvelopesApi.super.queryExistingDataEnvelopes(dataEnvelopeQuery); //To change body of generated methods, choose Tools | Templates.
     }
 
     private DataEnvelopeSearcher createDataEnvelopeSearcherInstance(RestHighLevelClient elasticsearchClient) {
