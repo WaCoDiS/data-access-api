@@ -52,21 +52,22 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
     private String dateFormat;
     private QueryParameterFilterProvider paramFilterProvider;
 
-    public ElasticSearchDataEnvelopeExplorer(RestHighLevelClient elasticsearchClient, String indexName, TimeValue requestTimeout) {
-        this(elasticsearchClient,indexName, requestTimeout, CommonAttributeFilterUtil.getDefaultDateFormat());
+    public ElasticSearchDataEnvelopeExplorer(RestHighLevelClient elasticsearchClient, String indexName, long requestTimeout_Millies) {
+        this(elasticsearchClient, indexName, requestTimeout_Millies, CommonAttributeFilterUtil.getDefaultDateFormat());
     }
 
     public ElasticSearchDataEnvelopeExplorer(RestHighLevelClient elasticsearchClient, String indexName) {
-        this(elasticsearchClient, indexName, TimeValue.timeValueMillis(DEFAULTTIMEOUT_MILLIS), CommonAttributeFilterUtil.getDefaultDateFormat());
+        this(elasticsearchClient, indexName, DEFAULTTIMEOUT_MILLIS, CommonAttributeFilterUtil.getDefaultDateFormat());
     }
 
-    public ElasticSearchDataEnvelopeExplorer(RestHighLevelClient elasticsearchClient, String indexName, TimeValue requestTimeout, String dateFormat) {
+    public ElasticSearchDataEnvelopeExplorer(RestHighLevelClient elasticsearchClient, String indexName, long requestTimeout_Millies, String dateFormat) {
         this.elasticsearchClient = elasticsearchClient;
         this.indexName = indexName;
         this.dateFormat = dateFormat;
         this.paramFilterProvider = new SimpleQueryParameterFilterProvider();
         this.jsonDeserializerFactory = new DataEnvelopeJsonDeserializerFactory();
         this.dataEnvelopeSerializer = new ElasticsearchCompatibilityDataEnvelopeSerializer();
+        this.requestTimeout = TimeValue.timeValueMillis(requestTimeout_Millies);
     }
 
     @Override
@@ -79,13 +80,13 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
             //query index
             SearchResponse searchResponse = this.elasticsearchClient.search(request, RequestOptions.DEFAULT);
             List<AbstractDataEnvelope> responseDataEnvelopes = processSearchResponse(searchResponse);
-            
+
             requestResponse = new RequestResponse(RequestResult.OK, Optional.of(responseDataEnvelopes));
         } catch (Exception e) {
             requestResponse = new RequestResponse(RequestResult.ERROR, Optional.empty());
             requestResponse.addException(e);
         }
-        
+
         return requestResponse;
     }
 
@@ -142,7 +143,7 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
         List<AbstractDataEnvelope> responseEnvelopes = new ArrayList<>();
         SearchHits hits = response.getHits();
 
-        for (SearchHit hit : hits  ) {
+        for (SearchHit hit : hits) {
             String hitIdentifier = hit.getId();
             String hitJson = hit.getSourceAsString();
             AbstractDataEnvelope hitDataEnvelope = deserializeDataEnvelope(hitJson);
