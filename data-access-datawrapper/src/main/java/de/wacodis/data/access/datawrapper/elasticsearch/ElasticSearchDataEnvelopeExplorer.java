@@ -121,7 +121,7 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
         //filter for query params
         if (query.getQueryParams() != null) {
             query.getQueryParams().entrySet().forEach((param) -> {
-                //if query for identifier match document id instead of identifier attribute of DataEnvelope (DataEnvelope indentifier attribute could be null)
+                //if query for 'identifier' match document id (_id) instead of identifier attribute of DataEnvelope
                 if (!isIdentifierQuery(param.getKey())) {
                     filters.add(this.paramFilterProvider.buildFilterForQueryParam(param.getKey(), param.getValue()));
                 } else {
