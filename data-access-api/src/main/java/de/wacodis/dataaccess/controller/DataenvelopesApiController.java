@@ -257,7 +257,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             LOGGER.error("closing elasticsearch client for uri " + elasticsearchUri + " raised exception, could not close client", ex);
         }
         
-        LOGGER.debug("finished DataEnvelope exploration");
+        LOGGER.info("finished DataEnvelope exploration");
         
         return requestResponse;
     }
