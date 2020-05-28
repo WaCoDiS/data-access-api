@@ -288,7 +288,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
             errorMessage.append("\t").append("no exceptions provided");
         } else {
             for (int i = 0; i < exceptions.size(); i++) {
-                errorMessage.append("\t").append("exception ").append(i).append(": ").append(exceptions.get(i).getMessage());
+                errorMessage.append("\t").append("exception ").append((i+1)).append(": ").append(exceptions.get(i).getMessage());
             }
         }
 
