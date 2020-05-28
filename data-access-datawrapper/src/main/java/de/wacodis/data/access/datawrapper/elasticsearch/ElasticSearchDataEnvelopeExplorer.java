@@ -108,9 +108,11 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
         }
 
         //filter for query params
-        query.getQueryParams().entrySet().forEach((param) -> {
-            filters.add(this.paramFilterProvider.buildFilterForQueryParam(param.getKey(), param.getValue()));
-        });
+        if (query.getQueryParams() != null) {
+            query.getQueryParams().entrySet().forEach((param) -> {
+                filters.add(this.paramFilterProvider.buildFilterForQueryParam(param.getKey(), param.getValue()));
+            });
+        }
 
         return filters;
     }
