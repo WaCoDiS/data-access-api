@@ -43,7 +43,10 @@ import org.slf4j.LoggerFactory;
 public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataEnvelopeExplorer.class);
-    
+
+    private static final String IDENTIFIER_ATTRIBUTE = "identifier";
+    private static final String INDEX_DOCUMENT_ID_FIELD = "_id";
+
     private static final int DEFAULTTIMEOUT_MILLIS = 10000;
 
     private RestHighLevelClient elasticsearchClient;
@@ -75,7 +78,7 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
     @Override
     public RequestResponse<List<AbstractDataEnvelope>> queryDataEnvelopes(DataEnvelopeQuery query) {
         LOGGER.debug("handle DataEnvelopeQuery:" + System.lineSeparator() + query.toString());
-        
+
         RequestResponse<List<AbstractDataEnvelope>> requestResponse;
 
         try {
@@ -87,7 +90,7 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
             List<AbstractDataEnvelope> responseDataEnvelopes = processSearchResponse(searchResponse);
 
             requestResponse = new RequestResponse(RequestResult.OK, Optional.of(responseDataEnvelopes));
-            
+
             LOGGER.info("DataEnvelope exploration finished succesfully, {} DataEnvelope(s) found", responseDataEnvelopes.size());
         } catch (Exception e) {
             requestResponse = new RequestResponse(RequestResult.ERROR, Optional.empty());
@@ -118,7 +121,12 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
         //filter for query params
         if (query.getQueryParams() != null) {
             query.getQueryParams().entrySet().forEach((param) -> {
-                filters.add(this.paramFilterProvider.buildFilterForQueryParam(param.getKey(), param.getValue()));
+                //if query for identifier match document id instead of identifier attribute of DataEnvelope (DataEnvelope indentifier attribute could be null)
+                if (!isIdentifierQuery(param.getKey())) {
+                    filters.add(this.paramFilterProvider.buildFilterForQueryParam(param.getKey(), param.getValue()));
+                } else {
+                    filters.add(this.paramFilterProvider.buildFilterForQueryParam(INDEX_DOCUMENT_ID_FIELD, param.getValue()));
+                }
             });
         }
 
@@ -174,5 +182,9 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
         dataEnvelope.setAreaOfInterest(defaultAOI);
 
         return dataEnvelope;
+    }
+    
+    private boolean isIdentifierQuery(String paramName){
+        return paramName.equals(IDENTIFIER_ATTRIBUTE);
     }
 }

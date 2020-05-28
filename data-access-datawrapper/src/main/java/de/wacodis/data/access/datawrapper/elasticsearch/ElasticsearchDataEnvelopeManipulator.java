@@ -40,7 +40,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticsearchDataEnvelopeSearcher.class);
 
     private static final int DEFAULTTIMEOUT_MILLIS = 10000;
-
+    
     private RestHighLevelClient elasticsearchClient;
     private String type;
     private String indexName;
