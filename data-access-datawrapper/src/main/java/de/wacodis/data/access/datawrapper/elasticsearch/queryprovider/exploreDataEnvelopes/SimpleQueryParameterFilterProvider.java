@@ -42,9 +42,12 @@ public class SimpleQueryParameterFilterProvider implements QueryParameterFilterP
             case LESSEROREQUALS:
                 filter = new RangeQueryBuilder(fieldName).lte(queryParam.getValue());
                 break;
+            case NOT:
+                filter = new BoolQueryBuilder().mustNot(new TermQueryBuilder(fieldName, queryParam.getValue()));
+                break;
             default:
                 LOGGER.error("handling of comparator {} is not implemented", queryParam.getComparator().toString());
-                throw new IllegalArgumentException("unknown comparator "+ queryParam.getComparator().toString() + ", cannot build query for query parameter " + fieldName);
+                throw new IllegalArgumentException("unknown comparator " + queryParam.getComparator().toString() + ", cannot build query for query parameter " + fieldName);
         }
 
         return filter;
