@@ -12,7 +12,6 @@ import de.wacodis.data.access.datawrapper.RequestResult;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.CommonAttributeFilterUtil;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.exploreDataEnvelopes.QueryParameterFilterProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.exploreDataEnvelopes.SimpleQueryParameterFilterProvider;
-import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.filterprovider.DataEnvelopeElasticsearchFilterProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopeJsonDeserializerFactory;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.ElasticsearchCompatibilityDataEnvelopeSerializer;
@@ -35,6 +34,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -42,6 +42,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
  */
 public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticSearchDataEnvelopeExplorer.class);
+    
     private static final int DEFAULTTIMEOUT_MILLIS = 10000;
 
     private RestHighLevelClient elasticsearchClient;
@@ -72,19 +74,25 @@ public class ElasticSearchDataEnvelopeExplorer implements DataEnvelopeExplorer {
 
     @Override
     public RequestResponse<List<AbstractDataEnvelope>> queryDataEnvelopes(DataEnvelopeQuery query) {
+        LOGGER.debug("handle DataEnvelopeQuery:" + System.lineSeparator() + query.toString());
+        
         RequestResponse<List<AbstractDataEnvelope>> requestResponse;
 
         try {
             List<QueryBuilder> filters = buildFilters(query);
             SearchRequest request = buildSearchRequest(filters);
+            LOGGER.debug("created {} filters for DataEnvelope exploration", filters.size());
             //query index
             SearchResponse searchResponse = this.elasticsearchClient.search(request, RequestOptions.DEFAULT);
             List<AbstractDataEnvelope> responseDataEnvelopes = processSearchResponse(searchResponse);
 
             requestResponse = new RequestResponse(RequestResult.OK, Optional.of(responseDataEnvelopes));
+            
+            LOGGER.info("DataEnvelope exploration finished succesfully, {} DataEnvelope(s) found", responseDataEnvelopes.size());
         } catch (Exception e) {
             requestResponse = new RequestResponse(RequestResult.ERROR, Optional.empty());
             requestResponse.addException(e);
+            LOGGER.error("DataEnvelope exploration caused error", e);
         }
 
         return requestResponse;

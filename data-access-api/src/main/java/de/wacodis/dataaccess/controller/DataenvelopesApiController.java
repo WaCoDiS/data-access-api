@@ -233,6 +233,8 @@ public class DataenvelopesApiController implements DataenvelopesApi {
 
     @Override
     public ResponseEntity queryExistingDataEnvelopes(DataEnvelopeQuery dataEnvelopeQuery) {
+        LOGGER.info("initiate DataEnvelope exploration");
+                
         ResponseEntity requestResponse;
         String elasticsearchUri = this.elasticsearchConfig.getUri();
         RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
@@ -254,6 +256,8 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         } catch (IOException ex) {
             LOGGER.error("closing elasticsearch client for uri " + elasticsearchUri + " raised exception, could not close client", ex);
         }
+        
+        LOGGER.debug("finished DataEnvelope exploration");
         
         return requestResponse;
     }
