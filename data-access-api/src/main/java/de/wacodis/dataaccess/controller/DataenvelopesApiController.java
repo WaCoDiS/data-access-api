@@ -1,15 +1,18 @@
 package de.wacodis.dataaccess.controller;
 
+import de.wacodis.data.access.datawrapper.DataEnvelopeExplorer;
 import de.wacodis.data.access.datawrapper.DataEnvelopeManipulator;
 import de.wacodis.data.access.datawrapper.DataEnvelopeSearcher;
 import de.wacodis.data.access.datawrapper.RequestResponse;
 import de.wacodis.data.access.datawrapper.RequestResult;
+import de.wacodis.data.access.datawrapper.elasticsearch.ElasticSearchDataEnvelopeExplorer;
 import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchDataEnvelopeManipulator;
 import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchDataEnvelopeSearcher;
 import de.wacodis.dataaccess.configuration.ElasticsearchDataEnvelopesAPIConfiguration;
 import de.wacodis.dataaccess.elasticsearch.ElasticsearchClientFactory;
 import de.wacodis.dataaccess.messaging.DataEnvelopeAcknowledgmentPublisherChannel;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
+import de.wacodis.dataaccess.model.DataEnvelopeQuery;
 import java.io.IOException;
 import java.util.Optional;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -24,6 +27,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import de.wacodis.dataaccess.model.Error;
 import de.wacodis.dataaccess.util.ErrorFactory;
 import java.util.List;
+import org.elasticsearch.common.unit.TimeValue;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 
@@ -100,7 +104,7 @@ public class DataenvelopesApiController implements DataenvelopesApi {
                 publishDataEnvelopeAcknowledgement(indexedDataEnvelope);
 
                 return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(indexedDataEnvelope);
-            }else{
+            } else {
                 String message = "unable to create resources" + System.lineSeparator() + abstractDataEnvelope.toString();
                 Error error = ErrorFactory.getErrorObject(message);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
@@ -227,6 +231,37 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         }
     }
 
+    @Override
+    public ResponseEntity queryExistingDataEnvelopes(DataEnvelopeQuery dataEnvelopeQuery) {
+        LOGGER.info("initiate DataEnvelope exploration");
+                
+        ResponseEntity requestResponse;
+        String elasticsearchUri = this.elasticsearchConfig.getUri();
+        RestHighLevelClient elasticsearchClient = this.elasticsearchClientFactory.buildElasticsearchClient(elasticsearchUri);
+
+        DataEnvelopeExplorer explorer = createDataEnvelopeExplorerInstance(elasticsearchClient);
+        RequestResponse queryResponse = explorer.queryDataEnvelopes(dataEnvelopeQuery);
+
+        if (queryResponse.getResponseObject().isPresent()) {
+            requestResponse = ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(queryResponse.getResponseObject().get());
+        } else {
+            String errorMsg = createErrorMessage(queryResponse.getExcetions());
+            Error error = ErrorFactory.getErrorObject(errorMsg);
+            requestResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(error);
+        }
+
+        try {
+            elasticsearchClient.close();
+            LOGGER.debug("closed elasticcsearch client for uri {}", elasticsearchUri);
+        } catch (IOException ex) {
+            LOGGER.error("closing elasticsearch client for uri " + elasticsearchUri + " raised exception, could not close client", ex);
+        }
+        
+        LOGGER.info("finished DataEnvelope exploration");
+        
+        return requestResponse;
+    }
+
     private DataEnvelopeSearcher createDataEnvelopeSearcherInstance(RestHighLevelClient elasticsearchClient) {
         String elasticsearchIndex = this.elasticsearchConfig.getIndexName();
         long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
@@ -242,8 +277,30 @@ public class DataenvelopesApiController implements DataenvelopesApi {
         return new ElasticsearchDataEnvelopeManipulator(elasticsearchClient, elasticsearchIndex, documentType, requestTimeout);
     }
 
+    private DataEnvelopeExplorer createDataEnvelopeExplorerInstance(RestHighLevelClient elasticsearchClient) {
+        String elasticsearchIndex = this.elasticsearchConfig.getIndexName();
+        long requestTimeout = this.elasticsearchConfig.getRequestTimeout_Millis();
+
+        return new ElasticSearchDataEnvelopeExplorer(elasticsearchClient, elasticsearchIndex, requestTimeout);
+    }
+
+    private String createErrorMessage(List<Exception> exceptions) {
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append("exception report: ").append(System.lineSeparator());
+
+        if (exceptions.isEmpty()) {
+            errorMessage.append("\t").append("no exceptions provided");
+        } else {
+            for (int i = 0; i < exceptions.size(); i++) {
+                errorMessage.append("\t").append("exception ").append((i+1)).append(": ").append(exceptions.get(i).getMessage());
+            }
+        }
+
+        return errorMessage.toString();
+    }
+
     private boolean publishDataEnvelopeAcknowledgement(AbstractDataEnvelope dataEnvelope) {
-        LOGGER.debug("publish acknowledgement of DataEnvelope:" + System.lineSeparator() + dataEnvelope.toString());
+        LOGGER.info("publish acknowledgement of DataEnvelope:" + System.lineSeparator() + dataEnvelope.toString());
 
         Message acknowledgement = MessageBuilder.withPayload(dataEnvelope).build();
         return this.dataEnvelopeAcknowledger.acknowledgeDataEnvelope().send(acknowledgement);

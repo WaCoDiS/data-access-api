@@ -5,11 +5,11 @@
 package de.wacodis.dataaccess.controller;
 
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
+import de.wacodis.dataaccess.model.DataEnvelopeQuery;
 import de.wacodis.dataaccess.model.Error;
 import io.swagger.annotations.*;
 import java.util.Optional;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.NativeWebRequest;
+import java.util.List;
 
 @javax.annotation.Generated(
         value = "org.openapitools.codegen.languages.SpringCodegen",
@@ -181,7 +182,7 @@ public interface DataenvelopesApi {
     @ApiOperation(
             value = "",
             nickname = "retrieveDataEnvelopeID",
-            notes = "retrieve Id for DataEnvelope ",
+            notes = "retrieve Id for existing DataEnvelope",
             response = AbstractDataEnvelope.class,
             tags = {})
     @ApiResponses(
@@ -198,10 +199,54 @@ public interface DataenvelopesApi {
             consumes = {"application/json"},
             method = RequestMethod.POST)
     default ResponseEntity<AbstractDataEnvelope> retrieveDataEnvelopeID(
-            @ApiParam(value = "data envelope for the resource to be created ", required = true)
+            @ApiParam(value = "DataEnvelope that should be matched", required = true)
                     @Valid
                     @RequestBody
                     AbstractDataEnvelope abstractDataEnvelope) {
+        getRequest()
+                .ifPresent(
+                        request -> {
+                            for (MediaType mediaType :
+                                    MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                                if (mediaType.isCompatibleWith(
+                                        MediaType.valueOf("application/json"))) {
+                                    ApiUtil.setExampleResponse(
+                                            request,
+                                            "application/json",
+                                            "{  \"identifier\" : \"identifier\",  \"sourceType\" : \"SensorWebDataEnvelope\",  \"areaOfInterest\" : {    \"extent\" : [ -151.17018, -151.17018, -151.17018, -151.17018 ]  },  \"created\" : \"2000-01-23T04:56:07.000+00:00\",  \"modified\" : \"2000-01-23T04:56:07.000+00:00\",  \"timeFrame\" : {    \"startTime\" : \"2000-01-23T04:56:07.000+00:00\",    \"endTime\" : \"2000-01-23T04:56:07.000+00:00\"  }}");
+                                    break;
+                                }
+                            }
+                        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+    
+    @ApiOperation(
+            value = "",
+            nickname = "queryExistingDataEnvelopes",
+            notes = "query for existing DataEnvelopes ",
+            response = AbstractDataEnvelope.class,
+            responseContainer = "List",
+            tags = {})
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        code = 200,
+                        message = "list of matching DataEnvelopes, empty list if no match ",
+                        response = AbstractDataEnvelope.class,
+                        responseContainer = "List"),
+                @ApiResponse(code = 500, message = "unexpected error ", response = Error.class)
+            })
+    @RequestMapping(
+            value = "/dataenvelopes/explore",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    default ResponseEntity<List<AbstractDataEnvelope>> queryExistingDataEnvelopes(
+            @ApiParam(value = "query parameters that should be matched ", required = true)
+                    @Valid
+                    @RequestBody
+                    DataEnvelopeQuery dataEnvelopeQuery) {
         getRequest()
                 .ifPresent(
                         request -> {

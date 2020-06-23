@@ -5,9 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import de.wacodis.data.access.datawrapper.DataEnvelopeManipulator;
 import de.wacodis.data.access.datawrapper.RequestResponse;
 import de.wacodis.data.access.datawrapper.RequestResult;
@@ -17,9 +15,6 @@ import de.wacodis.data.access.datawrapper.elasticsearch.util.ElasticsearchCompat
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.dataaccess.model.extension.elasticsearch.GeoShapeCompatibilityAreaOfInterest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -28,9 +23,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.DefaultEditorKit;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -38,8 +30,6 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.rest.RestStatus;
 
 /**
  *
@@ -50,7 +40,7 @@ public class ElasticsearchDataEnvelopeManipulator implements DataEnvelopeManipul
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticsearchDataEnvelopeSearcher.class);
 
     private static final int DEFAULTTIMEOUT_MILLIS = 10000;
-
+    
     private RestHighLevelClient elasticsearchClient;
     private String type;
     private String indexName;
