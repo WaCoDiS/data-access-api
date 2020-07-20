@@ -12,7 +12,9 @@ import de.wacodis.data.access.datawrapper.ResourceSearcher;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.DataAccessSearchBodyElasticsearchBoolQueryProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.queryprovider.ElasticsearchQueryProvider;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.AreaOfInterestConverter;
+import de.wacodis.data.access.datawrapper.elasticsearch.util.CopernicusDataEnvelopeSorter;
 import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopeJsonDeserializerFactory;
+import de.wacodis.data.access.datawrapper.elasticsearch.util.DataEnvelopePrioritizer;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeTimeFrame;
@@ -171,9 +173,12 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             AbstractSubsetDefinition input = inputs.get(i);
             SearchResponse response = searchResponse.getResponses()[i].getResponse();
             List<AbstractDataEnvelope> responseDataEnvelopes = processHits(response.getHits());
-
+            //prioritize results
+            //responseDataEnvelopes = orderDataEnvelopes(responseDataEnvelopes, searchBody);
+            
             ResourceSearchContext searchContext = new ResourceSearchContext(searchBody.getAreaOfInterest(), searchBody.getTimeFrame(), input);
             ResourceSearchResponseContainer responseHelper = new ResourceSearchResponseContainer(responseDataEnvelopes, searchContext);
+            //create resource for DataEnvelope and put to response container
             resources.put(input.getIdentifier(), getResourcesForResponse(responseHelper));
         }
 
@@ -243,6 +248,13 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             LOGGER.warn("unknown type " + areaOfInterest.getClass().getSimpleName() + ", return unchanged areaOfInterest");
             return areaOfInterest;
         }
+    }
+    
+    private List<AbstractDataEnvelope> orderDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes, DataAccessResourceSearchBody searchRequest){
+        DataEnvelopePrioritizer sorter = new CopernicusDataEnvelopeSorter(searchRequest);
+        List<AbstractDataEnvelope> sortedEnvs = sorter.orderDataEnvelopes(dataEnvelopes);
+        
+        return sortedEnvs;
     }
 
 }
