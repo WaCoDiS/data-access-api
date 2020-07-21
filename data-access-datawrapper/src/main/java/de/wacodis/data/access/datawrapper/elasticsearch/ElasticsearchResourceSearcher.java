@@ -174,7 +174,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
             SearchResponse response = searchResponse.getResponses()[i].getResponse();
             List<AbstractDataEnvelope> responseDataEnvelopes = processHits(response.getHits());
             //prioritize results
-            //responseDataEnvelopes = orderDataEnvelopes(responseDataEnvelopes, searchBody);
+            responseDataEnvelopes = orderDataEnvelopes(responseDataEnvelopes, searchBody);
             
             ResourceSearchContext searchContext = new ResourceSearchContext(searchBody.getAreaOfInterest(), searchBody.getTimeFrame(), input);
             ResourceSearchResponseContainer responseHelper = new ResourceSearchResponseContainer(responseDataEnvelopes, searchContext);

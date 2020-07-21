@@ -90,9 +90,32 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
         }
 
         @Override
-        public int compare(CopernicusDataEnvelope o1, CopernicusDataEnvelope o2) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public int compare(CopernicusDataEnvelope env1, CopernicusDataEnvelope env2) {
+            float indexEnv1 = calculatePriorityIndex(env1);
+            float indexEnv2 = calculatePriorityIndex(env2);
+            
+            if(indexEnv1 == indexEnv2){
+                return 0;
+            }else if(indexEnv1 < indexEnv2){
+                return -1;
+            }else{
+                return 1;
+            }    
         }
 
+        /**
+         * percentage of overlap (area of interest) minus cloud coverage
+         * @param env
+         * @return 
+         */
+        private float calculatePriorityIndex(CopernicusDataEnvelope env){
+            float cloudCov = env.getCloudCoverage();
+            float extentOverlap = AreaOfInterestIntersectionCalculator.calculateOverlapPercentage(this.areaOfInterest, env.getAreaOfInterest());
+            
+            return (extentOverlap - cloudCov);
+        }
+        
+
+        
     }
 }
