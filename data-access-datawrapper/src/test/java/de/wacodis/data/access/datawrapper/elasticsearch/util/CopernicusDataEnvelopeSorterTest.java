@@ -6,10 +6,8 @@
 package de.wacodis.data.access.datawrapper.elasticsearch.util;
 
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
-import de.wacodis.dataaccess.model.AbstractSubsetDefinition;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
