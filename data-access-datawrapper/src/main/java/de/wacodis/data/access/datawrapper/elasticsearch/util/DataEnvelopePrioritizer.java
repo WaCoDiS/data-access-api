@@ -14,6 +14,11 @@ import java.util.List;
  */
 public interface DataEnvelopePrioritizer {
     
-    List<AbstractDataEnvelope> orderDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes);
+    /**
+     * sort list of data envelope by specific priority
+     * @param dataEnvelopes
+     * @return return sorted list where the DataEnvelope with higher priority have lower index (highest priority (best) DataEnvelope must be the first element (index 0)
+     */
+    List<AbstractDataEnvelope> sortDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes);
     
 }

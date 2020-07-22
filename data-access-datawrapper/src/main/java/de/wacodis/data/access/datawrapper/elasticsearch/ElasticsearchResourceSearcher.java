@@ -252,7 +252,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     
     private List<AbstractDataEnvelope> orderDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes, DataAccessResourceSearchBody searchRequest){
         DataEnvelopePrioritizer sorter = new CopernicusDataEnvelopeSorter(searchRequest);
-        List<AbstractDataEnvelope> sortedEnvs = sorter.orderDataEnvelopes(dataEnvelopes);
+        List<AbstractDataEnvelope> sortedEnvs = sorter.sortDataEnvelopes(dataEnvelopes);
         
         return sortedEnvs;
     }

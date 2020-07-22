@@ -40,7 +40,7 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
     }
 
     @Override
-    public List<AbstractDataEnvelope> orderDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes) {
+    public List<AbstractDataEnvelope> sortDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes) {
         List<CopernicusDataEnvelope> copernicusEnvs = filterCopernicusDataEnvelopes(dataEnvelopes);
 
         //only sort if list contains only CopernicusDataEnvelopes
@@ -94,12 +94,13 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
             float indexEnv1 = calculatePriorityIndex(env1);
             float indexEnv2 = calculatePriorityIndex(env2);
             
+            //higher priority (better) should appear first
             if(indexEnv1 == indexEnv2){
                 return 0;
             }else if(indexEnv1 < indexEnv2){
-                return -1;
-            }else{
                 return 1;
+            }else{
+                return -1;
             }    
         }
 
