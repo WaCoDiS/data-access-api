@@ -9,9 +9,7 @@ import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -66,7 +64,7 @@ public class AreaOfInterestIntersectionCalculatorTest {
     @Test
     public void testCalculateIntersection() {
         List<Float> intersection = AreaOfInterestIntersectionCalculator.calculateIntersection(aoi1, aoi2).getExtent();
-        
+
         assertEquals(5.0f, intersection.get(0), delta);
         assertEquals(5.0f, intersection.get(1), delta);
         assertEquals(10.0f, intersection.get(2), delta);
@@ -80,6 +78,16 @@ public class AreaOfInterestIntersectionCalculatorTest {
     public void testIntersects() {
         assertTrue(AreaOfInterestIntersectionCalculator.intersects(aoi1, aoi2));
         assertFalse(AreaOfInterestIntersectionCalculator.intersects(aoi2, aoi3));
+
+        
+        //touches (not disjoint)
+        List<Float> extent3 = new ArrayList<>();
+        extent3.add(15.0f);
+        extent3.add(15.0f);
+        extent3.add(20.0f);
+        extent3.add(20.0f);
+        aoi3.setExtent(extent3);    
+        assertTrue(AreaOfInterestIntersectionCalculator.intersects(aoi2, aoi3));
     }
 
     /**
@@ -99,7 +107,7 @@ public class AreaOfInterestIntersectionCalculatorTest {
     public void testCalculateOverlapPercentage() {
         assertEquals(100.0f, AreaOfInterestIntersectionCalculator.calculateOverlapPercentage(aoi1, aoi1), delta);
         assertEquals(0.0f, AreaOfInterestIntersectionCalculator.calculateOverlapPercentage(aoi2, aoi3), delta);
-       
+
         List<Float> extent2 = new ArrayList<>();
         extent2.add(5.0f);
         extent2.add(0.0f);
