@@ -18,7 +18,7 @@ import javax.validation.constraints.*;
  * represents POST body parameters that will be used for requesting dataset resource from the DataAccess API
  */
 @ApiModel(description = "represents POST body parameters that will be used for requesting dataset resource from the DataAccess API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-28T14:02:44.016+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-09-23T17:11:28.351+02:00[Europe/Berlin]")
 
 public class DataAccessResourceSearchBody  implements Serializable {
   private static final long serialVersionUID = 1L;

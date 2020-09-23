@@ -16,9 +16,9 @@ import javax.validation.constraints.*;
  * abstract type for a backend that provides WaCoDiS products 
  */
 @ApiModel(description = "abstract type for a backend that provides WaCoDiS products ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-05-28T14:02:44.016+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-09-23T17:11:28.351+02:00[Europe/Berlin]")
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "backendType", visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "backendType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = ArcGISImageServerBackend.class, name = "ArcGISImageServerBackend"),
   @JsonSubTypes.Type(value = GeoServerBackend.class, name = "GeoServerBackend"),
