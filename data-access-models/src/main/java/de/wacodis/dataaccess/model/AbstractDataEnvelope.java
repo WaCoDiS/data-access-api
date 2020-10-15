@@ -19,7 +19,7 @@ import javax.validation.constraints.*;
  * abstract type that describes basic metadata information about a dataset 
  */
 @ApiModel(description = "abstract type that describes basic metadata information about a dataset ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-09-23T17:11:28.351+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-10-15T17:04:38.212+02:00[Europe/Berlin]")
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "sourceType", visible = true)
 @JsonSubTypes({
