@@ -73,6 +73,8 @@ public class CopernicusDataEnvelopeSorterTest {
         searchReq.setAreaOfInterest(this.aoiReference);
         searchReq.setInputs(new ArrayList<>());
         CopernicusDataEnvelopeSorter prioritizer = new CopernicusDataEnvelopeSorter(searchReq);
+        //only compare bboxes
+        prioritizer.setCompareSentinelFootpring(false);
 
         List<AbstractDataEnvelope> prioritizedEnvs = prioritizer.sortDataEnvelopes(envs);
 
@@ -80,9 +82,8 @@ public class CopernicusDataEnvelopeSorterTest {
         assertEquals(envs.get(1), prioritizedEnvs.get(0));
         assertEquals(envs.get(0), prioritizedEnvs.get(1));
     }
-    
-    
-        /**
+
+    /**
      * Test of sortDataEnvelopes method, of class CopernicusDataEnvelopeSorter.
      */
     @Test
@@ -105,7 +106,7 @@ public class CopernicusDataEnvelopeSorterTest {
         DwdDataEnvelope env2 = new DwdDataEnvelope();
         env2.setSourceType(AbstractDataEnvelope.SourceTypeEnum.DWDDATAENVELOPE);
         env2.identifier("env2");
-        env2.setAreaOfInterest(aoiEnv);      
+        env2.setAreaOfInterest(aoiEnv);
 
         List<AbstractDataEnvelope> envs = new ArrayList<>();
         envs.add(env1);
@@ -115,6 +116,8 @@ public class CopernicusDataEnvelopeSorterTest {
         searchReq.setAreaOfInterest(this.aoiReference);
         searchReq.setInputs(new ArrayList<>());
         CopernicusDataEnvelopeSorter prioritizer = new CopernicusDataEnvelopeSorter(searchReq);
+        //only compare bboxes
+        prioritizer.setCompareSentinelFootpring(false);
 
         List<AbstractDataEnvelope> prioritizedEnvs = prioritizer.sortDataEnvelopes(envs);
 

@@ -51,6 +51,8 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ElasticsearchResourceSearcher.class);
 
     private static final int DEFAULTTIMEOUT_MILLIS = 10000;
+    //determines wether footprint or just bbox is considered when sorting (prioritizing) CopernicusDataEnvelopes
+    private static final boolean COMPARESENTINELFOOTPRINT = true;
 
     private String indexName;
     private TimeValue requestTimeout;
@@ -251,7 +253,7 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     }
     
     private List<AbstractDataEnvelope> orderDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes, DataAccessResourceSearchBody searchRequest){
-        DataEnvelopePrioritizer sorter = new CopernicusDataEnvelopeSorter(searchRequest);
+        DataEnvelopePrioritizer sorter = new CopernicusDataEnvelopeSorter(searchRequest, COMPARESENTINELFOOTPRINT);
         List<AbstractDataEnvelope> sortedEnvs = sorter.sortDataEnvelopes(dataEnvelopes);
         
         return sortedEnvs;

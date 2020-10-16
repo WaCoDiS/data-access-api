@@ -5,6 +5,7 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.util;
 
+import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchResourceSearcher;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
@@ -12,7 +13,13 @@ import de.wacodis.dataaccess.model.DataAccessResourceSearchBody;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.geojson.GeoJsonReader;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -26,9 +33,19 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(CopernicusDataEnvelopeSorter.class);
 
     private DataAccessResourceSearchBody searchRequest;
+    private boolean compareSentinelFootpring;
 
-    public CopernicusDataEnvelopeSorter(DataAccessResourceSearchBody searchRequest) {
+    public CopernicusDataEnvelopeSorter(DataAccessResourceSearchBody searchRequest, boolean compareSentinelFootprint) {
         this.searchRequest = searchRequest;
+        this.compareSentinelFootpring = compareSentinelFootprint;
+    }
+
+    /**
+     * compareSentinelFootprint == true
+     * @param searchRequest 
+     */
+    public CopernicusDataEnvelopeSorter(DataAccessResourceSearchBody searchRequest) {
+        this(searchRequest, true);
     }
 
     public DataAccessResourceSearchBody getSearchRequest() {
@@ -39,13 +56,21 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
         this.searchRequest = searchRequest;
     }
 
+    public boolean isCompareSentinelFootpring() {
+        return compareSentinelFootpring;
+    }
+
+    public void setCompareSentinelFootpring(boolean compareSentinelFootpring) {
+        this.compareSentinelFootpring = compareSentinelFootpring;
+    }
+
     @Override
     public List<AbstractDataEnvelope> sortDataEnvelopes(List<AbstractDataEnvelope> dataEnvelopes) {
         List<CopernicusDataEnvelope> copernicusEnvs = filterCopernicusDataEnvelopes(dataEnvelopes);
 
         //only sort if list contains only CopernicusDataEnvelopes
         if (copernicusEnvs.size() == dataEnvelopes.size()) {
-            Comparator<CopernicusDataEnvelope> prioritizer = new CopernicusDataEnvelopePrioritizer(this.searchRequest.getAreaOfInterest());
+            Comparator<CopernicusDataEnvelope> prioritizer = new CopernicusDataEnvelopePrioritizer(this.searchRequest.getAreaOfInterest(), this.compareSentinelFootpring);
             //sort CopernicusDataEnvelopes
             copernicusEnvs.sort(prioritizer);
 
@@ -75,10 +100,23 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
 
     private class CopernicusDataEnvelopePrioritizer implements Comparator<CopernicusDataEnvelope> {
 
-        AbstractDataEnvelopeAreaOfInterest areaOfInterest;
+        private AbstractDataEnvelopeAreaOfInterest areaOfInterest;
+        private boolean compareSentinelFootprint;
+        private final GeoJsonReader geojsonReader;
 
-        public CopernicusDataEnvelopePrioritizer(AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
+        public CopernicusDataEnvelopePrioritizer(AbstractDataEnvelopeAreaOfInterest areaOfInterest, boolean compareSentinelFootprint) {
             this.areaOfInterest = areaOfInterest;
+            this.compareSentinelFootprint = compareSentinelFootprint;
+            this.geojsonReader = new GeoJsonReader();
+        }
+
+        /**
+         * compareSentinelFootprint == true
+         *
+         * @param areaOfInterest
+         */
+        public CopernicusDataEnvelopePrioritizer(AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
+            this(areaOfInterest, true);
         }
 
         public AbstractDataEnvelopeAreaOfInterest getAreaOfInterest() {
@@ -93,30 +131,51 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
         public int compare(CopernicusDataEnvelope env1, CopernicusDataEnvelope env2) {
             float indexEnv1 = calculatePriorityIndex(env1);
             float indexEnv2 = calculatePriorityIndex(env2);
-            
+
             //higher priority (better) should appear first
-            if(indexEnv1 == indexEnv2){
+            if (indexEnv1 == indexEnv2) {
                 return 0;
-            }else if(indexEnv1 < indexEnv2){
+            } else if (indexEnv1 < indexEnv2) {
                 return 1;
-            }else{
+            } else {
                 return -1;
-            }    
+            }
         }
 
         /**
          * percentage of overlap (area of interest) minus cloud coverage
+         *
          * @param env
-         * @return 
+         * @return
          */
-        private float calculatePriorityIndex(CopernicusDataEnvelope env){
+        private float calculatePriorityIndex(CopernicusDataEnvelope env) {
+            float extentOverlap;
             float cloudCov = env.getCloudCoverage();
-            float extentOverlap = AreaOfInterestIntersectionCalculator.calculateOverlapPercentage(this.areaOfInterest, env.getAreaOfInterest());
-            
+
+            if (this.compareSentinelFootprint) {
+                try {
+                    //compare with footprint of data envelope
+
+                    //parse geojson footprint
+                    Geometry footprintGeom = getGeoJsonAsGeometry(env.getFootprint());
+                    extentOverlap = AreaOfInterestIntersectionCalculator.calculateOverlapPercentage(areaOfInterest, footprintGeom);
+                } catch (ParseException ex) {
+                    LOGGER.error("unable to parse footprint geojson of data envelope " + env.getIdentifier(), ex);
+                    LOGGER.warn("cannot calculate overlap of footprint of data envelope {}, assume 0% overlap, this can change result order", env.getIdentifier());
+                    extentOverlap = 0.0f;
+                }
+
+            } else {
+                //only compare with bbox of data envelope
+                extentOverlap = AreaOfInterestIntersectionCalculator.calculateOverlapPercentage(this.areaOfInterest, env.getAreaOfInterest());
+            }
+
             return (extentOverlap - cloudCov);
         }
-        
 
-        
+        private Geometry getGeoJsonAsGeometry(String geojson) throws ParseException {
+            return this.geojsonReader.read(geojson);
+        }
+
     }
 }

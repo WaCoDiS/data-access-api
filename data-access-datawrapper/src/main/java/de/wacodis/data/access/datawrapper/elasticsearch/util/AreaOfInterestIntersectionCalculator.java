@@ -7,6 +7,9 @@ package de.wacodis.data.access.datawrapper.elasticsearch.util;
 
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import java.util.Arrays;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  *
@@ -48,6 +51,18 @@ public class AreaOfInterestIntersectionCalculator {
         return aoiIntersect;
     }
 
+    public static Geometry calculateIntersection(AbstractDataEnvelopeAreaOfInterest aoi, Geometry geom) {
+        //from geojson bbox: minLon, minLat, maxLon, maxLat
+        //to Envelope: x1,x2,y1,y2
+        Envelope aoiEnv = new Envelope(aoi.getExtent().get(0), aoi.getExtent().get(2), aoi.getExtent().get(1), aoi.getExtent().get(3));
+        Geometry aoiGeom = new GeometryFactory().toGeometry(aoiEnv);
+
+        //calculate intersection
+        Geometry intersection = geom.intersection(aoiGeom);
+
+        return intersection;
+    }
+
     public static boolean intersects(AbstractDataEnvelopeAreaOfInterest aoi1, AbstractDataEnvelopeAreaOfInterest aoi2) {
         Float[] extent1 = aoi1.getExtent().toArray(new Float[0]);
         Float[] extent2 = aoi2.getExtent().toArray(new Float[0]);
@@ -65,11 +80,11 @@ public class AreaOfInterestIntersectionCalculator {
      * @param aoi
      * @return
      */
-    public static float calculateArea(AbstractDataEnvelopeAreaOfInterest aoi) {
+    public static double calculateArea(AbstractDataEnvelopeAreaOfInterest aoi) {
         Float[] extent = aoi.getExtent().toArray(new Float[0]);
 
-        float a = Math.abs(extent[0] - extent[2]);
-        float b = Math.abs(extent[1] - extent[3]);
+        double a = Math.abs(extent[0] - extent[2]);
+        double b = Math.abs(extent[1] - extent[3]);
         return a * b;
     }
 
@@ -83,9 +98,9 @@ public class AreaOfInterestIntersectionCalculator {
     public static float calculateOverlapPercentage(AbstractDataEnvelopeAreaOfInterest aoiReference, AbstractDataEnvelopeAreaOfInterest aoiOther) {
         if (intersects(aoiReference, aoiOther)) {
             AbstractDataEnvelopeAreaOfInterest intersection = calculateIntersection(aoiReference, aoiOther);
-            float areaIntersection = calculateArea(intersection);
-            float areaReference = calculateArea(aoiReference);
-            float overlapPercentage = ((areaReference / 100) * areaIntersection);
+            double areaIntersection = calculateArea(intersection);
+            double areaReference = calculateArea(aoiReference);
+            float overlapPercentage = (float) ((areaReference / 100) * areaIntersection);
 
             assert (overlapPercentage <= 100.0f && overlapPercentage >= 0.0f);
 
@@ -93,6 +108,25 @@ public class AreaOfInterestIntersectionCalculator {
         } else {
             return 0.0f;
         }
+    }
+
+    /**
+     * calculates the area of intersection relative to the area of refernece
+     *
+     * @param aoiReference
+     * @param geomOther
+     * @return value between 0.0 and 100.0 (percentage)
+     */
+    public static float calculateOverlapPercentage(AbstractDataEnvelopeAreaOfInterest aoiReference, Geometry geomOther) {
+        Geometry intersection = calculateIntersection(aoiReference, geomOther);
+        double areaIntersection = intersection.getArea();
+        double areaReference = calculateArea(aoiReference);
+
+        float overlapPercentage = (float) ((areaReference / 100) * areaIntersection);
+
+        assert (overlapPercentage <= 100.0f && overlapPercentage >= 0.0f);
+
+        return overlapPercentage;
     }
 
 }
