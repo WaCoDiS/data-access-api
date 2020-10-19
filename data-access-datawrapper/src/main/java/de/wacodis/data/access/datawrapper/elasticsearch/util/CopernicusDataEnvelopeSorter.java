@@ -152,7 +152,8 @@ public class CopernicusDataEnvelopeSorter implements DataEnvelopePrioritizer {
             float extentOverlap;
             float cloudCov = env.getCloudCoverage();
 
-            if (this.compareSentinelFootprint) {
+            //only compare footprint if specified and footprint provided
+            if (this.compareSentinelFootprint && env.getFootprint() != null) {
                 try {
                     //compare with footprint of data envelope
 
