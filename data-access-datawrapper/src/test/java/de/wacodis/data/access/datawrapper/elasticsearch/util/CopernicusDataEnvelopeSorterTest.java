@@ -47,7 +47,7 @@ public class CopernicusDataEnvelopeSorterTest {
         //50% overlap with this.aoiReference
         AbstractDataEnvelopeAreaOfInterest aoiEnv = new AbstractDataEnvelopeAreaOfInterest();
         List<Float> extentEnv = new ArrayList<>();
-        extentEnv.add(5.0f);
+        extentEnv.add(0.0f);
         extentEnv.add(0.0f);
         extentEnv.add(10.0f);
         extentEnv.add(10.0f);
@@ -58,6 +58,9 @@ public class CopernicusDataEnvelopeSorterTest {
         env1.setIdentifier("env1");
         env1.setAreaOfInterest(aoiEnv);
         env1.setCloudCoverage(50.0f);
+        //0 0 , 0 10, 10 10, 10 0, 0 0
+        String footprint = "{\r\n    \"type\": \"Polygon\",\r\n    \"coordinates\": [\r\n        [\r\n            [\r\n                0,\r\n                0\r\n            ],\r\n            [\r\n                0,\r\n                10\r\n            ],\r\n            [\r\n                10,\r\n                10\r\n            ],\r\n            [\r\n                10,\r\n                0\r\n            ],\r\n            [\r\n                0,\r\n                0\r\n            ]\r\n        ]\r\n    ]\r\n}";
+        env1.setFootprint(footprint);
 
         CopernicusDataEnvelope env2 = new CopernicusDataEnvelope();
         env2.setSourceType(AbstractDataEnvelope.SourceTypeEnum.COPERNICUSDATAENVELOPE);
@@ -74,7 +77,7 @@ public class CopernicusDataEnvelopeSorterTest {
         searchReq.setInputs(new ArrayList<>());
         CopernicusDataEnvelopeSorter prioritizer = new CopernicusDataEnvelopeSorter(searchReq);
         //only compare bboxes
-        prioritizer.setCompareSentinelFootpring(false);
+        prioritizer.setCompareSentinelFootpring(true);
 
         List<AbstractDataEnvelope> prioritizedEnvs = prioritizer.sortDataEnvelopes(envs);
 
