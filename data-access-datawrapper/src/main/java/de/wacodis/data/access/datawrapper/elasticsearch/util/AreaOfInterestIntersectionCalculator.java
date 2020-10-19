@@ -52,10 +52,7 @@ public class AreaOfInterestIntersectionCalculator {
     }
 
     public static Geometry calculateIntersection(AbstractDataEnvelopeAreaOfInterest aoi, Geometry geom) {
-        //from geojson bbox: minLon, minLat, maxLon, maxLat
-        //to Envelope: x1,x2,y1,y2
-        Envelope aoiEnv = new Envelope(aoi.getExtent().get(0), aoi.getExtent().get(2), aoi.getExtent().get(1), aoi.getExtent().get(3));
-        Geometry aoiGeom = new GeometryFactory().toGeometry(aoiEnv);
+        Geometry aoiGeom = getAOIasGeometry(aoi);
 
         //calculate intersection
         Geometry intersection = geom.intersection(aoiGeom);
@@ -71,6 +68,12 @@ public class AreaOfInterestIntersectionCalculator {
                 && extent1[2] >= extent2[0]
                 && extent1[1] <= extent2[3]
                 && extent1[3] >= extent2[1];
+    }
+    
+    public static boolean intersects(AbstractDataEnvelopeAreaOfInterest aoi, Geometry geom){
+        Geometry aoiGeom = getAOIasGeometry(aoi);
+        
+        return geom.intersects(aoiGeom);
     }
 
     /**
@@ -127,6 +130,15 @@ public class AreaOfInterestIntersectionCalculator {
         assert (overlapPercentage <= 100.0f && overlapPercentage >= 0.0f);
 
         return overlapPercentage;
+    }
+
+    private static Geometry getAOIasGeometry(AbstractDataEnvelopeAreaOfInterest aoi) {
+        //from geojson bbox: minLon, minLat, maxLon, maxLat
+        //to Envelope: x1,x2,y1,y2
+        Envelope aoiEnv = new Envelope(aoi.getExtent().get(0), aoi.getExtent().get(2), aoi.getExtent().get(1), aoi.getExtent().get(3));
+        Geometry aoiGeom = new GeometryFactory().toGeometry(aoiEnv);
+        
+        return aoiGeom;
     }
 
 }

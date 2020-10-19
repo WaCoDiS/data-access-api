@@ -5,7 +5,6 @@
  */
 package de.wacodis.data.access.datawrapper.elasticsearch.util;
 
-import de.wacodis.data.access.datawrapper.elasticsearch.ElasticsearchResourceSearcher;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.dataaccess.model.CopernicusDataEnvelope;
@@ -13,8 +12,6 @@ import de.wacodis.dataaccess.model.DataAccessResourceSearchBody;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
