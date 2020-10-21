@@ -103,7 +103,7 @@ public class AreaOfInterestIntersectionCalculator {
             AbstractDataEnvelopeAreaOfInterest intersection = calculateIntersection(aoiReference, aoiOther);
             double areaIntersection = calculateArea(intersection);
             double areaReference = calculateArea(aoiReference);
-            float overlapPercentage = (float) ((areaReference / 100) * areaIntersection);
+            float overlapPercentage = (float) ((areaIntersection/ areaReference) * 100);
 
             assert (overlapPercentage <= 100.0f && overlapPercentage >= 0.0f);
 
@@ -125,7 +125,7 @@ public class AreaOfInterestIntersectionCalculator {
         double areaIntersection = intersection.getArea();
         double areaReference = calculateArea(aoiReference);
 
-        float overlapPercentage = (float) ((areaReference / 100) * areaIntersection);
+        float overlapPercentage = (float) ((areaIntersection/ areaReference) * 100);
 
         assert (overlapPercentage <= 100.0f && overlapPercentage >= 0.0f);
 
