@@ -103,6 +103,11 @@ public class ElasticsearchResourceSearcher implements ResourceSearcher {
     @Override
     public Map<String, List<AbstractResource>> query(DataAccessResourceSearchBody searchBody) throws IOException {
         try {
+            if(searchBody.getInputs().isEmpty()){
+                LOGGER.info("search body (request) contained no inputs, returning empty result map");
+                return new HashMap<>();
+            }
+            
             MultiSearchRequest multiSearch = buildSearchRequest(searchBody);
             MultiSearchResponse multiResponse = this.elasticsearchClient.msearch(multiSearch, RequestOptions.DEFAULT); //synchronous request to elasicsearch
 
