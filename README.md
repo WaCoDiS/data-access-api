@@ -243,7 +243,7 @@ parameters related to WaCoDis message broker
 | ------------- |-------------| -----|
 | type     | type of message broker  | WaCoDiS uses [RabbitMQ message broker](https://www.rabbitmq.com/)|
 | environment/spring/rabbitmq/host | RabbitMQ host (WaCoDiS message broker) | e.g. *localhost* |
-| environment/spring/rabbitmq/host | RabbitMQ port (WaCoDiS message broker)   | e.g. *5672*|
+| environment/spring/rabbitmq/port | RabbitMQ port (WaCoDiS message broker)   | e.g. *5672*|
 | environment/spring/rabbitmq/username | RabbitMQ username (WaCoDiS message broker)   | |
 | environment/spring/rabbitmq/password | RabbitMQ password (WaCoDiS message broker)   | |
 
