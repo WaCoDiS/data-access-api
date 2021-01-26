@@ -193,6 +193,8 @@ Data Access is a Spring Boot application. Execute the compiled jar (`java -jar  
 2. Run created Docker Image. A port binding for container port 8080 is necessary to make the service available.  
 (`docker run -p 8080:8080 wacodis_data_access:latest`)
 
+Alternatively, latest available docker image (automatically built from master branch) can be pulled from [Docker Hub](https://hub.docker.com/r/wacodis/data-access-api). See [WaCoDiS Docker repository](https://github.com/WaCoDiS/wacodis-docker) for pre-configured Docker Compose files to run WaCoDiS system components and backend services (RabbitMQ and Elasticsearch).
+
 ### Elasticsearch Index Initialization
 During the start up process, data access automatically initializes a (Elasticsearch) search index that indexes metadata (DataEnvelopes) for available data sets. The index settings are defined in a json file which is by default */main/resources/elasticsearch_indexsettings.json*. The mappings section of this file should not be altered because data access needs an index that matches those specifications. The location of the index settings file is [configurable](#configuration).  
 If index intitialization fails because of a connection error it is retried after a timeout. The max. number of retries and the timeout is [configurable](#configuration). This configuration parameters can be used in deployment scenarios (for example docker compose) if elasticsearch is not available before data access is started.
