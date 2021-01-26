@@ -274,10 +274,8 @@ The _/resources/search_ endpoint of Data Access API demands the conversion from 
    
    
 *Missing Features* 
-* support for  subtypes of _AbstractDataEnvelope_ other than _CopernicusDataEnvelope_
-* [Copernicus Open Access Hub](https://scihub.copernicus.eu/) is the only supported data portal for sentinel imagery. 
-  
-Support for [CODE-DE](https://code-de.org/en) is envisaged but not implemented. To support CODE-DE the [CopernicusDataEnvelopeConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/CopernicusDataEnvelopeConverter.java) must be edited. To support further data portals than Copernicus Open Access Hub and CODE-De, in addtion to changes to the _DataEnvelopeToResourceConverter_, the [WaCoDiS schema definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) have to be extended (enum CopernicusDataEnvelope.portal) first.  
+* full support for  subtypes of _AbstractDataEnvelope_ other than _CopernicusDataEnvelope_, as mentioned above conversion from DataEnvelope to Resource is currently only implemented for CopernicusDataEnvelopes 
+
 
 ### Branching
 The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development. It is advised to create new, seperate branches for new features (e.g _feature/myNewFeature_).
