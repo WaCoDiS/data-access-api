@@ -143,7 +143,7 @@
                     <excludes>
                         <exclude>**/src/test/resources/**</exclude>
                         <exclude>src/**/model/*.java</exclude>
-                        <exclude>src/**/model/*Api.java</exclude>
+                        <exclude>src/**/controller/*Api.java</exclude>
                     </excludes>
                     <strictCheck>true</strictCheck>
                     <properties>
