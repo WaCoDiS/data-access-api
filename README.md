@@ -5,34 +5,10 @@ This projects implements a REST API that persists and manages metadata from all 
 ## Table of Content  
 
 1. [WaCoDiS Project Information](#wacodis-project-information)
-  * [Architecture Overview](#architecture-overview)
 2. [Overview](#overview)
-  * [Core Data Types](#core-data-types)
-  * [Modules](#modules)
-  * [Data Access REST API](#data-access-rest-api)
-    * [Interaction with WaCoDiS Core Engine](#interaction-with-wacodis-core-engine)
-    * [Interaction with WaCoDiS Metadata Connector](#interaction-with-wacodis-metadata-connector)
-  * [Utilized Technologies](#utilized-technologies)
 3. [Installation / Building Information](#installation--building-information)
-  * [Build from Source](#build-from-source)
-  * [Build using Docker](#build-using-docker)
-  * [Deployment](#deployment)
-    * [Preconditions](#preconditions)
 4. [User Guide](#user-guide)
-  * [Run Data Access](#run-data-access)
-    * [Using Docker](#using-docker)
-  * [Elasticsearch Index Initialization](#elasticsearch-index-initialization)
-  * [Configuration](#configuration)
-    * [Parameters](#parameters)
-5. [Contribution - Developer Information](#contribution---developer-information)
-  * [How to Contribute](#how-to-contribute)
-    * [Extending Data Access](#extending-data-access)
-      * [New Types of DataEnvelope and SubsetDefinition](#new-types-of-dataenvelope-and-subsetdefinition)
-      * [Updating Data Access Models](#updating-data-access-models)
-    * [Pending Developments](#pending-developments)
-      * [Creation of Resources from DataEnvelopes](#creation-of-resources-from-dataenvelopes)
-  * [Branching](#branching) 
-  * [License and Third Party Lib POM Plugins](#license-and-third-party-lib-pom-plugins)
+5. [Developer Information](#developer-information)
 6. [Contact](#contact)
 7. [Credits and Contributing Organizations](#credits-and-contributing-organizations)
     
@@ -222,7 +198,7 @@ parameters related to WaCoDis message broker
 | environment/spring/rabbitmq/username | RabbitMQ username (WaCoDiS message broker)   | |
 | environment/spring/rabbitmq/password | RabbitMQ password (WaCoDiS message broker)   | |
 
-## Contribution - Developer Information
+## Developer Information
 This section contains information for developers. [Extending Data Access](#extending-data-access) describes how Data Access can be extended with new functionalities. [Pending Developments](#pending-developments) lists enivsaged features that are not (fully) implemented yet. 
 
 ### How to Contribute
@@ -258,15 +234,18 @@ The _/resources/search_ endpoint of Data Access API demands the conversion from 
 The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development. It is advised to create new, seperate branches for new features (e.g _feature/myNewFeature_).
 
 ### License and Third Party Lib POM Plugins
-[optional]
+Apache License, Version 2.0
 
-## Contact
+### Contributing developers
 |    Name   |   Organization    |    Mail    |
 | :-------------: |:-------------:| :-----:|
-| Sebastian Drost | Bochum University of Applied Sciences | sebastian.drost@hs-bochum.de |
-| Arne Vogt | Bochum University of Applied Sciences | arne.vogt@hs-bochum.de |
-| Andreas Wytzisk  | Bochum University of Applied Sciences | andreas.wytzisk@hs-bochum.de |
-| Matthes Rieke | 52° North GmbH | m.rieke@52north.org |
+| Arne Vogt | 52° North GmbH | [arnevogt](https://github.com/arnevogt) |
+| Sebastian Drost | 52° North GmbH | [SebaDro](https://github.com/SebaDro) |
+| Matthes Rieke | 52° North GmbH | [matthesrieke](https://github.com/matthesrieke) |
+
+## Contact
+The WaCoDiS project is maintained by [52°North GmbH](https://52north.org/). If you have any questions about this or any
+other repository related to WaCoDiS, please contact wacodis-info@52north.org.
 
 ## Credits and Contributing Organizations
 - Department of Geodesy, Bochum University of Applied Sciences, Bochum
