@@ -3,8 +3,7 @@ services:
   data-access-api:
     build:
       context: .
-    image: registry.wacodis.demo.52north.org/data-access-api:1.0.2-SNAPSHOT
-    ports:
+    image: registry.wacodis.demo.52north.org/data-access-api:latest
       - 8080:8080
     environment: 
       - spring.rabbitmq.host=eum-dcsi.demo.52north.org
