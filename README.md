@@ -168,6 +168,8 @@ Data Access is a Spring Boot application. Execute the compiled jar (`java -jar  
 2. Run created Docker Image. A port binding for container port 8080 is necessary to make the service available.  
 (`docker run -p 8080:8080 wacodis_data_access:latest`)
 
+Alternatively, latest available docker image (automatically built from master branch) can be pulled from [Docker Hub](https://hub.docker.com/r/wacodis/data-access-api). See [WaCoDiS Docker repository](https://github.com/WaCoDiS/wacodis-docker) for pre-configured Docker Compose files to run WaCoDiS system components and backend services (RabbitMQ and Elasticsearch).
+
 ### Elasticsearch Index Initialization
 During the start up process, data access automatically initializes a (Elasticsearch) search index that indexes metadata (DataEnvelopes) for available data sets. The index settings are defined in a json file which is by default */main/resources/elasticsearch_indexsettings.json*. The mappings section of this file should not be altered because data access needs an index that matches those specifications. The location of the index settings file is [configurable](#configuration).  
 If index intitialization fails because of a connection error it is retried after a timeout. The max. number of retries and the timeout is [configurable](#configuration). This configuration parameters can be used in deployment scenarios (for example docker compose) if elasticsearch is not available before data access is started.
@@ -216,7 +218,7 @@ parameters related to WaCoDis message broker
 | ------------- |-------------| -----|
 | type     | type of message broker  | WaCoDiS uses [RabbitMQ message broker](https://www.rabbitmq.com/)|
 | environment/spring/rabbitmq/host | RabbitMQ host (WaCoDiS message broker) | e.g. *localhost* |
-| environment/spring/rabbitmq/host | RabbitMQ port (WaCoDiS message broker)   | e.g. *5672*|
+| environment/spring/rabbitmq/port | RabbitMQ port (WaCoDiS message broker)   | e.g. *5672*|
 | environment/spring/rabbitmq/username | RabbitMQ username (WaCoDiS message broker)   | |
 | environment/spring/rabbitmq/password | RabbitMQ password (WaCoDiS message broker)   | |
 
@@ -249,10 +251,8 @@ The _/resources/search_ endpoint of Data Access API demands the conversion from 
    
    
 *Missing Features* 
-* support for  subtypes of _AbstractDataEnvelope_ other than _CopernicusDataEnvelope_
-* [Copernicus Open Access Hub](https://scihub.copernicus.eu/) is the only supported data portal for sentinel imagery. 
-  
-Support for [CODE-DE](https://code-de.org/en) is envisaged but not implemented. To support CODE-DE the [CopernicusDataEnvelopeConverter](https://github.com/WaCoDiS/data-access-api/blob/develop/data-access-datawrapper/src/main/java/de/wacodis/data/access/datawrapper/resourceconverter/CopernicusDataEnvelopeConverter.java) must be edited. To support further data portals than Copernicus Open Access Hub and CODE-De, in addtion to changes to the _DataEnvelopeToResourceConverter_, the [WaCoDiS schema definitions](https://github.com/WaCoDiS/apis-and-workflows/blob/master/openapi/src/main/definitions/wacodis-schemas.yml) have to be extended (enum CopernicusDataEnvelope.portal) first.  
+* full support for  subtypes of _AbstractDataEnvelope_ other than _CopernicusDataEnvelope_, as mentioned above conversion from DataEnvelope to Resource is currently only implemented for CopernicusDataEnvelopes 
+
 
 ### Branching
 The master branch provides sources for stable builds. The develop branch represents the latest (maybe unstable) state of development. It is advised to create new, seperate branches for new features (e.g _feature/myNewFeature_).
