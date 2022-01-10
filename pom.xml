@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.wacodis</groupId>
     <artifactId>data-access</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1</version>
     <packaging>pom</packaging>
 
     <name>WaCoDiS Data Access</name>
@@ -20,7 +19,7 @@
         <url>https://github.com/WaCoDiS/data-access-api/</url>
         <connection>scm:git:git://github.com/WaCoDiS/data-access-api.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/WaCoDiS/data-access-api.git</developerConnection>
-        <tag>v2.0.0</tag>
+        <tag>v2.0.1</tag>
     </scm>
 
     <licenses>
@@ -38,7 +37,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <wacodis-data-access.version>2.0.1-SNAPSHOT</wacodis-data-access.version>
+        <wacodis-data-access.version>2.0.1</wacodis-data-access.version>
         <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
         <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
         <elasticsearch.version>6.6.2</elasticsearch.version>
